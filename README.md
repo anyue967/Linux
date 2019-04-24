@@ -1,2 +1,2 @@
 # Linux
-学习Linux
+学习Linux之旅
