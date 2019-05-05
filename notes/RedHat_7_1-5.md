@@ -81,27 +81,27 @@
 `reboot` 
  
 ### 6. 解决piix4_smbus 0000:00:007:3:Host SMBus controller not enabled!  
-`[root@xy Desktop]# lsmod | grep i2c` 	 **搜索模块**  
-i2c_piix4              22106  0 
+`[root@xy Desktop]# lsmod | grep i2c`　　 **搜索模块**  
+i2c_piix4              22106  0   
 i2c_core               40325  2 drm,i2c_piix4  
 `[root@xy Desktop]# vim /etc/modprobe.d/blacklist.conf`    
-加入 `blacklist i2c-piix4`      **加黑名单**  
+加入 `blacklist i2c-piix4` 　　　　 **加黑名单**  
 `reboot`
 
 ### 7. 常用系统工作命令
 #### 7.1 man  
 Last login: Thu Jul  5 22:34:40 EDT 2018 on :0  
-`[root@xy ~]# man man`          **帮助**
+`[root@xy ~]# man man` 　　**帮助**
 
-#### 7.2 echo  **字符串 / $变量**  
+#### 7.2 echo  　　**字符串 / $变量**  
 `[root@xy ~]# echo xy`  
 xy  
 `[root@xy ~]# echo $SHELL`  
 /bin/bash
 
 #### 7.3 date  
-%t 跳格　　　　　%H 小时(00~23)　　 %S 秒(00~59)  
-%I 小时(00~12)　%M 分钟(00~59)　　 %J 今年中的第几天  
+%t 跳格　　　　　%H 小时(00~23)　　 　%S 秒(00~59)  
+%I 小时(00~12)　　%M 分钟(00~59)　　 %J 今年中的第几天  
 `[root@xy ~]# date`  
 Thu Jul  5 22:44:59 EDT 2018  
 `[root@xy ~]# date "+%Y-%M-%m-%d %H:%M:%S"`  
@@ -115,7 +115,7 @@ Fri Jul  6 10:49:07 EDT 2018
 `[root@xy ~]# reboot`   
 `[root@xy ~]# poweroff`  
 
-4. wget  
+#### 7.4 wget  
 -b 后台下载　　-P 下载至指定目录　　-t 最大尝试次数   
 -c 断点续传　　-p 下载页面搜有资源　　-r 递归下载        
 `[root@xy ~]# wget -r -p htpp://www.linuxprobe.com`
@@ -151,16 +151,16 @@ KiB Swap:  2113532 total,        0 used,  2113532 free.   342864 cached Mem
 .......省略部分信息........    
 
 #### 7.7 pidof    
-`[root@xy ~]# pidof sshd`		**pidof 服务名称**  
+`[root@xy ~]# pidof sshd`　　　**pidof 服务名称**  
 1552
 
 #### 7.8 kill  
-[root@xy ~]# kill 2156	  **kill PID号**
+[root@xy ~]# kill 2156	　　**kill PID号**
 
 #### 7.9 killall   
 `[root@xy ~]# pidof httpd`  
 13581 13580 13579 13578 13577 13576  
-`[root@xy ~]# killall httpd`    		**killall 服务名称**  
+`[root@xy ~]# killall httpd`    	　　**killall 服务名称**  
 `[root@xy ~]# pidof httpd`   
 
 ### 8. 系统状态检测命令  
@@ -183,29 +183,29 @@ lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0    
 
 #### 8.2 uname  
-`[root@xy ~]# uname -a`    **查看系统内核与版本信息**    
+`[root@xy ~]# uname -a` 　　　**查看系统内核与版本信息**    
 Linux xy.com 3.10.0-123.el7.x86_64 #1 SMP Mon May 5 11:16:57 EDT 2014 x86_64 x86_64 x86_64 GNU/Linux  
-`[root@xy ~]# cat /etc/redhat-release`      **系统版本详细信息文件路径**   
+`[root@xy ~]# cat /etc/redhat-release`   　　　 **系统版本详细信息文件路径**   
 Red Hat Enterprise Linux Server release 7.0 (Maipo)
 
 #### 8.3 uptime   
-`[root@xy ~]# uptime`			**5min	 10min	15min	系统负载状况**  
+`[root@xy ~]# uptime`　　　**5min	 10min	15min	系统负载状况**  
  11:08:55 up 31 min,  2 users,  load average: 0.48, 0.42, 0.46    
 
 #### 8.4. free  
-`[root@xy ~]# free -h`               **内存使用情况**    
+`[root@xy ~]# free -h`       　　　**内存使用情况**    
              total       used       free     shared    buffers     cached  
 Mem:          1.9G       1.2G       732M       9.8M       1.1M       335M  
 -/+ buffers/cache:       919M       1.0G  
 Swap:         2.0G         0B       2.0G  
 
 #### 8.5 who  
-`[root@xy ~]# who`          **当前登陆主机用户信息**  
+`[root@xy ~]# who`      　　　　　**当前登陆主机用户信息**  
 xy       :0           2018-07-05 22:38 (:0)  
 xy       pts/0        2018-07-06 11:06 (:0)  
 
 #### 8.6 last    
-`[root@xy ~]# last`         **查看本机登陆记录**  
+`[root@xy ~]# last`     　　　　 **查看本机登陆记录**  
 xy       pts/0        :0               Fri Jul  6 11:06   still logged in     
 xy       pts/0        :0               Thu Jul  5 22:41 - 11:06  (12:24)      
 xy       :0           :0               Thu Jul  5 22:38   still logged in        
@@ -213,9 +213,9 @@ reboot   system boot  3.10.0-123.el7.x Fri Jul  6 06:37 - 11:11  (04:33)
 .......省略部分信息........    
 
 #### 8.7 history  
-`[root@xy ~]# history`      **命令使用历史**     
+`[root@xy ~]# history`      　　　**命令使用历史**     
    1  history    
-`[root@xy ~]# history -c`   		   **clean**    
+`[root@xy ~]# history -c`   		   　　**clean**    
 `[root@xy ~]# cat ~/.bash_history`  
 lsmod|grep i2c  
 `vim /etc/modprobe.d/blacklist.conf`    
@@ -248,16 +248,16 @@ Please send this file to your support representative.
 
 ### 9. 工作目录切换命令  
 #### 9.1 pwd  
-`[root@xy ~]# pwd`          **当前所处工作目录**  
+`[root@xy ~]# pwd`          　　**当前所处工作目录**  
 /root
 
 #### 9.2 cd  
 `[root@xy ~]# cd /etc`  
-`[root@xy etc]# cd -`       **cd - 返回到上一次所处目录**  
+`[root@xy etc]# cd -`       　　**cd - 返回到上一次所处目录**  
 /root  
 `[root@xy ~]# cd /etc`  
-`[root@xy etc]# cd ~`       **进入当前用户的home目录**  
-`[root@xy ~]# cd ..`       **cd .. 进入上级目录**  
+`[root@xy etc]# cd ~`       　　**进入当前用户的home目录**  
+`[root@xy ~]# cd ..`      　　 **cd .. 进入上级目录**  
 `[root@xy /]# cd /etc`  
 `[root@xy etc]# cd ..`  
 
@@ -278,7 +278,7 @@ drwxr-xr-x. 132 root root 8192 Jul  6 06:37 /etc
 
 ### 10. 文本编辑命令  
 #### 10.1 cat  
-`[root@xy ~]# cat -n initial-setup-ks.cfg`      **短篇文本查看 Number**  
+`[root@xy ~]# cat -n initial-setup-ks.cfg`      　　**短篇文本查看 Number**  
    1  #version=RHEL7  
    2  # X Window System configuration information  
    3  xconfig  --startxonboot  
@@ -291,7 +291,7 @@ drwxr-xr-x. 132 root root 8192 Jul  6 06:37 /etc
 ........省略部分输出信息........
 
 #### 10.2 more  
-`[root@xy ~]# more initial-setup-ks.cfg`        **长篇文本查看 翻滚 空格键**
+`[root@xy ~]# more initial-setup-ks.cfg`       　　 **长篇文本查看 翻滚 空格键**
    1  #version=RHEL7  
    2  # X Window System configuration information  
    3  xconfig  --startxonboot  
@@ -307,7 +307,7 @@ drwxr-xr-x. 132 root root 8192 Jul  6 06:37 /etc
 ........省略部分输出信息........  
 
 #### 10.3 head  
-`[root@xy ~]# head -n 10 initial-setup-ks.cfg`      **head -n 查看文本前n行**  
+`[root@xy ~]# head -n 10 initial-setup-ks.cfg`      　　**head -n 查看文本前n行**  
 1  #version=RHEL7  
 2  # X Window System configuration information  
 3  xconfig  --startxonboot  
@@ -320,7 +320,7 @@ drwxr-xr-x. 132 root root 8192 Jul  6 06:37 /etc
 10 cdrom  
 
 #### 10.4 tail  
-`[root@xy ~]# tail -n 10 initial-setup-ks.cfg`		 **tail -n 查看后10行**
+`[root@xy ~]# tail -n 10 initial-setup-ks.cfg`		　　 **tail -n 查看后10行**  
 @guest-agents  
 @guest-desktop-agents  
 @input-methods  
@@ -330,7 +330,7 @@ drwxr-xr-x. 132 root root 8192 Jul  6 06:37 /etc
 @x11  
 %end  
 
-`[root@xy ~]# tail -f /var/log/messages`			**tail -f 动态显示log信息**  
+`[root@xy ~]# tail -f /var/log/messages`			　**tail -f 动态显示log信息**  
 Jul  6 11:51:43 xy dbus[1068]: [system] Activating via systemd: service   name='net.reactivated.Fprint' unit='fprintd.service'  
 Jul  6 11:51:43 xy systemd: Starting Fingerprint Authentication Daemon...  
 Jul  6 11:51:43 xy dbus-daemon: dbus[1068]: [system] Successfully activated   service 'net.reactivated.Fprint'  
@@ -364,7 +364,7 @@ Free Linux LessonS
 //////////...../////////  
 Professional guidance  
 Linux Course  
-`[root@xy diff]# diff --brief diff_A.txt diff_B.txt`         **比较文本差异**  
+`[root@xy diff]# diff --brief diff_A.txt diff_B.txt`         　　**比较文本差异**  
 Files diff_A.txt and diff_B.txt differ  
 `[root@xy diff]# diff -c diff_A.txt diff_B.txt`  
 *** diff_A.txt	2018-07-06 12:06:35.889958037 -0400  
@@ -396,7 +396,7 @@ Files diff_A.txt and diff_B.txt differ
 1902 /etc/passwd  
 
 #### 10.5 stat 
-`[root@xy ~]# stat anaconda-ks.cfg` 	**查看文件具体存储信息与时间**  
+`[root@xy ~]# stat anaconda-ks.cfg` 	　　**查看文件具体存储信息与时间**  
   File: ‘anaconda-ks.cfg’  
   Size: 1071      	Blocks: 8          IO Block: 4096   regular file  
 Device: fd00h/64768d	Inode: 68521005    Links: 1  
@@ -411,7 +411,7 @@ Change: 2018-07-06 12:21:08.983950168 -0400
 `[root@xy ~]# head -n 2 /etc/passwd`  
 root:x:0:0:root:/root:/bin/bash  
 bin:x:1:1:bin:/bin:/sbin/nologin  
-`[root@xy ~]# cut -d: -f 1 /etc/passwd`       **按列提取文本字符**  
+`[root@xy ~]# cut -d: -f 1 /etc/passwd`      　　 **按列提取文本字符**  
 root  
 bin  
 daemon  
@@ -451,7 +451,7 @@ sshd
 tcpdump  
 xy  
 
-#### 10.7 tr              **替换文本字符串**
+#### 10.7 tr　　**替换文本字符串**
 `[root@xy ~]# cat anaconda-ks.cfg | tr [a-z] [A-Z]`  
 
 ### 11. 文件目录管理命令  
@@ -470,7 +470,7 @@ xy
 `[root@xy ~]# cd /tmp`  
 `[root@xy tmp]# mkdir diff`  
 `[root@xy tmp]# cd diff`    
-`[root@xy diff]# mkdir -p a/b/c/d/e`               **递归创建目录**  
+`[root@xy diff]# mkdir -p a/b/c/d/e` 　　　**递归创建目录**  
 `[root@xy diff]# cd a`  
 `[root@xy a]#`  
 `[root@xy ~]# touch install.log`  
@@ -492,7 +492,7 @@ Desktop          Downloads  *linux.log*            Pictures  Templates
 
 #### 11.5 rm  
 `[root@xy ~]# rm linux.log`  
-rm: remove regular empty file ‘diff’? y
+rm: remove regular empty file ‘diff’? y  
 `[root@xy ~]# rm -f linux.log`          
 anaconda-ks.cfg  Documents  initial-setup-ks.cfg  Music     Public     Videos  
 Desktop          Downloads  Pictures              Templates  
@@ -500,13 +500,13 @@ Desktop          Downloads  Pictures              Templates
 `[root@xy ~]# cd diff`  
 `[root@xy diff]# cd -`  
 /root  
-`[root@xy ~]# rm -rf diff`          **-rf**  
+`[root@xy ~]# rm -rf diff`         　　 **-rf**  
 `[root@xy ~]# ls`  
 anaconda-ks.cfg  Documents  initial-setup-ks.cfg  Pictures  Templates  
 Desktop          Downloads  Music                 Public    Video  
 
-#### 11.6 dd          **按照指定大小和个数的数据块复制文件或转换文件**  
-if 输入文件名称　　of 输出文件名称　　bs 设置块大小　　count 设置复制块的个数  
+#### 11.6 dd          　　按照指定大小和个数的数据块复制文件或转换文件  
+if-输入文件名称　　of-输出文件名称　　bs-设置块大小　　count-设置复制块的个数  
 `[root@xy ~]# dd if=/dev/zero of=10_file bs=10M count=1`  
 `[root@xy ~]# dd if=/dev/cdrom of=RHEL-server-7.0-x86_64.iso`  
 `[root@xy ~]# file anaconda-ks.cfg`  
@@ -520,7 +520,7 @@ anaconda-ks.cfg: ASCII text
 #### 12.1 tar  
 -c 创建压缩文档　　       -x 解开压缩文档　　    -t 查看压缩包内容　　-z 用Gzip压缩/解压
 -j 用bzip2压缩/解压　　   -v 显示压缩/解压过程　　-f 目标文件名
--p 保留原文件的权限属性    -P 使用绝对路径来压缩　　-C 指定压缩目录
+-p 保留原文件的权限属性    -P 使用绝对路径来压缩　　-C 指定压缩目录  
 `[root@xy tmp]# tar -czvf ect.`dtae +"+%Y-%m-%d"`.tar.gz /ect`  
 `[root@xy tmp]# tar -czvf diff.tar.gz /diff`  
 diff/  
@@ -530,9 +530,9 @@ diff/diff_B.txt~
 diff/diff.tar.gz  
 `[root@xy diff]# tar -xzvf diff.tar.gz -C /diff`  
 
-#### 12.2 grep              **常用！！！！**  
+#### 12.2 grep     　　常用！！！！  
 -b 将可执行binary当做text搜索　　-c 仅显示找到的行数　　　-i 忽略大小写 
--n 显示行号　　　　-v 反向选择,仅列出没有关键词的行  
+-n 显示行号      　　　-v 反向选择，仅列出没有关键词的行  
 `[root@xy ~]# grep -n /sbin/nologin /etc/passwd`  
 1:bin:x:1:1:bin:/bin:/sbin/nologin  
 2:daemon:x:2:2:daemon:/sbin:/sbin/nologin  
@@ -541,12 +541,12 @@ diff/diff.tar.gz
 5:mail:x:8:12:mail:/var/spool/mail:/sbin/nologin  
 6:operator:x:11:0:operator:/root:/sbin/nologin  
 
-#### 12.3 find       **实用**  
+#### 12.3 find       　　实用  
 -name 匹配名称　　-perm 匹配权限　　-user 匹配所有者  
 -group 匹配所有组　　　-mtime -n +n 匹配修改内容的时间  
 -atime -n +n 匹配访问文件的时间　　　　-exec …… {} \;  
 
-`[root@xy ~]# find /etc/ -name "host*" -print`     **find 查找路径 -参数**  
+`[root@xy ~]# find /etc/ -name "host*" -print`     　　**find 查找路径 -参数**  
 /etc/avahi/hosts  
 /etc/host.conf  
 /etc/hosts  
@@ -555,7 +555,7 @@ diff/diff.tar.gz
 /etc/selinux/targeted/modules/active/modules/hostname.pp  
 /etc/hostname  
 
-`[root@xy ~]# find / -perm -4000 -print`      **-perm 匹配权限**  
+`[root@xy ~]# find / -perm -4000 -print`      　　**-perm 匹配权限**  
 find: ‘/proc/35382’: No such file or directory  
 find: ‘/proc/35428/task/35428/fd/6’: No such file or directory  
 find: ‘/proc/35428/task/35428/fdinfo/6’: No such file or directory  
@@ -568,18 +568,18 @@ find: ‘/run/user/1000/gvfs’: Permission denied
 /usr/bin/gpasswd  
 /usr/bin/newgrp  
 ........省略部分信息........  
-`[root@xy ~]# find / -user xy -exec cp -a {} /root/findresults/ \;`  **厉害！！**
-    -exec ... {} ... \;  
+`[root@xy ~]# find / -user xy -exec cp -a {} /root/findresults/ \;`   
+**厉害！！**  -exec ... {} ... \;  
 
-### 13. 重定向操作符 > >> < <<      **尖头在哪哪边为输出**  
+### 13. 重定向操作符 >　 >>　 <　 <<      　　尖头在哪哪边为输出  
 **输入重定向 O-I**  
   命令 <  文件              
-  命令 << 分界符                         **遇见分界符为止**  
+  命令 << 分界符                        　　 **遇见分界符为止**  
   命令 < 文件1 > 文件2  
 **输出重定向 I-O**  
-  命令 >   文件                          **清空原有文件**  
+  命令 >   文件                         　　 **清空原有文件**  
   命令 2>  文件         
-  命令 >>  文件                          **追加到原有文件内容的后面**  
+  命令 >>  文件                         　　 **追加到原有文件内容的后面**  
   命令 2>> 文件
   命令 >>  文件 2>&1 或 命令 &>> 文件      
 `[root@xy ~]# man bash > readme.txt`  
@@ -592,7 +592,7 @@ Quality linux learning materials
 ls: cannot access xxxxxxx: No such file or directory
 `[root@xy ~]# ls -l xxxxxxx > readme.txt`   
 ls: cannot access xxxxxxx: No such file or directory
-`[root@xy ~]# ls -l  xxxxxxx 2> readme.txt`       **2的用法**  
+`[root@xy ~]# ls -l  xxxxxxx 2> readme.txt`       　　**2的用法**  
 `[root@xy ~]# cat readme.txt`     
 ls: cannot access xxxxxxx: No such file or directory  
 `[root@xy ~]# wc -l < readme.txt`` 
@@ -601,7 +601,7 @@ ls: cannot access xxxxxxx: No such file or directory
 1  
 
 ### 14. 管道符 |  
-`[root@xy ~]# grep "/sbin/nologin" /etc/passwd | wc -l`      **例子不错**  
+`[root@xy ~]# grep "/sbin/nologin" /etc/passwd | wc -l`      　　**例子不错**  
 33  
 `[root@xy ~]# ls -l /etc/ | more`  
 total 1396  
@@ -628,17 +628,16 @@ brw-rw----. 1 root disk 8, 2 Jul  6  2018 /dev/sda2
 brw-rw----. 1 root disk 8, 1 Jul  6  2018 /dev/sda1  
 brw-rw----. 1 root disk 8, 2 Jul  6  2018 /dev/sda2  
  
-### 16. 常用的转义字符  \ 、''、""、``
-  \  使反斜杠后的一个变量变为单纯的字符串　　　''  转义其中所有的变量为单纯的字符串
-  "" 保留其中的变量属性,不进行转义处理　　　　``  把其中的命令执行后返回结果  
+### 16. 常用的转义字符  \ 、''、""、``(把其中的命令执行后返回结果)
+  \  使反斜杠后的一个变量变为单纯的字符串　　　''  转义其中所有的变量为单纯的字符串  　　   "" 保留其中的变量属性,不进行转义处理     　　  
 `[root@xy ~]# PRICE=5`  
-`[root@xy ~]# echo "Price is $PRICE"`        **$ 取变量的值**  
+`[root@xy ~]# echo "Price is $PRICE"`        　　**$ 取变量的值**  
 Price is 5  
 `[root@xy ~]# echo "Price is $$PRICE"`  
 Price is 7982PRICE  
 `[root@xy ~]# echo "Price is \$$PRICE"`  
 Price is $5  
-`[root@xy ~]# echo `uname -a``   **执行命令返回结果**  
+`[root@xy ~]# echo `uname -a``   　　**执行命令返回结果**  
 Linux xy.com 3.10.0-123.el7.x86_64 #1 SMP Mon May 5 11:16:57 EDT 2014 x86_64 x86_64 x86_64 GNU/Linux  
 
 ### 17. 重要的环境变量  
@@ -648,26 +647,26 @@ anaconda-ks.cfg  Documents  initial-setup-ks.cfg  Pictures  readme.txt  Videos
 Desktop          Downloads  Music                 Public    Templates   xy.txt  
 `[root@xy ~]# rm xy.txt`  
 rm: remove regular empty file ‘xy.txt’?  y  
-`[root@xy ~]# alias rm`           **alias 的用法**
-alias rm='rm -i'                       // inter  
-`[root@xy ~]# unalias rm`          **unalias 的用法**  
+`[root@xy ~]# alias rm`           　　**alias 的用法**  
+alias rm='rm -i'                       　　**inter**  
+`[root@xy ~]# unalias rm`         　　 **unalias 的用法**  
 `[root@xy ~]# rm xy.txt`  
 
 **HOME      SHELL     HISTSIZE    HISTFILESIZE  MAILL**       
 **LANG      RANDOM    PS1         PATH          EDITOR**  
    使用 export **变量名** *提升变量为全局变量*  
-`[root@xy test]# type -a true`         **type 命令名称 内部还是外部**  
+`[root@xy test]# type -a true`         　　**type 命令名称 内部还是外部**  
 true is a shell builtin  
 true is /bin/true  
 true is /usr/bin/true  
 `[root@xy test]# type true`   
 true is a shell builtin  
-`[root@xy test]# env`			      **env  查看所有的环境变量**   
+`[root@xy test]# env`			     　　 **env  查看所有的环境变量**   
 `[root@xy ~]# echo $PATH`  
 /usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin   
-`[root@xy ~]# PATH=$PATH:/root/bin`         **增加PATH**    
+`[root@xy ~]# PATH=$PATH:/root/bin`         　　**增加PATH**    
 `[root@xy ~]# echo $PATH`  
-/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:**/root/bin**    
+/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:　　**/root/bin**    
 
 ### 18. Vim文本编辑器 ESC  
 :w　　:q　　:q!　　:wq!　　a　　i　　o　　u 撤销上一步操作  
@@ -681,7 +680,7 @@ xy.com
 ### 20. 配置网卡信息  
 `[root@xy ~]# cd /etc/sysconfig/network-scripts/`  
 `[root@xy network-scripts]# ls`  
-ifcfg-eno16777736  ifdown-ppp       ifup-eth     ifup-sit    
+ifcfg-eno16777736  　ifdown-ppp      　 ifup-eth     ifup-sit    
 ifcfg-lo           ifdown-routes    ifup-ippp    ifup-Team  
 ifdown             ifdown-sit       ifup-ipv6    ifup-TeamPort  
 ifdown-bnep        ifdown-Team      ifup-isdn    ifup-tunnel  
@@ -690,7 +689,7 @@ ifdown-ippp        ifdown-tunnel    ifup-plusb   init.ipv6-global
 ifdown-ipv6        ifup             ifup-post    network-functions  
 ifdown-isdn        ifup-aliases     ifup-ppp     network-functions-ipv6  
 ifdown-post        ifup-bnep        ifup-routes  
-`[root@xy network-scripts]# vim  ifcfg-eno16777736`  **RHEL5,6 ifcfg-eth**  
+`[root@xy network-scripts]# vim  ifcfg-eno16777736`  　**RHEL5，6 ifcfg-eth**  
   TYPE=Ethernet  
   BOOTPROTO=static  
   NAME=eno16777736  
@@ -704,22 +703,22 @@ ifdown-post        ifup-bnep        ifup-routes
 `[root@xy network-scripts]# ping 192.168.37.10`  
 
 ### 21. 配置Yum软件仓库  
-`[root@xy ]# vim /etc/yum.repos.d/rhel7.repo`     **创建本地yum源**   
+`[root@xy ]# vim /etc/yum.repos.d/rhel7.repo`    　 **创建本地yum源**   
   [rhel-media]  
   name=xy  
   baseurl=file:///media/cdrom　　file:ftp://　　file:http://　　fiel:///  
-  enabled=1   **启用**         
+  enabled=1   　**启用**         
   gpgcheck=1  
   gpgkey=file:///media/cdrom/RPM-GPG-KEY-redhat-release  
 
 `[root@xy yum.repos.d]# mkdir -p /media/cdrom`  
-`[root@xy yum.repos.d]# mount /dev/cdrom /media/cdrom`   **mount 设备 挂载目录**  
+`[root@xy yum.repos.d]# mount /dev/cdrom /media/cdrom`   　**mount 设备 挂载目录**  
 mount: /dev/sr0 is write-protected,mounting read-only  
 
 `[root@xy yum.repos.d]# vim /etc/fstab`               
-/dev/cdrom /media/cdrom iso9660 default 0 0         **fstab 文件写法**  
+/dev/cdrom /media/cdrom iso9660 default 0 0        　 **fstab 文件写法**  
 
-`[root@xy yum.repos.d]# yum install httpd`  		**测试**
+`[root@xy yum.repos.d]# yum install httpd`  		　**测试**  
 Dependencies Resolved  
 ........省略部分信息........  
 Install  1 Package (+4 Dependent packages)  
@@ -776,16 +775,16 @@ Complete!
 -d **测试文件是否为目录类型**    -e **测试文件是否存在**     -f **判断文件是否为一般文件**   
 -r **测试当前用户是否有读权限**  -w **当前用户是否有写权限** -x **当前用户是否有执行权限**  
 $? **显示上一次命令的执行返回值**  
-`[root@xy ~]# [ -d /etc/fstab ]`		**测试文件是否为目录类型**  
+`[root@xy ~]# [ -d /etc/fstab ]`		　**测试文件是否为目录类型**  
 `[root@xy ~]# echo $?`  
 1  				
-`[root@xy ~]# [ -f /etc/fstab ]`		**判断是否为一般文件**  
+`[root@xy ~]# [ -f /etc/fstab ]`		　**判断是否为一般文件**  
 `[root@xy ~]# echo $?`  
 0  
-`[root@xy ~]# [ -e /dev/cdrom ] && echo "Exist"`	**当前面执行成功则执行后面**  
+`[root@xy ~]# [ -e /dev/cdrom ] && echo "Exist"`	　**当前面执行成功则执行后面**  
 Exist    
 `[root@xy ~]# su - xy`    
-`[xy@xy ~]$ [ $USER = root ] || echo "user"`     **当前执行失败则执行后面**  
+`[xy@xy ~]$ [ $USER = root ] || echo "user"`    　 **当前执行失败则执行后面**  
 user  
 `[xy@xy ~]$ exit`  
 logout  
@@ -795,8 +794,8 @@ administrator
 root  
 
 #### 24.2 数字
--eq **是否相等**     -ne **是否不等于**       -gt **是否大于**  
--lt **是否小于**     -le **是否等于/小于**    -ge **是否等于/大于**  
+-eq **是否相等**     　-ne **是否不等于**       　-gt **是否大于**  
+-lt **是否小于**     　-le **是否等于/小于**   　 -ge **是否等于/大于**  
 `[root@xy ~]# [ 10 -gt 10 ]`      
 [root@xy ~]# echo $?  
 1  
@@ -819,7 +818,7 @@ Mem:          1987       1198        789          9          0        280
 Insufficient Memory  
 
 #### 24.3 字符串
-= **比较字符串内容是否相同**  != **比较字符串内容是否不同**  -z **判断字符串内容是否为空**  
+= **比较字符串内容是否相同** 　!= **比较字符串内容是否不同**　　-z **判断字符串内容是否为空**  
 `[root@xy ~]# [ -z $String ]`  
 `[root@xy ~]# echo $?`
 0  
@@ -844,7 +843,7 @@ Not en.US
 
 `[root@xy test]# vim chkhost.sh`  
 `[root@xy test]# bash mkcdrom.sh`  
-	-c **规定尝试的次数**   -i **每个数据发送间隔**   -W **定义等待超时时间**  
+	-c **规定尝试的次数**  　 -i **每个数据发送间隔**  　 -W **定义等待超时时间**  
 
       #!/bin/bash  
       ping -c 3 -i 0.2 -W 3 $1 &> /dev/null   **/dev/null 没有回收功能的垃圾箱**  
@@ -990,28 +989,28 @@ Enter your score (0-100): 88
 8 # *  *  *  *  * user-name command to be executed  
 
 `[root@xy ~]# at 23:30`  
-at > systemctl restart httpd      **echo "systemctl restart httpd" | at 23:30**  
+at > systemctl restart httpd     　 **echo "systemctl restart httpd" | at 23:30**  
 at > 此处按下Ctrl +D组合键来结束编写任务计划  
 job 3 at Mon Apr 27 23:30:00 2017 
  
-`[root@xy ~]# at -l`                **查看一次性计划任务**  
+`[root@xy ~]# at -l`               　 **查看一次性计划任务**  
 3 Mon Apr 27 23:30:00 2017 a root
 
-`[root@xy ~]# atrm 3`               **删除一次性计划任务**  
+`[root@xy ~]# atrm 3`              　 **删除一次性计划任务**  
 
-`[root@xy ~]# crontab -e`        **crontab 有规律 周期性的执行具体任务 创建 编辑**    
+`[root@xy ~]# crontab -e`       　 **crontab 有规律 周期性的执行具体任务 创建 编辑**    
 no crontab for root - using   
 an empty one  
 crontab: installing new crontab 
  
-`[root@xy ~]# crontab -l`     **crontab - l 查看  crontab -r 删除**  
+`[root@xy ~]# crontab -l`     　**crontab - l 查看  crontab -r 删除**  
 0 3 * * * cp /var/log/alternatives.log /home/shiyanlou/tmp/$(date+ \%Y\%m\%d)   
 25  3  *  * 1,3,5 /usr/bin/tar -czvf backup.tar.gz /home/wwwroot  
-分  时 日 月 星期  命令     **没有设置的用 * 占位**  
+分 时 日 月 星期 命令     　**没有设置的用 * 占位**  
 
 **注:分字段必须有;  日、星期不能同时有,否则会冲突**  
 
-`[root@xy ~]# whereis rm`      **whereis 命令 查询命令所在路径**  
+`[root@xy ~]# whereis rm`       　**whereis 命令 查询命令所在路径**  
 rm: /usr/bin/rm /usr/share/man/man1/rm.1.gz /usr/share/man/man1p/rm.1p.gz  
 `[root@xy ~]# crontab -e`  
 crontab: installing new crontab  
@@ -1020,23 +1019,22 @@ crontab: installing new crontab
 0 1 * * 1-5 /usr/bin/rm -rf /tmp/*  
 
 ### 28. 用户身份  
-UID(User IDentification)	**管理员 0**	 **系统用户 1-999**	**普通用户 1000 往上**  
+UID(User IDentification)	　**管理员 0**　**系统用户 1-999**　**普通用户 1000 往上**  
 GID(Group IDentification)  
-39. useradd:  
--d **指定用户家目录(默认/home/username)**             -e **账户到期时间(YYYY-MM-DD)** 
--u **指定该用户默认UID**   -g **指定一个初始用户基本组**   -G **指定一个/多个扩展用户组** 
--N **不创建于用户同名的基本用户组**   -s **指定该用户默认Shell解释器**  
-`[root@xy ~]# useradd -d /home/linux -u 8888 -s /sbin/nologin xy`   **useradd**  
-`[root@xy ~]# id xy`                     **id**  
+#### 28.1 useradd:  
+-d **指定用户家目录(默认/home/username)**　-e **账户到期时间(YYYY-MM-DD)**　　 
+-u **指定该用户默认UID** 　-g **指定一个初始用户基本组**　　　　　　　　　　　　　　　-G **指定一个/多个扩展用户组** 　-N **不创建于用户同名的基本用户组**   　　　　　　　　-s **指定该用户默认Shell解释器**  
+`[root@xy ~]# useradd -d /home/linux -u 8888 -s /sbin/nologin xy`   　**useradd**  
+`[root@xy ~]# id xy`                    　 **id**  
 uid=8888(xy) gid=8888(xy) groups=8888(xy)  
 
-`[root@xy ~]# groupadd ronny`           **groupadd**  
+`[root@xy ~]# groupadd ronny`           　**groupadd**  
 
-#### 28.1 usermod  
--c **填写用户备注信息**              -d -m **重新指定用户的家目录并自动迁移数据**
--e **账户到期时间(YYYY-MM-DD)**     -g **变更所属用户组**  -G **变更扩展用户组** 
--L **锁定用户禁止登陆系统**          -U **解锁用户,允许登陆系统** 
--s **变更默认终端**                 -u **修改用户UID**  
+#### 28.2 usermod  
+-c **填写用户备注信息**　　-d -m **重新指定用户的家目录并自动迁移数据**  
+-e **账户到期时间(YYYY-MM-DD)**　　-g **变更所属用户组**　　-G **变更扩展用户组**  　 
+-L **锁定用户禁止登陆系统**　　-U **解锁用户,允许登陆系统**   　　　　　　　　　　　　
+-s **变更默认终端**　　 -u **修改用户UID**  
 `[root@xy ~]# usermod -G root xy`   
 `[root@xy ~]# id xy`  
 uid=1000(xy) gid=1000(xy) groups=1000(xy),0(root)
@@ -1044,9 +1042,9 @@ uid=1000(xy) gid=1000(xy) groups=1000(xy),0(root)
 `[root@xy ~]# id xy`  
 uid=8888(xy) gid=1000(xy) groups=1000(xy),0(root)  
 
-#### 28.2 -l **锁定用户禁止登陆系统**     -u **解锁用户,允许登陆系统** 
---stdin **允许标准输入改密码** `echo "NewPassWord" | passwd --stdin Username)` 
--d **使该用户可以用空密码登陆系统**  -e **强制用户下次登陆修改密码** 
+-l **锁定用户禁止登陆系统** 　-u **解锁用户,允许登陆系统** 
+--stdin**允许标准输入改密码**　`echo "NewPassWord" | passwd --stdin Username)` 　
+-d **使该用户可以用空密码登陆系统**  　　-e **强制用户下次登陆修改密码** 　　　　　
 -S **显示用户密码是否锁定,以及密码采用的加密算法名称**  
 `[root@xy ~]# passwd`  
 Changing password for user root.  
@@ -1072,7 +1070,7 @@ passwd: Success
 xy PS 2018-07-06 0 99999 7 -1 (Password set, SHA512 crypt.)  
 
 #### 28.3 userdel  
--f **强制删除用户**     -r **同时删除用户及家目录**  
+-f **强制删除用户**　　-r **同时删除用户及家目录**  
 `[root@xy ~]# id xy`  
 uid=8888(xy) gid=1000(xy) groups=1000(xy),0(root)  
 `[root@xy ~]# userdel -r xy`  
@@ -1080,17 +1078,19 @@ uid=8888(xy) gid=1000(xy) groups=1000(xy),0(root)
 id: xy: no user  
 
 ### 29. netstat          
--t **指明显示TCP端口**   -u **指明显示UDP端口**   -a  **all**
--l **仅显示监听套接字**   -p **显示进程标识符**    -n **不进行DNS轮询**  
+-t **指明显示TCP端口**　-u **指明显示UDP端口**　-a  **all**
+-l **仅显示监听套接字**　-p **显示进程标识符**　-n **不进行DNS轮询**  
 
-### 30. lsof   **lsof -i:8022**   
+### 30. lsof   
+**lsof -i:8022**   
 
 ### 31. 文件归属与权限
-   - **普通文件**	       d **目录文件**	        l **链接文件**   
-   b **块设备文件**	     c **字符设备文件**	     p **管道文件**  
-   r **(可读) 4**	w **(可写:编辑、新增、修改、删除文件实际内容) 2**	x **(执行) 1**    
+-**普通文件**　　d **目录文件**　　l **链接文件**   
+b**块设备文件**　c **字符设备文件**　　p **管道文件**  
+r **(可读) 4**　　w **(可写:编辑、新增、修改、删除文件实际内容) 2**  
+x **(执行) 1**    
 `[root@xy ~]# ls -l initial-setup-ks.cfg`   
--        rw- r-- r--. 1 root   root 1233 Jul  6 09:44 initial-setup-ks.cfg   
+-rw- r-- r--. 1 root   root 1233 Jul  6 09:44 initial-setup-ks.cfg   
 文件类型  6   4   4      属主   属组  大小 修改时间      文件名  
 
 **SUID是一种对二进制程序进行设置的特殊权限，可以让二进制程序的执行者临时拥有属主的权限(仅对拥有执行权限的二进制程序有效)**  
@@ -1147,7 +1147,7 @@ drwxr-xr-t. 2 root root 6 Feb 11 19:34 linux/
 
 ### 32. 文件的隐藏属性
 #### 32.1 chattr(+参数 -c参数)  
-`[root@xy test]# chattr +a linuxprobe`     **Append Only**   
+`[root@xy test]# chattr +a linuxprobe`   　　 **Append Only**   
 `[root@xy test]# rm linuxprobe`   
 rm: remove regular file ‘linuxprobe’? y  
 rm: cannot remove ‘linuxprobe’: Operation not permitted  
@@ -1155,7 +1155,7 @@ rm: cannot remove ‘linuxprobe’: Operation not permitted
 `[root@xy test]# chattr -a linuxprobe`   
 `[root@xy test]# rm linuxprobe`   
 rm: remove regular file ‘linuxprobe’? y  
-`[root@xy test]# lsattr linuxprobe`             **隐藏权限**  
+`[root@xy test]# lsattr linuxprobe`   　　**隐藏权限**  
 `[root@xy test]# -----a--------- linuxprobe`  
 
 #### 32.2 文件访问控制表(ACL)  
@@ -1165,7 +1165,7 @@ Last login: Sun Jul  8 15:22:06 CST 2018 on pts/0
 -bash: cd: /root: Permission denied  
 `[xy@xy root]$ exit`  
 
-`[root@xy ~]# setfacl -Rm u:xy:rwx /root`     **setfacl -Rm 管理ACL规则**  
+`[root@xy ~]# setfacl -Rm u:xy:rwx /root`   　　 **setfacl -Rm 管理ACL规则**  
 `[root@xy ~]# su -xy`  
 Last login: Sat Mar 21 21:45:04 CST 2018 on pts/1  
 `[xy@xy ~]$ cd /root`  
@@ -1176,7 +1176,7 @@ anaconda-ks.cfg Downloads Pictures Public
 `[root@xy ~]# ls ld /root`  
 dr-xrwx---+ 14 root root 4096 May 4 2018 /root  
 
-`[root@xy ~]# getfacl /root`         **getfacl 文件名称 显示ACL信息**  
+`[root@xy ~]# getfacl /root`        　 **getfacl 文件名称 显示ACL信息**  
 getfacl: Removing leading '/' from absolute path names  
 1 # file: root  
 2 # owner: root  

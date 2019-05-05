@@ -1,4 +1,4 @@
-+ rpm -qa | grep vsftp   **查询安装的软件**  
++ rpm -qa | grep vsftp  　**查询安装的软件**  
 + rpm -e fielname.rpm  
 
 ### 1. 使用vsftpd服务传输文件  
@@ -77,9 +77,9 @@ iptables: Saving firewall rules to /etc/sysconfig/iptables:[  OK  ]
 	ftp> exit  
 	221 Goodbye.  
 
-`[root@xy ~]# ls -ld /var/ftp/pub`   **ls -Zd**  
+`[root@xy ~]# ls -ld /var/ftp/pub`　**ls -Zd**  
 drwxr-xr-x. 2 root root 6 Mar  7  2014 /var/ftp/pub  
-`[root@xy ~]# chown -Rf ftp /var/ftp/pub`      **更改目录所属主身份为ftp**  
+`[root@xy ~]# chown -Rf ftp /var/ftp/pub`　**更改目录所属主身份为ftp**  
 `[root@xy ~]# ls -ld /var/ftp/pub`  
 drwxr-xr-x. 2 ftp root 6 Mar  7  2014 /var/ftp/pub  
 `[root@xy ~]# ftp 192.168.37.10` 
@@ -97,7 +97,7 @@ drwxr-xr-x. 2 ftp root 6 Mar  7  2014 /var/ftp/pub
 	ftp> mkdir files  
 	550 Create directory operation failed. 提示创建目录失败,原因所在SElinux
   
-`[root@xy ~]# getsebool -a | grep ftp`   **getsebool -a** 
+`[root@xy ~]# getsebool -a | grep ftp`　 **getsebool -a** 
  
     ftp_home_dir --> off  
     ftpd_anon_write --> off  
@@ -105,7 +105,7 @@ drwxr-xr-x. 2 ftp root 6 Mar  7  2014 /var/ftp/pub
     ftpd_connect_db --> off  
     ftpd_full_access --> off       **ftp 全部权限未开启 off 改为 on**
   
-`[root@xy ~]# setsebool -P ftpd_full_access=on`      **-P permanent**  
+`[root@xy ~]# setsebool -P ftpd_full_access=on`　 **-P permanent**  
 `[root@xy ~]# ftp 192.168.37.10` 
  
 	Connected to 192.168.37.10 (192.168.37.10).  
@@ -146,7 +146,7 @@ drwxr-xr-x. 2 ftp root 6 Mar  7  2014 /var/ftp/pub
 	ftp> exit  
 	221 Goodbye.  
 `[root@xy ~]# cat /etc/vsftpd/user_list`  
-`[root@xy ~]# cat /etc/vsftpd/ftpusers`    **名单中含有root,默认禁止root用户**  
+`[root@xy ~]# cat /etc/vsftpd/ftpusers` 　**名单中含有root,默认禁止root用户**  
 
 #### 2.5 虚拟用户模式  
 `[root@xy ~]# cd /etc/vsftpd/`  
@@ -158,7 +158,7 @@ drwxr-xr-x. 2 ftp root 6 Mar  7  2014 /var/ftp/pub
 	123456   
 	redhat  
 	123456  
-`[root@xy vsftpd]# db_load -T -t hash -f vuser.list vuser.db`  **db_load**  
+`[root@xy vsftpd]# db_load -T -t hash -f vuser.list vuser.db`  　**db_load**  
 `[root@xy vsftpd]# file vuser.db`  
 vuser.db: Berkeley DB (Hash, version 9, native byte-order)  
 `[root@xy vsftpd]# chmod 600 vuser.db`  
@@ -210,9 +210,9 @@ user_config_dir=/etc/vsftpd/vuser_dir
     timeout         设置重传超时时间  
     quit            退出  
 
-`[root@xy ~]# vim /etc/xinetd.d/tftp`       **disable = no**  
+`[root@xy ~]# vim /etc/xinetd.d/tftp` 　**disable = no**  
 `[root@xy ~]# systemctl restart xinetd` 
-`[root@xy ~]# netstat -a | grep tfetp` 	**查询端口启用状态**  
+`[root@xy ~]# netstat -a | grep tftp`　 	**查询端口启用状态**  
 `[root@xy ~]# systemctl enable xinetd`  
 `[root@xy ~]# firewall-cmd --permanent --add-port=69/udp`   
 success  
@@ -232,7 +232,7 @@ I love AnXiaohong
 ### 4. 使用Samba或NFS实现文件"共享"  
    基于SMB(Server Messages Block)协议,开发出SMBServer服务程序,实现Linux与Windows之间的文件共享变得简单  
 `[root@xy ~]# mv /etc/samba/smb.conf /etc/samba/smb.conf.bak`  
-`[root@xy ~]# cat /etc/samba/smb.conf.bak | grep -v "#" | grep -v ";" | grep -v "^$" > /etc/samba/smb.conf`  **-v 反选 ^$ 空白行**  
+`[root@xy ~]# cat /etc/samba/smb.conf.bak | grep -v "#" | grep -v ";" | grep -v "^$" > /etc/samba/smb.conf` 　 **-v 反选 ^$ 空白行**  
 `[root@xy ~]# cat /etc/samba/smb.conf`  
  
     [global]
@@ -255,25 +255,25 @@ I love AnXiaohong
 + ldapsam:基于LDAP服务进行账户验证  
 `load printers = yes`  
 `cups options = raw`              打印机选项  
------------------------------------------------------------------------------------------
-    [homes]  
-		comment = Home Directories  
-		browseable = no  
-		writable = yes  
-	[printers]
-		comment = All Printers  
-		path = /var/spool/samba  
-		browseable = no  
-		guest ok = no  
-		writable = no  
-		printable = yes  
-	[database]            添加进 /etc/samba/smb.conf  
-        comment = Do not arbitrarily modify the database file  
-        path = /home/database  
-        public = no  
-        writable = yes  
+
+	    [homes]  
+			comment = Home Directories  
+			browseable = no  
+			writable = yes  
+		[printers]
+			comment = All Printers  
+			path = /var/spool/samba  
+			browseable = no  
+			guest ok = no  
+			writable = no  
+			printable = yes  
+		[database]            添加进 /etc/samba/smb.conf  
+	        comment = Do not arbitrarily modify the database file  
+	        path = /home/database  
+	        public = no  
+	        writable = yes  
 #### 4.3 pdbedit 命令管理SMB服务程序的账户信息数据库  
-  -a 建立Samba账户  -x 删除Samba账户   -L 列出Samba账户   -Lv 列出账户详尽信息  
+  -a 建立Samba账户　-x 删除Samba账户　-L 列出Samba账户　-Lv 列出账户详尽信息  
 `[root@xy ~]# id xy`  
 uid=1000(xy) gid=1000(xy) groups=1000(xy)    
 `[root@xy ~]# pdbedit -a -u xy`         
