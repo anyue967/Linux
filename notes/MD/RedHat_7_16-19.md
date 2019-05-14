@@ -2,12 +2,14 @@
 + Squid 替代用户向网站服务器请求页面数据并进行缓存,当用户再次再请求相同数据,则可以将
 存储服务器本地数据交付给用户,减少了用户等待时间,支持HTTP、FTP、SSL等多种协议  
 + Squid分为正向代理 与 反向代理: 
-	- 正向代理:用户(局域网)-->Squid-->网站资源,以及基于ACL功能对用户访问网站进行限制,具体分为标准代理模式 与 透明代理模式,标准模式是把网站数据缓存到本地服
+    - 正向代理:用户(局域网)-->Squid-->网站资源,以及基于ACL功能对用户访问网站进行限制,具体分为标准代理模式 与 透明代理模式,标准模式是把网站数据缓存到本地服
 务器上,提高数据资源再次访问时的效率,但用户必须填写代理服务器IP与端口;透明模式则不需要  
- 	- 反向代理:让多节点主机反向缓存网站数据 服务器机房(多节点主机-->Squid服务器-->Internet-->用户)   
+![Squid正向代理图示](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/Squid正向代理.jpg)  
+    - 反向代理:让多节点主机反向缓存网站数据 服务器机房(多节点主机-->Squid服务器-->Internet-->用户)   
+![Squid反向代理图示](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/Squid反向代理.jpg)    
 + 测试设备:  
-   - Linux主机(网卡1:仅主机模式192.168.37.10 网卡2:桥接模式DHCP)    
-   - Windows主机(网卡:仅主机模式192.168.37.20) 
+   - Linux主机(**内网卡:仅主机模式192.168.37.10，外网卡:桥接模式DHCP**)    
+   - Windows主机(**网卡:仅主机模式192.168.37.20**) 
    
 `[root@xy ~]# nmtui` 					**GUI下配置网卡参数**  
 `[root@xy ~]# nmcli connection show`  
@@ -32,36 +34,38 @@ ln -s '/usr/lib/systemd/system/squid.service' '/etc/systemd/system/multi-user.ta
 `[root@xy ~]# semanage port -l | grep squid_port_t`
   
     squid_port_t                   tcp      3128, 3401, 4827  
-	squid_port_t                   udp      3401, 4827  
-[root@xy ~]# semanage port -a -t squid_port_t -p tcp 10000
+    squid_port_t                   udp      3401, 4827  
+`[root@xy ~]# semanage port -a -t squid_port_t -p tcp 10000`
   
-	squid_port_t                   tcp      10000, 3128, 3401, 4827  
-	squid_port_t                   udp      3401, 4827  
+     squid_port_t                   tcp      10000, 3128, 3401, 4827  
+     squid_port_t                   udp      3401, 4827  
 `[root@xy ~]# getsebool -a | grep squid` 
  
     squid_connect_any --> on  
     squid_use_tproxy --> off  
 `[root@xy ~]# vim /etc/squid/squid.conf`    **Squid 提供的ACL功能**
 
-    acl client src = 192.168.37.20 仅许192.168.37.20用Squid提供的代理服务  
-    acl deny_keyword url_regex -i linux 禁止访问包含linux关键词的网站  
+    acl client src = 192.168.37.20   仅允许192.168.37.20使用Squid提供的代理服务  
+    acl deny_keyword url_regex -i linux     禁止访问包含linux关键词的网站  
     acl deny_url url_regex http://linuxcool.com  
-    acl badfile urlpath_regex -i \.rar$ \.avi$  禁止下载.rar .avi 资源 
+    acl badfile urlpath_regex -i \.rar$ \.avi$     禁止下载.rar .avi 资源 
     http_access deny deny_url  
     http_access deny deny_keyword  
-    http_access deny badfile  
+    http_access deny badfile 
     http_access allow client  
     http_access deny all  
+
 `[root@xy ~]# iptables -F`  
 `[root@xy ~]# iptables -t nat -A POSTROUTING -p udp --dport 53 -o eno33554968 -j MASQUERADE` **实现DNS地址解析服务53端口的数据转发功能**   
 `[root@xy ~]# echo "net.ipv4.ip_forwrad=1" >> /etc/sysctl.conf`  
 `[root@xy ~]# sysctl -p`  
 `[root@xy ~]# net.ipv4.ip_forward = 1`  
 `[root@xy ~]# vim /etc/squid/squid.conf`  
-   http_port 3128 transparent              **透明模式**  
-   cache_dir ufs /var/spool/squid 100 16 256  
-`[root@xy ~]# squid -k parse` 			**检测主配置文件是否有错**  
-`[root@xy ~]# squid -z`                          **对服务程序透明化进行初始化**  
+
+    http_port 3128 transparent              **透明模式**  
+    cache_dir ufs /var/spool/squid 100 16 256  
+`[root@xy ~]# squid -k parse` 		**检测主配置文件是否有错**  
+`[root@xy ~]# squid -z`                     **对服务程序透明化进行初始化**  
 `[root@xy ~]# iptables -t nat -A PREROUTING -p tcp -m tcp --dport 80 -j REDIRECT --to -ports 3128`     
 **SNAT 设置对网站80端口请求转发至Squid服务器本地3128端口**  
 `[root@xy ~]# iptables -t nat -A PREROUTING -s 192.168.37.0/24 -o eno33554968 -j SNAT --to 桥接网卡IP`  
@@ -76,18 +80,18 @@ ln -s '/usr/lib/systemd/system/squid.service' '/etc/systemd/system/multi-user.ta
 #### 2.1.2 创建RAID 5磁盘阵列:  
 `[root@xy ~]# mdadm -Cv /dev/md0 -n 3 -l 5 -x 1 /dev/sdb /dev/sdc /dev/sdd /dev/sde`  
 `[root@xy ~]# mdadm -D /dev/md0` 				**查看设备详细信息**  
-#### 2.1.3 安装iSCSI服务端: 
+#### 2.1.3 安装iSCSI服务端(192.168.37.1)： 
 `[root@xy ~]# yum -y install targetd targetcli`    
 `[root@xy ~]# systemctl restart targetd`  
 `[root@xy ~]# systemctl enable targetd`  
 ln -s '/usr/lib/systemd/system/targetd.service' '/etc/systemd/system/multi-user.target.wants/targetd.service'  
-
++++++++++++++++++++++++++++++++++++++++++++++++++  +++++  
 `[root@xy ~]# targetcli`       	**交互式配置界面**  
 Warning: Could not load preferences file /root/.targetcli/prefs.bin.  
 targetcli shell version 2.1.fb34  
 Copyright 2011-2013 by Datera, Inc and others.  
 For help on commands, type 'help'.  
-/> ls  
+/> **ls**  
 o- / ..................................................................... [...]  
   o- backstores .......................................................... [...]  
   | o- block .............................................. [Storage Objects: 0]  
@@ -97,11 +101,11 @@ o- / ..................................................................... [...]
   o- iscsi ........................................................ [Targets: 0]  
   o- loopback ..................................................... [Targets: 0]  
 
-> cd /backstores/block           **共享设备位置**  
-/backstores/block> create disk0 /dev/md0  
+> **cd /backstores/block**           共享设备位置  
+/backstores/block> **create disk0 /dev/md0**  
 Create block storage object disk0 using /dev/md0.    
-/backstores/block> cd /   
-/> ls  
+/backstores/block> **cd /**   
+/> **ls**  
 o- / ..................................................................... [...]  
   o- backstores .......................................................... [...]  
     o-disk0 ........................ [/dev/md0 (40.0GiB write-thru deactivated)]  
@@ -111,41 +115,43 @@ o- / ..................................................................... [...]
   | o- ramdisk ............................................ [Storage Objects: 0]  
   o- iscsi ........................................................ [Targets: 0]  
   o- loopback ..................................................... [Targets: 0]  
-
-/> cd iscsi                 **创建iSCSI target名称及配置共享资源**  
-/iscsi> create  
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  
+/> **cd iscsi**               创建iSCSI target名称及配置共享资源  
+/iscsi> **create**  
 Created target iqn.2003-01.org.linux-iscsi.xy.x8664:sn.ca5dd98d2e7d.  
 Created TPG 1.  
 /iscsi> cd iqn.2003-01.org.linux-iscsi.xy.x8664:sn.ca5dd98d2e7d/  
-/iscsi/iqn.20....ca5dd98d2e7d> ls  
+/iscsi/iqn.20....ca5dd98d2e7d> **ls**  
 o- iqn.2003-01.org.linux-iscsi.xy.x8664:sn.ca5dd98d2e7d .............. [TPGs: 1]  
   o- tpg1 ............................................... [no-gen-acls, no-auth]  
     o- acls .......................................................... [ACLs: 0]  
     o- luns .......................................................... [LUNs: 0]  
     o- portals .................................................... [Portals: 0]  
-/iscsi/iqn.20....ca5dd98d2e7d> cd tpg1/luns  
-/iscsi/iqn.20...e7d/tpg1/luns> create /backstores/block/disk0  
-Create LUN 0.  
-/iscsi/iqn.20...e7d/tpg1/luns> cd ..  
-/iscsi/iqn.20...d98d2e7d/tpg1> create iqn.2003-01.org.linux-iscsi.xy.x8664:sn.ca5dd9  
-8d2e7d:client  
+/iscsi/iqn.20....ca5dd98d2e7d> **cd tpg1/luns**  
+/iscsi/iqn.20...e7d/tpg1/luns> **create /backstores/block/disk0**    
+Create LUN 0.    
++++++++++++++++++++++++++++++++++++++++++++++++++++  ++++++++++++++++++++++  
+/iscsi/iqn.20...e7d/tpg1/luns> **cd..**   
+/iscsi/iqn.20...e7d/tpg1/luns> **cd acls**    设置访问控制列表        
+/iscsi/iqn.20...d98d2e7d/tpg1>** create iqn.2003-01.org.linux-iscsi.xy.x8664:sn.ca5dd98d2e7d:client**    
 Create Node ACL for iqn.2003-01.org.linux-iscsi.xy.x8664:sn.ca5dd98d2e7d:client  
 Create LUN 0.  
-/iscsi/iqn.20...e7d/tpg1/luns> cd ..  
-/iscsi/iqn.20...d98d2e7d/tpg1> cd portals   
-/iscsi/iqn.20.../tpg1/portals> create 192.168.37.10  
+/iscsi/iqn.20...e7d/tpg1/luns> **cd ..**    
+/iscsi/iqn.20...d98d2e7d/tpg1> **cd portals**   
+/iscsi/iqn.20.../tpg1/portals> **create 192.168.37.10**    
 Using default IP port 3260  
 Created network portal 192.168.37.10:3260.  
-/iscsi/iqn.20.../tpg1/portals> ls /  
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  
+/iscsi/iqn.20.../tpg1/portals> **ls /**       检测配置信息   
 o- / ..................................................................... [...]  
   o- backstores .......................................................... [...]  
   | o- block .............................................. [Storage Objects: 0]  
-  | | o-disk0 ...................... [/dev/md0 (40.0GiB write-thru deactivated)]  
+  | | o-disk0 ...................... [/dev/md0 (40.0GiB write-thru deactivated)]  **1**  
   | o- fileio ............................................. [Storage Objects: 0]  
   | o- pscsi .............................................. [Storage Objects: 0]  
   | o- ramdisk ............................................ [Storage Objects: 0]  
   o- iscsi ........................................................ [Targets: 1]  
-  | o- iqn.2003-01.org.linux-iscsi.xy.x8664:sn.ca5dd98d2e7d .......... [TPGs: 1]  
+  | o- iqn.2003-01.org.linux-iscsi.xy.x8664:sn.ca5dd98d2e7d .......... [TPGs: 1]  **2**  
   |   o- tpg1 ........................................... [no-gen-acls, no-auth]  
   |     o- acls ...................................................... [ACLs: 0]  
   |     | o- iqn.2003-01.org.linux-iscsi.xy.x8664:sn.ca5dd98d2e7d:client......  
@@ -673,11 +679,12 @@ MariaDB [(none)]> `create database xy default character set latin1;`
 `[root@xingyue masR5]# mysql -u root -p 123456 xy < masR5.sql --default-character-set=lantin1`  
 
 ### 4.1 使用PXE+Kickstat无人值守安装服务  
-+ PXE(Preboot eXecute Environment)---预启动执行环境,可以让计算机通过网络来启动操作系统,主要用于在无人值守安装系统中引导客户端安装Linux操作系统  
-+ Kickstat无人值守安装方式,预先把手工填写参数保存为ks.cfg文件,安装过程自动匹配Kickstat生成的文件  
-+ PXE + TFTP + FTP + DHCP + Kickstat 
++ **PXE(Preboot eXecute Environment)**---预启动执行环境,可以让计算机通过网络来启动操作系统,主要用于在无人值守安装系统中引导客户端安装Linux操作系统  
++ **Kickstat无人值守安装方式**,预先把手工填写参数保存为**ks.cfg**文件,安装过程自动匹配Kickstat生成的文件  
++ **DHCP + tftp + vsftp + Kickstart**   
+![PXE+Kickstart](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/无人值守安装流程.png)  
  
-#### 4.2 DHCP服务程序配置  
+#### 4.2 DHCP服务程序配置  (192.168.37.10 无人值守系统服务器IP)
 `[root@xy ~]# vim /etc/dhcp/dhcpd.conf`
   
         #  
@@ -696,22 +703,22 @@ MariaDB [(none)]> `create database xy default character set latin1;`
         	default-lease-time  21600;  
         	max-server  43200;  
     		next-server 192.168.37.10;  
-    	filename"pxelinux.0";  *客户机获取IP 主动获取引导驱动文件*  
+            filename"pxelinux.0";  *客户机获取IP 主动获取引导驱动文件*  
     	}
 `[root@xy ~]# systemctl restart dhcpd`  
 `[root@xy ~]# systemctl enable dhcpd`  
 ln -s '/usr/lib/systemd/system/dhcpd.service' '/etc/systemd/system/multi-user.target.wants/dhcpd.service'  
-
-#### 4.3 TFTP服务程序配置     **为客户机提供引导及驱动文件,默认占用端口  69/UDP**  
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### 4.3 TFTP服务程序配置，为客户机提供引导及驱动文件,默认占用端口  69/UDP   
 `[root@xy ~]# vim /etc/xinetd.d/tftp`   
 disable = no  
 `[root@xy ~]# firewall-cmd  --permanent --add-port=69/udp`      
 success  
 `[root@xy ~]# firewall-cmd --reload`  
 success  
-
-#### 4.4 SYSLinux服务程序配置    **提供引导加载服务程序**  
-`[root@xy ~]# yum install syslinux` **/usr/share/syslinux 引导文件**  
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### 4.4 SYSLinux服务程序配置，提供引导加载服务程序 
+`[root@xy ~]# yum install syslinux`     **/usr/share/syslinux 引导文件**  
 `[root@xy ~]# cd /var/lib/tftpboot/`  
 `[root@xy tftpboot]# cp /usr/share/syslinux/pxelinux.0 .`  
 `[root@xy tftpboot]# cp /media/cdrom/images/pxeboot/{vmlinuz,initrd.img} .`
@@ -722,16 +729,15 @@ success
 boot.msg  initrd.img  pxelinux.0  pxelinux.cfg  vesamenu.c32  vmlinuz  
 `[root@xy tftpboot]# vim /pxelinux.cfg/default`  
 
-    default linux                     *1行   vesamenu.c32*  
-
-	label linux  
-  		menu label ^Install Red Hat Enterprise Linux 7.0  
-  		kernel vmlinuz  
-  	append initrd=initrd.img inst.stage2=hd:LABEL=RHEL-7.0\x20Server.x86_64 quiet   
+    default linux                     1行   vesamenu.c32
+    label linux  			61行
+        menu label ^Install Red Hat Enterprise Linux 7.0  
+        kernel vmlinuz  
+        append initrd=initrd.img inst.stage2=hd:LABEL=RHEL-7.0\x20Server.x86_64 quiet   
   	**64行改为**
-  	append initrd=initrd.img inst.stage2=ftp://192.168.37.10 ks=ftp://192.168.37.10/pub/ks.cfg quiet    
-
-#### 4.5 vsftp服务程序配置     **光盘镜像通过FTP协议传输**  
+        append initrd=initrd.img inst.stage2=ftp://192.168.37.10 ks=ftp://192.168.37.10/pub/ks.cfg quiet    
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  
+#### 4.5 vsftp服务程序配置，光盘镜像通过FTP协议传输  
 `[root@xy ~]# yum install vsftpd`  
 `[root@xy ~]# systemctl restart vsftpd`  
 `[root@xy ~]# systemctl enable vsftpd`  
@@ -751,4 +757,11 @@ success
     url --url=ftp://192.168.37.10     *1行*  
     timezone Aisa/Shanghai --isUtc    *21行*  
     cleanpart --all --initlable       *29行*  
+
 `[root@xy ~]# yum istall system-config-kickstart` 图形化Kickstart应答文件生成工具
+
++ 1. DHCP：给未安装操作系统的机子分配静态IP，并加载引导驱动文件 pxelinux.0；   
++ 2. tftp(基于 UDP 文件传输协议)：为客户机提供引导及驱动文件；   
++ 3. SYSLinux：复制引导文件 pxelinux.0 到TFTP 默认目录中，创建 /pxelinux.cfg/defalut 文件；
++ 4. vsftp：将光盘镜像挂载到 media/cdrom，复制到 vsftp 工作目录；
++ 5. 创建 Kickstart 应答文件：/var/ftp/pub/ks.cfg  

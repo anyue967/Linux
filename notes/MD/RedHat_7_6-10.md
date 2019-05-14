@@ -309,10 +309,8 @@ dd: error writing '/boot/tom': Disk quato exceeded
 ![RAID 5](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/raid5.gif)  
  
     RAID 10：RAID10=RAID 1 + RAID 0
-![RAID 10](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/raid-10-1024x508.gif)     
+![RAID 10](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/raid-10-1024x508.png)     
     
-    LVM(Logical Volume Manager,逻辑卷管理器)  
-
 #### 12.1 部署磁盘阵列RAID 10:  
 **mdadm [模式] <RAID设备名称> [选项][成员设备名称]**　
 -a **检测设备名称**　-n **指定设备数量**　 -l **指定RAID级别**　-C **创建**　
@@ -569,8 +567,9 @@ Number Major Minor RaidDevice Status
      4   8    48       2      active sync      /dev/sde   
      0   8    16       -      faulty           /dev/sdc  
 
-### 13. LVM (逻辑卷管理器)  
-在硬盘分区和文件系统之间添加了一个逻辑层,提供了一个抽象的卷组，可以把多块硬盘进行卷合并实现对硬盘分区的动态调整  
+### 13. LVM (Logical Volume Manager，逻辑卷管理器)  
+在硬盘分区和文件系统之间添加了一个逻辑层,提供了一个抽象的卷组，可以把多块硬盘进行卷合并实现对硬盘分区的**动态调整**    
+![LVM图示](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/逻辑卷.png)
 
 #### 13.1 常用LVM部署命令  
 功能　PV(物理卷管理)　VG(卷组管理)　LV(逻辑卷管理)  
@@ -941,8 +940,8 @@ Do you really want to remove active logical volume vo? [y/n]: y
   Labels on physical volume "/dev/sdc" successfully wiped  
   Labels on physical volume "/dev/sdd" successfully wiped  
 
-### 17. iptables 与 firewalld防火墙  
-#### 17.1 iptables命令 策略规则链+ 动作：  
+### 17. iptables 与 firewalld 防火墙(四表五链)  
+#### 17.1 iptables命令  参数 + 策略规则链 + 动作 ：  
      -P　　设置默认策略   
      -F 　　清空规则链  
      -L　　查看规则链  
@@ -965,7 +964,7 @@ Do you really want to remove active logical volume vo? [y/n]: y
     POSTROUTING 　　在进行路由选择后处理数据包 
 
 #### 17.3 动作：
-ACCEPT　REJECT　LOG　DROP  
+ACCEPT　REJECT(拒绝请求，同时返回拒绝信息)　LOG　DROP(丢包，不响应)  
 
 `[root@xy ~]# iptables -L`　**-L 查看规则链 Look**  
 Chain INPUT (policy ACCEPT)  
@@ -1058,7 +1057,11 @@ REJECT     tcp  --  192.168.37.5         anywhere             tcp dpt:http
 reject-with icmp-port-unreachable
 ........省略部分输出信息........  
 `[root@xy ~]# service iptables save`　 **永久生效**  
-iptables: Saving firewall rules to /etc/sysconfig/iptables:[  OK  ]  
+iptables: Saving firewall rules to /etc/sysconfig/iptables:[  OK  ]   
+
+####  禁止源自192.168.10.0/24 网段的流量访问本机sshd服务：
+`[root@xy ~]# iptables -I INPUT -s 192.168.10.0/24 -p tcp --dport 22 -j REJECT`
+`[root@xt ~]# service iptables save`
 
 ### 17.8 firewalld(Dynamic Firewall Manager of Linux system):Linux动态防火墙管理器  
 管理方式:CLI(命令行界面) 与 GUI(图形用户界面)
@@ -1159,8 +1162,7 @@ success
 PING 192.168.37.10 (192.168.37.10) 56(84) bytes of data.  
 64 bytes from 192.168.37.10: icmp_seq=1 ttl=64 time=31.3 ms  
 64 bytes from 192.168.37.10: icmp_seq=2 ttl=64 time=0.272 ms    
-64 bytes from 192.168.37.10: icmp_seq=3 ttl=64 time=0.245 ms  
-64 bytes from 192.168.37.10: icmp_seq=4 ttl=64 time=0.183 ms  
+64 bytes from 192.168.37.10: icmp_seq=3 ttl=64 time=0.245 ms    
 
 --- 192.168.37.10 ping statistics ---  
 4 packets transmitted, 4 received, 0% packet loss, time 3005ms  
@@ -1305,6 +1307,10 @@ PasswordAuthentication no
      -r         用于传送文件
 
      -6         使用ipv6协议
+`[root@xy ~]# echo "Hello World" > readme.txt`  
+`[root@xy ~]# scp /root/readme.txt 192.168.37.10:/home`　　　　// 上传  
+
+`[root@xy ~]# scp 192.168.37.10:/home/readme.txt /root`　　　　// 下载
 
 **不间断回话服务screen**  
 -S **创建回话窗口**　 -d **指定回话进行离线处理**　-r **恢复指定回话**   
@@ -1367,7 +1373,7 @@ drwxr-xr-x. root root system_u:object_r:httpd_sys_content_t:s0 /var/www/html/
 `[root@xy ~]# ls -Zd /home/wwwroot/`  
 drwxr-xr-x. root root unconfined_u:object_r:home_root_t:s0 /home/wwwroot/  
 
-#### 22.3 semanage [选项][文件]
+#### 22.3 semanage [参数] [选项] [文件]
 -l **用于查询**　-a **用于添加**　-m **用于修改**　-d **用于删除**  
 **semanage fcontext -a -t 用于添加新的SELinux安全上下文**     
 `[root@xy ~]# semanage fcontext -a -t httpd_sys_content_t /home/wwwroot`    
@@ -1381,8 +1387,8 @@ drwxr-xr-x. root root unconfined_u:object_r:home_root_t:s0 /home/wwwroot/
 
 #### 22.4 个人用户主页功能  
 `[root@xy ~]# vim /etc/httpd/conf.d/userdir.conf`   
-   UserDir disabled　**加上#**  
-   #UserDir public_html   去掉#   网站在用户家目录中保存的名称 
+   #UserDir disabled  
+   UserDir public_html　　去掉#   网站在用户家目录中保存的名称 
  
 `[root@xy ~]# su - xy`  
 `[xy@xy ~]$ mkdir public_html`  
