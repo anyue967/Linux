@@ -5,7 +5,10 @@
 1. 硬盘建立分区遵从：主分区 -- 扩展分区 -- 逻辑分区 -- 激活主分区 -- 格式化所有分区；虚拟机的三种网络模式：**桥接网络**，**NAT网络地址转换(VMnet8)**，**仅主机模式(VMnet1)**；其中，主机模式仅仅与物理主机通信，不能访问外网，而其它两种可以通过物理主机进行外网的访问。
 
 2. 主引导记录 MBR（Master Boot Record）；
-3. 主分区（扩展分区也是一个主分区）的**最大个数是4个**，由MBR决定，**扩展分区是一个概念包含多个逻辑分区**；
+3. 硬盘由大量扇区构成，以首扇区最重要，**首扇区共512B**，**结束符占2B**，**主引导记录占446B**，所以**分区表就只有64B**，分区表记录一个分区信息需要16B，所以做多记录4个分区信息，为了解决分区不够的问题，可将其中的分区信息指向另外一个分区，称为**扩展分区**，在扩展分区里划分逻辑分区。
+![首扇区图示](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/首扇区图示.png)  
+![分区图示](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/逻辑分区.png)  
+
 4. Windows 与 Linux：  
 	* 主分区+1扩展分区
 	* 主分区+1扩展分区
@@ -72,7 +75,7 @@
     chkconfig foo list 		systemctl list-unit-files --type=service    
 
 ### 5. 重置密码操作
-`cat /etc/redhat-release`  
+`cat /etc/redhat-release`  　　**查看redhat-realease version**
 *linux16 追加 rd.break ctrl+x运行*  
 `mount -o remount, rw /sysroot`  
 `chroot /sysroot`  
@@ -151,8 +154,8 @@ KiB Swap:  2113532 total,        0 used,  2113532 free.   342864 cached Mem
   2445 xy        20   0  346176  16268  13060 S   0.3  0.8   0:09.79 vmtoolsd   
 .......省略部分信息........    
 
-#### 7.7 pidof    
-`[root@xy ~]# pidof sshd`　　　**pidof 服务名称**  
+#### 7.7 pidof 　　　  
+`[root@xy ~]# pidof sshd`　　　**查询PID值 ，pidof 服务名称**  
 1552
 
 #### 7.8 kill  
@@ -545,7 +548,8 @@ diff/diff.tar.gz
 #### 12.3 find       　　实用  
 -name 匹配名称　　-perm 匹配权限　　-user 匹配所有者  
 -group 匹配所有组　　　-mtime -n +n 匹配修改内容的时间  
--atime -n +n 匹配访问文件的时间　　　　-exec …… {} \;  
+-atime -n +n 匹配访问文件的时间　　　　
+-exec …… {} \;　　　**-exec 后可跟进 执行的命令**  
 
 `[root@xy ~]# find /etc/ -name "host*" -print`     　　**find 查找路径 -参数**  
 /etc/avahi/hosts  
@@ -576,13 +580,13 @@ find: ‘/run/user/1000/gvfs’: Permission denied
 **输入重定向 O-I**  
   命令 <  文件              
   命令 << 分界符                        　　 **遇见分界符为止**  
-  命令 < 文件1 > 文件2  
+  命令 < 文件1 > 文件2　　　**将文件1作为命令的标准输入并将标准输出到文件2**
 **输出重定向 I-O**  
   命令 >   文件                         　　 **清空原有文件**  
   命令 2>  文件         
   命令 >>  文件                         　　 **追加到原有文件内容的后面**  
   命令 2>> 文件
-  命令 >>  文件 2>&1 或 命令 &>> 文件      
+  命令 >>  文件 2>&1 或 命令 &>> 文件   　　**将标准输出与错误输出共同写到文件**     
 `[root@xy ~]# man bash > readme.txt`  
 `[root@xy ~]# echo "Welcome to Linuxprobe.Com" > readme.txt`  
 `[root@xy ~]# echo "Quality linux learning materials" >> readme.txt`   
@@ -738,7 +742,7 @@ Dependency Installed:
 
 Complete!  
 
-### 22. 编写简单的shell脚本  
+### 22. 编写简单的shell脚本，"执行成功返回值：0，否则返回值为非 0 数字"
 `[root@xy test]# vim example.sh`  
   #!/bin/bash  
   #For Example BY xy.com  
@@ -782,7 +786,7 @@ $? **显示上一次命令的执行返回值**
 `[root@xy ~]# [ -f /etc/fstab ]`		　**判断是否为一般文件**  
 `[root@xy ~]# echo $?`  
 0  
-`[root@xy ~]# [ -e /dev/cdrom ] && echo "Exist"`	　**当前面执行成功则执行后面**  
+`[root@xy ~]# [ -e /dev/cdrom ] && echo "Exist"`	　**当前面执行成功则执行后面，整个表达式返回值 为 0**  
 Exist    
 `[root@xy ~]# su - xy`    
 `[xy@xy ~]$ [ $USER = root ] || echo "user"`    　 **当前执行失败则执行后面**  
@@ -791,8 +795,6 @@ user
 logout  
 `[root@xy ~]# [ ! $USER = root ] || echo "administrator"`  
 administrator  
-`[root@xy ~]# [ ! $USER = root ] && echo "user" || echo "root"`  
-root  
 
 #### 24.2 数字
 -eq **是否相等**     　-ne **是否不等于**       　-gt **是否大于**  
@@ -1105,17 +1107,17 @@ x **(执行) 1**
 `[root@xy tmp]# mkdir testdir`  
 `[root@xy tmp]# ls -ald testdir/`  
 drwxr-xr-x. 2 root root 6 Feb 11 11:50 testdir/  
-`[root@xy tmp]# chmod -Rf 777 testdir/`         **chmod 设置文件或目录的权限**  
+`[root@xy tmp]# chmod -Rf 777 testdir/`         **chmod 设置文件或目录的权限，-R：递归**  
 `[root@xy tmp]# chmod -Rf g+s testdir/`  
 `[root@xy tmp]# ls -ald testdir/`  
 drwxrwsrwx. 2 root root 6 Feb 11 11:50 testdir/		         **SGID**  
 
 `[root@xy xy ~]# ls -al test`  
 -rw-rw-r--. 1 xy root 15 Feb 11 11:50 test  
-`[root@xy xy ~]# chmod 760 test`  			**chmod**  
+`[root@xy xy ~]# chmod 760 test`  			**chmod[参数] 权限 文件或目录名称**  
 `[root@xy xy ~]# ls -l test`  
 -rwxrw----. 1 xy root 15 Feb 11 11:50 test  
-`[root@xy xy ~]# chown root:bin test` 		**chown**  
+`[root@xy xy ~]# chown root:bin test` 		**chown[参数] 所有者:所属组 文件或目录名称**  
 `[root@xy xy ~]# ls -l test`
 -rwxrw----. 1 root bin 15 Feb 11 11:50 test  
 

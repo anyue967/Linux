@@ -47,7 +47,7 @@ SCSI/SATA/U盘　 /dev/sd[a-p]
 ### 5. 挂载硬件设备 
 **注：** mount -a 会自动检查/etc/fstab文件有无疏漏的挂载设备，若有则自动进行挂载
 
-`[root@xy ~]# mount /dev/sdb2 /backup`	　**挂载目录需要挂载前创建好**  
+`[root@xy ~]# mount /dev/sdb2 /backup`	　**挂载目录需要挂载前创建好，mount[设备文件 挂在目录]**  
 `[root@xy ~]# vim /etc/fstab`			     　 **开机自动挂载sdb2**  
 1  #  
 2  # /etc/fstab  
@@ -63,8 +63,8 @@ SCSI/SATA/U盘　 /dev/sd[a-p]
 12 /dev/sdb2								/backup		 ext4      defaults        0 0  
 
 ### 6. 撤销挂载设备  
-`[root@xy ~]# umount /dev/sdb2`　**umount 撤销挂载设备**  
-### 7. 分区及格式化: 
+`[root@xy ~]# umount /dev/sdb2`　**umount [设备文件/挂在目录]**  
+### 7. 分区-格式化-挂载: 
 #### fdisk    
 -m **查看全部可用参数**　-n **添加新的分区**　-d **删除某个分区信息** 　
 -q **不保存退出**　-l **列出所以可用的分区类型**　-t **改变某个分区的信息** 　　　
@@ -299,15 +299,19 @@ dd: error writing '/boot/tom': Disk quato exceeded
 ### 12. RAID与LVM磁盘阵列技术  
     RAID(Redundant Array of Independent Disks,独立冗余磁盘阵列)
 
-    RAID 0:把多块物理硬件设备(至少2块)通过硬件或软件凡事串联在一起,组成一个大的卷组,提升了硬盘数据的吞吐量,但不具备数据备份和错误修复能力
+    RAID 0:把多块物理硬件设备(至少2块)通过硬件或软件凡事串联在一起,组成一个大的卷组,提升了硬盘数据的吞吐量,但不具备数据备份和错误修复能力  
+![RAID 0](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/RAID0.png)
 
-    RAID 1:数据写到多块硬盘设备上,当某一块硬盘发生故障后,一般会立即以热交换方式来恢复数据的正常使用,但硬盘的使用率却下降了,只有33%左右
+    RAID 1:数据写到多块硬盘设备上,当某一块硬盘发生故障后,一般会立即以热交换方式来恢复数据的正常使用,但硬盘的使用率却下降了,只有33%左右    
+![RAID 1](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/raid1.jpg)  
 
-    RAID 5:将硬盘设备的数据奇偶校验信息保存到除自身外每一块硬盘设备上,当硬盘出现问题,通过奇偶校验信息来尝试重建损坏的数据
-
+    RAID 5:将硬盘设备的数据奇偶校验信息保存到除自身外每一块硬盘设备上,当硬盘出现问题,通过奇偶校验信息来尝试重建损坏的数据  
+![RAID 5](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/raid5.gif)  
+ 
     RAID 10：RAID10=RAID 1 + RAID 0
-
-    LVM(Logical Volume Manager,逻辑卷管理器)
+![RAID 10](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/raid-10-1024x508.gif)     
+    
+    LVM(Logical Volume Manager,逻辑卷管理器)  
 
 #### 12.1 部署磁盘阵列RAID 10:  
 **mdadm [模式] <RAID设备名称> [选项][成员设备名称]**　
