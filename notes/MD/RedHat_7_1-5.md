@@ -9,12 +9,6 @@
 ![首扇区图示](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/首扇区图示.png)  
 ![分区图示](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/逻辑分区.png)  
 
-4. Windows 与 Linux：  
-	* 主分区+1扩展分区
-	* 主分区+1扩展分区
-	* 主分区+1扩展分区
-	* 4个独立主分区
-
 ### Linux 下的分区方案
 	1. /：　用于存放系统，划为主分区
 	2. /boot：　引导分区，划为主分区，大概200M即可；

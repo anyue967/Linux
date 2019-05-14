@@ -1060,7 +1060,7 @@ reject-with icmp-port-unreachable
 iptables: Saving firewall rules to /etc/sysconfig/iptables:[  OK  ]   
 
 ####  禁止源自192.168.10.0/24 网段的流量访问本机sshd服务：
-`[root@xy ~]# iptables -I INPUT -s 192.168.10.0/24 -p tcp --dport 22 -j REJECT`
+`[root@xy ~]# iptables -I INPUT -s 192.168.10.0/24 -p tcp --dport 22 -j REJECT`  
 `[root@xt ~]# service iptables save`
 
 ### 17.8 firewalld(Dynamic Firewall Manager of Linux system):Linux动态防火墙管理器  
@@ -1286,7 +1286,6 @@ The key's randomart image is:
 * 客户端主机生成的密钥对传送至远程主机上  
 `[root@xy ~]# ssh-copy-id 192.168.37.10`  
 Number of key(s) added: 1  
-
 Now try logging into the machine, with:   "ssh '192.168.37.10'"  
 and check to make sure that only the key(s) you wanted were added.  
 

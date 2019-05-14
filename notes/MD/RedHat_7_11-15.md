@@ -59,7 +59,7 @@ iptables: Saving firewall rules to /etc/sysconfig/iptables:[  OK  ]
     anon_other_write_enable=YES 
  
 #### 2.3 客户端:
-`[root@xy ~]# yum install ftp`　　　　ftp是Linux以命令行的方式管理FTP传输服务的客户端工具
+`[root@xy ~]# yum install ftp`　　　　ftp是Linux以命令行的方式管理FTP传输服务的客户端工具  
 `[root@xy ~]# ftp 192.168.37.10` 
  
     Connected to 192.168.37.10 (192.168.37.10).  
