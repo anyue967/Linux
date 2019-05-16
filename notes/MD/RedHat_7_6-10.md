@@ -715,7 +715,7 @@ Writing superblocks and filesystem accounting information: done
 `[root@xy ~]# vim /etc/fstab`  
 /dev/storage/vo              /LVM         ext4          defaults   0 0   
 
-### 14. 扩容逻辑卷: 卸载 -扩容 -检测 -挂载 
+### 14. 扩容逻辑卷: umount -> lvextend -> e2fsck -> mount
 `[root@xy ~]# umount /LVM`  
 `[root@xy ~]# lvextend -L 290M /dev/storage/vo`　**lvextend:扩容逻辑卷**  
   Rounding size to boundary between physical extents: 292.00 MiB  
@@ -746,8 +746,8 @@ tmpfs                   994M     0  994M   0% /sys/fs/cgroup
 /dev/sda1               497M  119M  379M  24% /boot  
 /dev/mapper/storage-vo  279M  2.1M  259M   1% /LVM  
 
-### 15. 缩小逻辑卷: 卸载 -检测 -缩容 -挂载  
-`[root@xy ~]# umount /LVM`
+### 15. 缩小逻辑卷: umount -> e2fsck -> resize2fs -> mount  
+`[root@xy ~]# umount /LVM`  
 `[root@xy ~]# e2fsck -f /dev/storage/vo`
 e2fsck 1.42.9 (28-Dec-2013)  
 Pass 1: Checking inodes, blocks, and sizes  

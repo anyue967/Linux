@@ -681,7 +681,7 @@ MariaDB [(none)]> `create database xy default character set latin1;`
 ### 4.1 使用PXE+Kickstat无人值守安装服务  
 + **PXE(Preboot eXecute Environment)**---预启动执行环境,可以让计算机通过网络来启动操作系统,主要用于在无人值守安装系统中引导客户端安装Linux操作系统  
 + **Kickstat无人值守安装方式**,预先把手工填写参数保存为**ks.cfg**文件,安装过程自动匹配Kickstat生成的文件  
-+ **DHCP + tftp + vsftp + Kickstart**   
++ **DHCP +  vsftp + tftp + Kickstart**   
 ![PXE+Kickstart](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/无人值守安装流程.png)  
  
 #### 4.2 DHCP服务程序配置  (192.168.37.10 无人值守系统服务器IP)

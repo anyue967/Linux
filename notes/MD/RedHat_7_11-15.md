@@ -202,7 +202,8 @@ user_config_dir=/etc/vsftpd/vuser_dir
 `[root@xy vusers_dir]# systemctl restart vsftpd.service`   
 `[root@xy vusers_dir]# systemctl enable vsftpd`  
 
-### 3. 简单文件传输协议(TFTP:Trivial File Transfer Protocol):TFTP采用UDP协议,默认端口号69  
+### 3. 简单文件传输协议(TFTP:Trivial File Transfer Protocol)：
+#### TFTP 基于UDP(69)协议在（客户端与服务器）之间进行简单文件传输的协议
     ?               帮助  
     put             上传文件   
     get             下载文件  
@@ -320,7 +321,7 @@ ln -s '/usr/lib/systemd/system/smb.service' '/etc/systemd/system/multi-user.targ
 `[root@xy ~]# iptables -F`  
 `[root@xy ~]# service iptables save`  
 iptables: Saving firewall rules to /etc/sysconfig/iptables:[  OK  ]  
-访问Samba服务器，  //Samba 服务器IP
+**访问Samba服务器，  //Samba 服务器IP**
 
 #### 4.4 Linux 访问文件共享服务(Samba客户端)  
 + 客户端安装 cifs-utils,配置认证文件  
@@ -358,31 +359,34 @@ iptables: Saving firewall rules to /etc/sysconfig/iptables:[  OK  ]
 ln -s '/usr/lib/systemd/system/nfs-server.service' '/etc/systemd/system/  
 nfs.target.wants/nfs-server.service'  
 
-#### 5.1 客户端配置 `showmount`命令 192.168.37.20(客户机IP)  
+#### 5.1 客户端配置   
     -e 显示NFS服务器的共享列表 -a 显示本机挂载文件资源的情况 -v 显示版本
+`[root@xy~]# showmount -e 192.168.37.10`  
+Export list for 192.168.37.10:  
+/nfsfile 192.168.37.10  
 `[root@xy ~]# mkdir /nfsfile`		**客户端创建挂载地址**  
-`[root@xy ~]# mount -t nfs 1 192.168.37.10:/nfsfile /nfsfile` 
+`[root@xy ~]# mount -t nfs 192.168.37.10:/nfsfile /nfsfile` 
 `[root@xy ~]# cat /nfsfile/readme`   
 192.168.10.10:/nfsfile /nfsfile nfs defaults 0 0  
 
 ### 6. auto自动挂载服务  
 `[root@xy ~]# yum install autofs`  
-`[root@xy ~]# vim /etc/auto.master`     **autofs 的配置文件**  
-eg. /media /etc/iso.misc   **挂载目录 子配置文件; 挂在目录是设备挂载位置的上一级目录**  
-`[root@xy ~]# vim /etc/iso.misc`		**子配置文件**
+`[root@xy ~]# vim /etc/auto.master`　　**autofs 的配置文件**  
+eg. /media /etc/iso.misc　　**挂载目录 子配置文件; 挂在目录是设备挂载位置的上一级目录**  
+`[root@xy ~]# vim /etc/iso.misc`		**子配置文件**  
 iso      -fstype=iso9660,ro,nosuid,nodev :/dev/cdrom   
-挂载目录  挂载文件类型及权限                :设备名称  
+**挂载目录  挂载文件类型及权限                :设备名称**
 
 ### 7. 使用BIND提供域名解析服务(Berkeley Internet Name Domain)  
-+ DNS(Domain Name System):管理和解析域名 与 IP 的对应关系,域名--IP(正向解析),IP--域名(反向解析)  
++ DNS(Domain Name System)：管理和解析(*域名 与 IP*)的对应关系，域名-->IP(正向解析)，IP-->域名(反向解析)  
 + DNS服务器:主服-masster、从服-slave、缓存服三种,DNS域名解析服务采用分布式数据结构,执行查询请求有 
 + 递归查询(必须向用户返回结果) 迭代查询(一台接一台,直到返回结果)  
    - 配置Bind(Berkely Internet Name Domain)服务:  
    - 主配置文件`/etc/named.conf`----定义bind服务程序的运行  
    - 区域配置文件`/etc/named.rfc1912.zones`----保存域与IP所在的具体位置  
    - 数据配置文件目录`/var/named`----保存域名与IP真实对应关系数据  
-   - ![Bind正向解析参数](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/bind正向解析图示.jpg)    
-   - ![Bind反向解析](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/bind反向解析图示.jpg)   
+![Bind正向解析参数](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/bind正向解析图示.jpg)    
+![Bind反向解析](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/bind反向解析图示.jpg)   
  
 `[root@xy ~]# yum install bind-chroot`  
 `[root@xy ~]# vim /etc/named.conf`	        **主配置文件**
