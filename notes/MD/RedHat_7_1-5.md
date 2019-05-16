@@ -591,12 +591,12 @@ Quality linux learning materials
 ls: cannot access xxxxxxx: No such file or directory
 `[root@xy ~]# ls -l xxxxxxx > readme.txt`   
 ls: cannot access xxxxxxx: No such file or directory
-`[root@xy ~]# ls -l  xxxxxxx 2> readme.txt`       　　**2的用法**  
+`[root@xy ~]# ls -l  xxxxxxx 2> readme.txt`       　　**2的用法**    
 `[root@xy ~]# cat readme.txt`     
 ls: cannot access xxxxxxx: No such file or directory  
-`[root@xy ~]# wc -l < readme.txt`` 
-1  
-`[root@xy ~]# cat readme.txt | wc -l`  
+`[root@xy ~]# wc -l < readme.txt`  
+1      
+`[root@xy ~]# cat readme.txt | wc -l`    
 1  
 
 ### 14. 管道符 |  
