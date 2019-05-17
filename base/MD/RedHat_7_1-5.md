@@ -1,13 +1,26 @@
 199 238 106
-
+## 目录
+* [首扇区知识](#首扇区)
+* [RPM](#RPM)
+* [Yum](#Yum)
+* [启动模式](#启动模式)
+* [管理服务](#管理服务)
+* [查看进程IDpidof](#pidof)
+* [杀死进程IDkill](#lill) 
+* [杀死进程服务killall](#killall)
+* [打包压缩与搜索命令](#tar)
+* [重定向操作](#重定向)
+* [配置yum库](#yum库)
+* [Shell脚本](#Shell)
+* [crontab](#j计划服务)
 ## 分区方案：
 ### 背景知识：  
 1. 硬盘建立分区遵从：主分区 -- 扩展分区 -- 逻辑分区 -- 激活主分区 -- 格式化所有分区；虚拟机的三种网络模式：**桥接网络**，**NAT网络地址转换(VMnet8)**，**仅主机模式(VMnet1)**；其中，主机模式仅仅与物理主机通信，不能访问外网，而其它两种可以通过物理主机进行外网的访问。
 
-2. 主引导记录 MBR（Master Boot Record）；
-3. 硬盘由大量扇区构成，以首扇区最重要，**首扇区共512B**，**结束符占2B**，**主引导记录占446B**，所以**分区表就只有64B**，分区表记录一个分区信息需要16B，所以做多记录4个分区信息，为了解决分区不够的问题，可将其中的分区信息指向另外一个分区，称为**扩展分区**，在扩展分区里划分逻辑分区。
-![首扇区图示](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/首扇区图示.png)  
-![分区图示](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/逻辑分区.png)  
+2. 主引导记录 MBR（Master Boot Record）：<div id="首扇区"></div>
+3. 硬盘由大量扇区构成，以首扇区最重要，**首扇区共512B**，**结束符占2B**，**主引导记录占446B**，所以**分区表就只有64B**，分区表记录一个分区信息需要16B，所以做多记录4个分区信息，为了解决分区不够的问题，可将其中的分区信息指向另外一个分区，称为**扩展分区**，在扩展分区里划分逻辑分区。   
+![首扇区图示](../img/首扇区图示.png)  
+![分区图示](../img/逻辑分区.png)  
 
 ### Linux 下的分区方案
 	1. /：　用于存放系统，划为主分区
@@ -16,7 +29,7 @@
 	4. /home：　划为逻辑分区，用于存放用户文件；
 	5. /tmp：　存放临时文件，可有可无，划为逻辑分区；
 
-### RPM:(红帽软件包管理器) windows控制面板
+### RPM:(红帽软件包管理器) windows控制面板 <div id="RPM"></div>
     rpm -ivh filename.rpm　　安装软件  
     rpm -e filename.rpm　　　卸载软件
     
@@ -26,7 +39,7 @@
     rpm -qf filename　　　　 查询文件属于哪个RPM的命令格式
     rpm -qa | grep fielname　查询所安装的软件的名称*          
 
-### Yum软件仓库:
+### Yum软件仓库: <div id="Yum"></div>
     yum repolist all　　　　　  列出软件仓库  
     yum list all　　　　　　　   列出仓库所有软件
     yum info 软件包名称　　　　  查看软件包信息 
@@ -43,13 +56,13 @@
 
 ### BIOS--Boot Loader--内核--内核初始化--启动初始化进程(systemd)
 
-### 1. 启用多用户、无图形模式  
+### 1. 启用多用户、无图形模式   <div id="启动模式"></div>
 `[root@xy ~]# ln -sf /lib/systemd/system/multi-user.target /etc/systemd/system/default.target`
 
 ### 2. 启用多用户、图形模式  
 `[root@xy ~]# ln -sf /lib/systemd/system/graphical.target /etc/systemd/system/default.target`
 
-### 3. 管理服务  
+### 3. 管理服务  <div id="管理服务"></div>
 
 **System V init** 　　		**systemctl**  
 
@@ -148,14 +161,14 @@ KiB Swap:  2113532 total,        0 used,  2113532 free.   342864 cached Mem
   2445 xy        20   0  346176  16268  13060 S   0.3  0.8   0:09.79 vmtoolsd   
 .......省略部分信息........    
 
-#### 7.7 pidof 　　　  
+#### 7.7 pidof 　　　  <div id="pidof"></div>
 `[root@xy ~]# pidof sshd`　　　**查询PID值 ，pidof 服务名称**  
 1552
 
-#### 7.8 kill  
+#### 7.8 kill  <div id="kill"></div>
 [root@xy ~]# kill 2156	　　**kill PID号**
 
-#### 7.9 killall   
+#### 7.9 killall   <div id="killall"></div>
 `[root@xy ~]# pidof httpd`  
 13581 13580 13579 13578 13577 13576  
 `[root@xy ~]# killall httpd`    	　　**killall 服务名称**  
@@ -514,7 +527,7 @@ anaconda-ks.cfg: ASCII text
 `[root@xy ~]# file /dev/sda`  
 /dev/sda: block special  
 
-### 12. 打包压缩与搜索命令  
+### 12. 打包压缩与搜索命令  <div id="tar"></div>
 #### 12.1 tar  
 -c 创建压缩文档　　       -x 解开压缩文档　　    -t 查看压缩包内容　　-z 用Gzip压缩/解压
 -j 用bzip2压缩/解压　　   -v 显示压缩/解压过程　　-f 目标文件名
@@ -570,7 +583,7 @@ find: ‘/run/user/1000/gvfs’: Permission denied
 `[root@xy ~]# find / -user xy -exec cp -a {} /root/findresults/ \;`   
 **厉害！！**  -exec ... {} ... \;  
 
-### 13. 重定向操作符 >　 >>　 <　 <<      　　尖头在哪哪边为输出  
+### 13. 重定向操作符 >　 >>　 <　 <<      　　尖头在哪哪边为输出  <div id="重定向"></div>
 **输入重定向 O-I**  
   命令 <  文件              
   命令 << 分界符                        　　 **遇见分界符为止**  
@@ -701,7 +714,7 @@ ifdown-post        ifup-bnep        ifup-routes
 `[root@xy network-scripts]# systemctl restart network`  
 `[root@xy network-scripts]# ping 192.168.37.10`  
 
-### 21. 配置Yum软件仓库  
+### 21. 配置Yum软件仓库  <div id="yum库"></div>
 `[root@xy ]# vim /etc/yum.repos.d/rhel7.repo`    　 **创建本地yum源**   
   [rhel-media]  
   name=xy  
@@ -736,7 +749,7 @@ Dependency Installed:
 
 Complete!  
 
-### 22. 编写简单的shell脚本，"执行成功返回值：0，否则返回值为非 0 数字"
+### 22. 编写简单的shell脚本，"执行成功返回值：0，否则返回值为非 0 数字"	<div id="Shell"></div>
 `[root@xy test]# vim example.sh`  
   #!/bin/bash  
   #For Example BY xy.com  
@@ -974,7 +987,7 @@ Enter your score (0-100): 88
   请输入一个字符，并按Enter键确认：4  
   您输入的是4数字。  
 
-#### 27. 计划任务服务程序 (一次性、长期性计划任务)
+#### 27. 计划任务服务程序 (一次性、长期性计划任务)	<div id="计划服务"></div>
 
 1 # Example of job definition:  
 2 # .---------------- minute (0 - 59)  

@@ -1,3 +1,14 @@
+## 目录
+* [分区/格式化/挂载/卸载](#fdisk)
+* [磁盘容量配额技术 uquota](#uquota)
+* [RAID 磁盘阵列](#RAID)
+* [LVM 逻辑卷管理](#LVm)
+* [iptables 参数 规则链 动作](#iptables)
+* [firewall-cmd 防火墙](#firewalld)
+* [SSH 服务](#SSH)
+* [scp 远程传输](#scp)
+* [apache 服务](#Apache)
+
 ### 1. 一切从  / 开始
                                      根目录 /                  
         /root	/bin	/dev	/etc	/home	/lib	/usr	/media	/tmp
@@ -23,7 +34,7 @@
 
 ### 2. 路径   
 绝对路径：从根目录(/)开始写起的文件或目录  
-相对路径：相对于当前路径的写法  
+相对路径：相对于当前路径的写法  `./  ../  ~`
 
 ### 3. 物理设备的命名规则  
 IDE　/dev/hd[a-d]  
@@ -62,9 +73,10 @@ SCSI/SATA/U盘　 /dev/sd[a-p]
 11 /dev/cdrom                              /media/cdrom iso9660   defaults        0 0  
 12 /dev/sdb2								/backup		 ext4      defaults        0 0  
 
+<div id="fdisk"></div>
 ### 6. 撤销挂载设备  
 `[root@xy ~]# umount /dev/sdb2`　**umount [设备文件/挂在目录]**  
-### 7. 分区-格式化-挂载: 
+### 7. 分区-格式化-挂载:  
 #### fdisk    
 -m **查看全部可用参数**　-n **添加新的分区**　-d **删除某个分区信息** 　
 -q **不保存退出**　-l **列出所以可用的分区类型**　-t **改变某个分区的信息** 　　　
@@ -249,6 +261,7 @@ UUID=28d7b2f5-a322-4990-ab6c-5936d156fce7 /boot  xfs       defaults        1 2
 Filename        Type    Size  Used  Priority  
 /dev/dm-0                               partition 2113532 0 -1  
 
+<div id="uquota"></div>
 ### 10. 磁盘容量配额技术  
 UUID=28d7b2f5-a322-4990-ab6c-5936d156fce7 /boot    xfs    defaults,uquota 1 2 　
 **配置/etc/fstab,使/boot目录支持uquota,磁盘容量配额技术** 
@@ -296,6 +309,7 @@ dd: error writing '/boot/tom': Disk quato exceeded
 -s **创建符号链接(不带-s,默认创建硬链接)**　  -f **强制创建文件/目录的链接** 　
 -i **覆盖前先询问** 　 -v **显示创建链接的过程**  
 
+<div id="RAID"></div>
 ### 12. RAID与LVM磁盘阵列技术  
     RAID(Redundant Array of Independent Disks,独立冗余磁盘阵列)
 
@@ -567,6 +581,7 @@ Number Major Minor RaidDevice Status
      4   8    48       2      active sync      /dev/sde   
      0   8    16       -      faulty           /dev/sdc  
 
+<div id="LVM"></div>
 ### 13. LVM (Logical Volume Manager，逻辑卷管理器)  
 在硬盘分区和文件系统之间添加了一个逻辑层,提供了一个抽象的卷组，可以把多块硬盘进行卷合并实现对硬盘分区的**动态调整**    
 ![LVM图示](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/逻辑卷.png)
@@ -780,8 +795,8 @@ tmpfs                   994M     0  994M   0% /sys/fs/cgroup
 /dev/sda1               497M  119M  379M  24% /boot  
 /dev/mapper/storage-vo  113M  1.6M  103M   2% /LVM  
 
-### 16. 逻辑卷快照:类似于虚拟机快照,特点:快照卷容量必须等同于逻辑卷容量;快照卷是一次性的,执行后会立即自动删除
-`[root@xy ~]# vgdisplay`        
+### 16. 逻辑卷快照:类似于虚拟机快照,特点:快照卷容量必须等同于逻辑卷容量;快照卷是一次性的,执行后会立即自动删除   
+`[root@xy ~]# vgdisplay`         
   --- Volume group ---  
   VG Name               storage  
   System ID             
@@ -956,6 +971,7 @@ Do you really want to remove active logical volume vo? [y/n]: y
      --dport num　　匹配目标端口号  
      --sport num　　匹配来源端口号  
 
+<div id="iptables"></div>
 #### 17.2 策略规则链[iptables]服务把用于处理或过滤流量的策略条目称为规则,多条规则可组成一个规则链,而规则链则依据数据包处理位置的不同进行分类,具体如下：
     PREROUTING　　在进行路由选择前处理数据包  
     INPUT　　处理流入数据包  
@@ -1063,6 +1079,7 @@ iptables: Saving firewall rules to /etc/sysconfig/iptables:[  OK  ]
 `[root@xy ~]# iptables -I INPUT -s 192.168.10.0/24 -p tcp --dport 22 -j REJECT`  
 `[root@xt ~]# service iptables save`
 
+<div id="firewalld"></div>
 ### 17.8 firewalld(Dynamic Firewall Manager of Linux system):Linux动态防火墙管理器  
 管理方式:CLI(命令行界面) 与 GUI(图形用户界面)
                              
@@ -1241,7 +1258,8 @@ ger/ActiveConnection/2)
 `[root@xy ~]# ping 192.168.37.10`  
 **断开其中一块网卡,另一块会继续为用户提供服务** 
 
-### 20. 配置sshd服务:  
+<div id="SSH"></div>
+### 20. 配置sshd服务:    
 `[root@xy ~]# vim /etc/ssh/sshd_config`   
 
     Port 22                               sshd服务默认端口  
@@ -1293,6 +1311,7 @@ and check to make sure that only the key(s) you wanted were added.
 `[root@xy ~]# vim /etc/ssh/sshd_config`   
 PasswordAuthentication no  
 
+<div id="scp"></div>
 ### 21. 远程传输命令scp(secure copy) 基于SSH协议 Liunx主机之间:  
 
      scp [参数] 本地文件 远程用户@远程IP地址:远程目录	上传到远程主机
@@ -1320,6 +1339,7 @@ There is a screen on:
         3127.backup     (Attached)  
 1 Socket in /var/run/screen/S-root.  
 
+<div id="Apache"></div>
 ### 22. Apache 服务部署静态网站
 + Web 服务程序:IIS Nginx Apache  
 `[root@xy ~]# yum install httpd`  

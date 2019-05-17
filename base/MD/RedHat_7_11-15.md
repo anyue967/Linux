@@ -1,6 +1,18 @@
+## 目录
+* [FTP 服务](#vsftp)
+* [Samba 服务](#Samba)
+* [NFS 服务](#NSF)
+* [auto 挂载服务](#autofs)
+* [Bind 域名解析服务](#Bind)
+* [DHCP 服务](#DHCP)
+* [邮件系统](#Email)
+* [](#)
+* [](#)
+
 + rpm -qa | grep vsftp  　**查询安装的软件**  
 + rpm -e fielname.rpm  
 
+<div id="vsftp"></div>
 ### 1. 使用vsftpd服务传输文件  
     FTP(File Transfer Protocol),基于C/S模式,默认端口:-21-(数据端口),22(命令端口) 
 #### 1.1 主动 被动 2种模式
@@ -233,13 +245,14 @@ Documents        Music                 readme.txt  Videos
 `[root@xy ~]# cat readme.txt`   
 I love AnXiaohong  
 
+<div id="Samba"></div>
 ### 4. 使用Samba或NFS实现文件"共享"  
    基于**SMB**(Server Messages Block)协议,开发出SMBServer服务程序,**实现Linux与Window**s之间的文件共享变得简单  
-![Samba logo](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/Samba.png)  
+![Samba logo](../img/Samba.png)  
 
 `[root@xy ~]# mv /etc/samba/smb.conf /etc/samba/smb.conf.bak`  
 `[root@xy ~]# cat /etc/samba/smb.conf.bak | grep -v "#" | grep -v ";" | grep -v "^$" > /etc/samba/smb.conf` 　 **-v 反选(排除)， ^$ 空白行**  
-![Samba参数](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/Samba参数.jpg)  
+![Samba参数](../img/Samba参数.jpg)  
 
 `[root@xy ~]# cat /etc/samba/smb.conf`  
 
@@ -335,6 +348,7 @@ iptables: Saving firewall rules to /etc/sysconfig/iptables:[  OK  ]
 `[root@xy ~]# vim /etc/fstab`   
 //Samba服务器IP/共享目录 /客户端目录 cifs credentials=/root/auth.smb 0 0 
 
+<div id="NFS"></div>
 ### 5. NFS基于TCP/IP协议，用于Linux系统之间上文件资源共享 C/S
 #### 5.1 服务端 192.168.37.10  
 `[root@xy ~]# iptables -F`  
@@ -369,6 +383,7 @@ Export list for 192.168.37.10:
 `[root@xy ~]# cat /nfsfile/readme`   
 192.168.10.10:/nfsfile /nfsfile nfs defaults 0 0  
 
+<div id="autofs"></div>
 ### 6. auto自动挂载服务  
 `[root@xy ~]# yum install autofs`  
 `[root@xy ~]# vim /etc/auto.master`　　**autofs 的配置文件**  
@@ -377,6 +392,7 @@ eg. /media /etc/iso.misc　　**挂载目录 子配置文件; 挂在目录是设
 iso      -fstype=iso9660,ro,nosuid,nodev :/dev/cdrom   
 **挂载目录  挂载文件类型及权限                :设备名称**
 
+<div id="Bind"></div>
 ### 7. 使用BIND提供域名解析服务(Berkeley Internet Name Domain)  
 + DNS(Domain Name System)：管理和解析(*域名 与 IP*)的对应关系，域名-->IP(正向解析)，IP-->域名(反向解析)  
 + DNS服务器:主服-masster、从服-slave、缓存服三种,DNS域名解析服务采用分布式数据结构,执行查询请求有 
@@ -385,8 +401,8 @@ iso      -fstype=iso9660,ro,nosuid,nodev :/dev/cdrom
    - 主配置文件`/etc/named.conf`----定义bind服务程序的运行  
    - 区域配置文件`/etc/named.rfc1912.zones`----保存域与IP所在的具体位置  
    - 数据配置文件目录`/var/named`----保存域名与IP真实对应关系数据  
-![Bind正向解析参数](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/bind正向解析图示.jpg)    
-![Bind反向解析](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/bind反向解析图示.jpg)   
+![Bind正向解析参数](../img/bind正向解析图示.jpg)    
+![Bind反向解析](../img/bind反向解析图示.jpg)   
  
 `[root@xy ~]# yum install bind-chroot`  
 `[root@xy ~]# vim /etc/named.conf`	        **主配置文件**
@@ -562,6 +578,7 @@ Activate: 20180713051051
 	{  
 		key { master-slave; };   //45行  
 
+<div id="DHCP"></div>
 ### 9. 使用DHCP动态管理主机地址  
 + DHCP(Dynamic Host Configuration Protocol):基于UDP协议仅仅在局域网内部使用提高IP利用率,提高配置效率,降低管理维护成本  
 + 作用域:完整的IP段,DHCP协议根据作用域分配IP  
@@ -610,6 +627,7 @@ Activate: 20180713051051
 		fixed-address 192.168.37.55;  
 	}
 
+<div id=Email"></div>
 ### 10. 使用Postfix 与 Dovecot部署邮件系统  
 + 电子邮件协议:
    - 简单邮件传输协议（Simple Mail Transfer Protocol，**SMTP**）：用于**发送和中转发出的电子邮件**，占用服务器的**25/TCP端口**。
