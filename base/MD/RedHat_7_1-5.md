@@ -1,5 +1,5 @@
 199 238 106
-## 目录
+## 目录 <div id="back"></div>
 * [首扇区知识](#首扇区)
 * [RPM](#RPM)
 * [Yum](#Yum)
@@ -1199,3 +1199,4 @@ other::---
 
 `[root@xy ~]# whereis ps`  
 ps: /usr/bin/ps /usr/share/man/man1/ps.1.gz /usr/share/man/man1p/ps.1p.gz   
+[返回目录](#back)

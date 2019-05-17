@@ -1,11 +1,8 @@
-## 目录
+## 目录	<div id="back"></div>
 * [Squid 服务](#Squid)  
 * [iSCIS 服务](#iSCIS)  
 * [MangoDB 服务](#MangoDB)  
 * [无人值守安装服务](#无人值守安装)
-* [](#)
-* [](#)
-* [](#)
 
 <div id="Squid"></div>
 ### 1. 使用Squid部署代理缓存服务  
@@ -778,3 +775,4 @@ success
 + 3. SYSLinux：复制引导文件 pxelinux.0 到TFTP 默认目录中，创建 /pxelinux.cfg/defalut 文件；
 + 4. vsftp：将光盘镜像挂载到 media/cdrom，复制到 vsftp 工作目录；
 + 5. 创建 Kickstart 应答文件：/var/ftp/pub/ks.cfg  
+[返回目录](#back)
