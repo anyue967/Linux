@@ -1,7 +1,7 @@
 ## 目录	<div id="back"></div>
 * [FTP 服务](#vsftp)
 * [Samba 服务](#Samba)
-* [NFS 服务](#NSF)
+* [NFS 服务](#NFS)
 * [auto 挂载服务](#autofs)
 * [Bind 域名解析服务](#Bind)
 * [DHCP 服务](#DHCP)
