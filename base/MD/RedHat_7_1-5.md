@@ -541,7 +541,7 @@ diff/diff_B.txt~
 diff/diff.tar.gz  
 `[root@xy diff]# tar -xzvf diff.tar.gz -C /diff`  
 
-#### 12.2 grep     　　常用！！！！  
+#### 12.2 grep     　　字符串搜索常用！！！！  
 -b 将可执行binary当做text搜索　　-c 仅显示找到的行数　　　-i 忽略大小写 
 -n 显示行号      　　　-v 反向选择，仅列出没有关键词的行  
 `[root@xy ~]# grep -n /sbin/nologin /etc/passwd`  
@@ -552,11 +552,11 @@ diff/diff.tar.gz
 5:mail:x:8:12:mail:/var/spool/mail:/sbin/nologin  
 6:operator:x:11:0:operator:/root:/sbin/nologin  
 
-#### 12.3 find       　　实用  
+#### 12.3 find       　　文件搜索 实用  
 -name 匹配名称　　-perm 匹配权限　　-user 匹配所有者  
 -group 匹配所有组　　　-mtime -n +n 匹配修改内容的时间  
 -atime -n +n 匹配访问文件的时间　　　　
--exec …… {} \;　　　**-exec 后可跟进 执行的命令**  
+-exec ... {} ... \;　　　**-exec 后可跟进 执行的命令**  
 
 `[root@xy ~]# find /etc/ -name "host*" -print`     　　**find 查找路径 -参数**  
 /etc/avahi/hosts  
@@ -627,7 +627,7 @@ Changing password for user root.
 passwd: all authentication tokens updated successfully.  
 
 ### 15. 命令行的通配符  * 、[0-9]、(?)、[abc]  
-    *     匹配零个/多个字符　　　　　　　?     匹配单个字符- 
+    *     匹配零个/多个字符　　　　　　　?     匹配单个字符 
     [0-9] 匹配0~9之间的单个数字的字符    [abc] 匹配a、b、c三个字符中个任意一个
 `[root@xy ~]# ls -l /dev/sda*`  
 brw-rw----. 1 root disk 8, 0 Jul  6  2018 /dev/sda  
@@ -1197,6 +1197,13 @@ group::r-x
 mask::rwx  
 other::---  
 
-`[root@xy ~]# whereis ps`  
-ps: /usr/bin/ps /usr/share/man/man1/ps.1.gz /usr/share/man/man1p/ps.1p.gz   
+`[root@xy ~]# whereis ps`   **搜索命令所在位置及帮助文档**   
+ps: /usr/bin/ps /usr/share/man/man1/ps.1.gz /usr/share/man/man1p/ps.1p.gz  
+
+#### 补充：
++ `locate`     文件名搜索！！！！   
+  - 快捷的在`locatedb`中搜索文件名，因为是在本地数据库中搜索`/var/lib/mlocate`,所以速度回很快，但数据库更新为1天，所以使用`updatedb`更新数据库   
++ `whoami`    当前登陆用户  
++ `whatis ls`   查看命令作用
++ `which ls`   查看命令所在位置及别名
 [返回目录](#back)
