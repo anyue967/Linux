@@ -29,7 +29,7 @@
 	4. /home：　划为逻辑分区，用于存放用户文件；
 	5. /tmp：　存放临时文件，可有可无，划为逻辑分区；
 
-### RPM:(红帽软件包管理器) windows控制面板 <div id="RPM"></div>
+### RPM:(红帽软件包管理器) 相当于windows 的控制面板的软件管理 <div id="RPM"></div>
     rpm -ivh filename.rpm　　安装软件  
     rpm -e filename.rpm　　　卸载软件
     
@@ -37,18 +37,22 @@
     rpm -qpi filename.rpm　　查询软件描述信息
     rpm -qpl filename.rpm　　列出软件文件信息 
     rpm -qf filename　　　　 查询文件属于哪个RPM的命令格式
-    rpm -qa | grep fielname　查询所安装的软件的名称*          
+    rpm -qa | grep filename　查询所安装的软件的名称*    
 
 ### Yum软件仓库: <div id="Yum"></div>
     yum repolist all　　　　　  列出软件仓库  
     yum list all　　　　　　　   列出仓库所有软件
+
     yum info 软件包名称　　　　  查看软件包信息 
     yum install 软件包名称　　   安装软件包 
-    yum reinstall 软件包名称　　 卸载软件包  
+    yum reinstall 软件包名称　　 卸载软件包 
+ 
     yum update 软件包名称　　　	升级软件包  
-    yum remove 软件包名称　　　　移除软件包  
+    yum remove 软件包名称　　　　移除软件包 
+ 
     yum clean all　　　　　　　  清除所有仓库缓存
     yum check-update　　　　　 　检查可更新的软件包  
+
     yum grouplist　　　　　　　　查看系统中已经安装的软件包组  
     yum groupinstall 软件包组　　 安装指定的软件包组  
     yum groupremove 软件包组　　　移除指定的软件包组 
@@ -718,7 +722,7 @@ ifdown-post        ifup-bnep        ifup-routes
 `[root@xy ]# vim /etc/yum.repos.d/rhel7.repo`    　 **创建本地yum源**   
   [rhel-media]  
   name=xy  
-  baseurl=file:///media/cdrom　　file:ftp://　　file:http://　　fiel:///  
+  baseurl=file:///media/cdrom　　file:ftp://　　file:http://　　file:///  
   enabled=1   　**启用**         
   gpgcheck=1  
   gpgkey=file:///media/cdrom/RPM-GPG-KEY-redhat-release  
@@ -1091,7 +1095,7 @@ id: xy: no user
 -t **指明显示TCP端口**　-u **指明显示UDP端口**　-a  **all**
 -l **仅显示监听套接字**　-p **显示进程标识符**　-n **不进行DNS轮询**  
 
-### 30. lsof   
+### 30. lsof            *list open files
 **lsof -i:8022**   
 
 ### 31. 文件归属与权限
@@ -1206,4 +1210,14 @@ ps: /usr/bin/ps /usr/share/man/man1/ps.1.gz /usr/share/man/man1p/ps.1p.gz
 + `whoami`    当前登陆用户  
 + `whatis ls`   查看命令作用
 + `which ls`   查看命令所在位置及别名
++ `[root@xy xy]# yum install lrzsz`
+    - `sz /etc/hosts`   下载服务器文件
+    - `rz`  上传文件
+[Rhel-7-yum源配置-1](https://www.cnblogs.com/wlzjdm/p/8687745.html)  
+[Rhel-7-yum源配置-2](https://blog.csdn.net/qq_36119192/article/details/82222175)  
+[Rhel-7-yum源配置-3](https://blog.csdn.net/u013605322/article/details/79726564 ) 
+
+[rHEL-7-yum优先级设置-1](https://blog.csdn.net/tantexian/article/details/38895449)
+[rHEL-7-yum优先级设置-2](https://blog.csdn.net/conling_/article/details/70399694)
+
 [返回目录](#back)

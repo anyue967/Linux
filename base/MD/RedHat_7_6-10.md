@@ -156,7 +156,7 @@ realtime =none                   extsz=4096   blocks=0, rtextents=0
 #### 7.3 挂载分区： 
 `[root@xy ~]# mkdir /newFS`  
 `[root@xy ~]# mount /dev/sdb1 /newFS/`  
-`[root@xy ~]# df -h` 	　 **查看挂载状态及设备**  
+`[root@xy ~]# df -h` 	　 **查看挂载状态及设备 建议 df -Th 命令信息更全**  
 Filesystem             Size  Used Avail Use% Mounted on  
 /dev/mapper/rhel-root   28G  3.0G   25G  11% /  
 devtmpfs               985M     0  985M   0% /dev  
