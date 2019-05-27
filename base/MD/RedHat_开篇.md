@@ -1,6 +1,6 @@
 # 关于开源协议：
 + ☞ **GNU GPL(GNU General Public License，GNU通用公共许可证)**，协议规则：    
-![Gnu-GPL](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/Gnu-GPL.png)  
+![Gnu-GPL](../img/Gnu-GPL.png)  
 **[http://www.gnu.org/home.en.html](http://www.gnu.org/home.en.html)**
    - **复制自由：**允许把软件复制到任何人的电脑中，并且不限制复制的数量。
    - **传播自由：**允许软件以各种形式进行传播。
@@ -8,13 +8,13 @@
    - **修改自由：**允许开发人员增加或删除软件的功能，但软件修改后必须依然基于GPL许可协议授权。
 
 +  ☞ ** BSD(Berkeley software Distribution，伯克利软件分销)**，协议规则：  
-![bsd](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/bsd.png)
+![bsd](../img/bsd.png)
   - 如果再发布的软件中包含源代码，则源代码必须继续遵循BSD许可协议。
   - 如果再发布的软件中只有二进制程序，则需要在相关文档或版权文件中声明原始代码遵循了BSD协议。
   - 若软件是基于他人的源代码编写而成的，则需要保留原始代码的协议、商标、专利声明及其他原作者声明的内容信息。
 
 + A**pache Liscense Version(Apache 许可证版本)**，协议规则：  
-![Apache](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/apache.png)
+![Apache](../img/apache.png)
   - 该软件及其衍生品必须继续使用Apache许可协议。
   - 如果修改了程序源代码，需要在文档中进行声明。
   - 若软件是基于他人的源代码编写而成的，则需要保留原始代码的协议、商标、专利声明及其他原作者声明的内容信息。
@@ -26,22 +26,22 @@
 
 # 关于Linux发行版本类型：
 + **RedHat Enterprise Linux，RHEL**(红帽企业版Linux)：红帽公司是全球最大的开源技术厂商，RHEL是全世界内使用最广泛的Linux系统。  
-![RedHat](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/redhat.png)
+![RedHat](../img/redhat.png)
 
 + **Community Enterprise Operating System，CentOS**(社区企业操作系统)：通过把RHEL系统重新编译并发布给用户免费使用的Linux系统。  
-![CentOS](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/centos-150x150.jpg)
+![CentOS](../img/centos-150x150.jpg)
 
 + **Fedora**：由红帽公司发布的桌面版系统套件，用户可免费体验到最新的技术或工具，这些技术或工具在成熟后会被加入到RHEL系统中，因此Fedora也称为RHEL系统的“试验田”。  
-![Fedora](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/fedora-e1422160855872.png)
+![Fedora](../img/fedora-e1422160855872.png)
 
 + **openSUSE**：源自德国的一款著名的Linux系统。  
-![openSUSE](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/OpenSUSE-300x193.png)
+![openSUSE](../img/OpenSUSE-300x193.png)
 
 + **Gentoo**：具有极高的自定制性，操作复杂，因此适合有经验的人员使用。  
-![Gentoo](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/Gentoo-287x300.png)
+![Gentoo](../img/Gentoo-287x300.png)
 
 + **Debian**：稳定性、安全性强，提供了免费的基础支持，可以**良好地支持各种硬件架构**，以及提供近十万种不同的开源软件，在国外拥有很高的认可度和使用率。  
-![Debian](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/debian.png)
+![Debian](../img/debian.png)
 
 + **Ubuntu**：*一款派生自Debian的操作系统*，*对新款硬件具有极强的兼容能力*。Ubuntu与Fedora都是极其出色的Linux桌面系统，而且Ubuntu也可用于服务器领域。  
-![Ubuntu](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/ubuntu.png)
+![Ubuntu](../img/ubuntu.png)

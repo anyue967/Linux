@@ -18,9 +18,9 @@
 1. 硬盘建立分区遵从：主分区 -- 扩展分区 -- 逻辑分区 -- 激活主分区 -- 格式化所有分区；虚拟机的三种网络模式：**桥接网络**，**NAT网络地址转换(VMnet8)**，**仅主机模式(VMnet1)**；其中，主机模式仅仅与物理主机通信，不能访问外网，而其它两种可以通过物理主机进行外网的访问。
 
 2. 主引导记录 MBR（Master Boot Record）：<div id="首扇区"></div>
-3. 硬盘由大量扇区构成，以首扇区最重要，**首扇区共512B**，**结束符占2B**，**主引导记录占446B**，所以**分区表就只有64B**，分区表记录一个分区信息需要16B，所以做多记录4个分区信息，为了解决分区不够的问题，可将其中的分区信息指向另外一个分区，称为**扩展分区**，在扩展分区里划分逻辑分区。   
-![首扇区图示](../img/首扇区图示.png)  
-![分区图示](../img/逻辑分区.png)  
+3. 硬盘由大量扇区构成，以首扇区最重要，**首扇区共512B**，**结束符占2B**，**主引导记录占446B**，所以**分区表就只有64B**，分区表记录一个分区信息需要16B，所以做多记录4个分区信息，为了解决分区不够的问题，可将其中的分区信息指向另外一个分区，称为**扩展分区**，在扩展分区里划分逻辑分区，**一块硬盘只能有一个扩展分区，1、2、3、4号只能给主分区，5、6开始为逻辑分区**。 
+![首扇区图示](../img/首扇区图示.png)    
+![分区图示](../img/逻辑分区.png)    
 
 ### Linux 下的分区方案
 	1. /：　用于存放系统，划为主分区
@@ -422,7 +422,8 @@ Modify: 2018-07-06 05:36:00.000000000 -0400
 Change: 2018-07-06 12:21:08.983950168 -0400  
  Birth: -  
 
-#### 10.6 cut  
+#### 10.6 cut   提取列 字符串  不识别空格
+-f  指定列数    -c  按字符提取   -d  分隔符
 `[root@xy ~]# head -n 2 /etc/passwd`  
 root:x:0:0:root:/root:/bin/bash  
 bin:x:1:1:bin:/bin:/sbin/nologin  
@@ -545,7 +546,7 @@ diff/diff_B.txt~
 diff/diff.tar.gz  
 `[root@xy diff]# tar -xzvf diff.tar.gz -C /diff`  
 
-#### 12.2 grep     　　字符串搜索常用！！！！  
+#### 12.2 grep     　　提取行    字符串搜索常用！！！！  
 -b 将可执行binary当做text搜索　　-c 仅显示找到的行数　　　-i 忽略大小写 
 -n 显示行号      　　　-v 反向选择，仅列出没有关键词的行  
 `[root@xy ~]# grep -n /sbin/nologin /etc/passwd`  
@@ -1213,11 +1214,24 @@ ps: /usr/bin/ps /usr/share/man/man1/ps.1.gz /usr/share/man/man1p/ps.1p.gz
 + `[root@xy xy]# yum install lrzsz`
     - `sz /etc/hosts`   下载服务器文件
     - `rz`  上传文件
-[Rhel-7-yum源配置-1](https://www.cnblogs.com/wlzjdm/p/8687745.html)  
-[Rhel-7-yum源配置-2](https://blog.csdn.net/qq_36119192/article/details/82222175)  
-[Rhel-7-yum源配置-3](https://blog.csdn.net/u013605322/article/details/79726564 ) 
 
-[rHEL-7-yum优先级设置-1](https://blog.csdn.net/tantexian/article/details/38895449)
-[rHEL-7-yum优先级设置-2](https://blog.csdn.net/conling_/article/details/70399694)
+[Rhel-7-yum源配置-1](https://www.cnblogs.com/wlzjdm/p/8687745.html)    
+[Rhel-7-yum源配置-2](https://blog.csdn.net/qq_36119192/article/details/82222175)    
+[Rhel-7-yum源配置-3](https://blog.csdn.net/u013605322/article/details/79726564 )   
+
+[RHEL-7-yum优先级设置-1](https://blog.csdn.net/tantexian/article/details/38895449)  
+[RHEL-7-yum优先级设置-2](https://blog.csdn.net/conling_/article/details/70399694)  
+
++   [umask 命令参考](https://www.cnblogs.com/sench/p/8933638.html)    
+    - 若用户创建一个文件，则**文件的默认访问权限**为 `-rw-rw-rw-` ，创建目录的默认权限 `drwxrwxrwx` ，而umask值则表明了需要**从默认权限中去掉哪些权限**来成为最终的默认权限值。
++   文件系统命令补充：
+    -   查看分区概览信息：`dumpe2fs -h /dev/sd*`
+    -   统计文件占用空间(准确)  /   查看空间占用大小：`du -ahs` /   `df -ahT`
+    -   fdisk命令：
+        *   显示磁盘信息：`fdisk -l`
+        *   更改分区系统的ID：`fdisk -t`
+    -   文件系统修复命令：`fsck -y /dev/sdb1`
++   mount [-t  文件系统 -L  卷标名 -o  特殊选项]   设备文件名   挂载点：
+    *   `mount -t vfat -o iocharset=utf-8 /dev/sdb1 /mnt/usb `
 
 [返回目录](#back)

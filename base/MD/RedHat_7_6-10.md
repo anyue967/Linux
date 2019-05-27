@@ -2,7 +2,7 @@
 * [分区/格式化/挂载/卸载](#fdisk)
 * [磁盘容量配额技术 uquota](#uquota)
 * [RAID 磁盘阵列](#RAID)
-* [LVM 逻辑卷管理](#LVm)
+* [LVM 逻辑卷管理](#LVM)
 * [iptables 参数 规则链 动作](#iptables)
 * [firewall-cmd 防火墙](#firewalld)
 * [SSH 服务](#SSH)
@@ -138,11 +138,11 @@ Syncing disks.
 `[root@xy ~]# file /dev/sdb1`  
 /dev/sdb1: block special  
 
-#### 7.2 格式化： mkfs.文件类型名称 /dev/sdb1  
+#### 7.2 格式化： mkfs.文件类型名称 /dev/sdb1   
 `[root@xy ~]# mkfs`　**分区完后用 mkfs 格式化**  
 mkfs         mkfs.cramfs  mkfs.ext3    mkfs.fat     mkfs.msdos   mkfs.xfs  
 mkfs.btrfs   mkfs.ext2    mkfs.ext4    mkfs.minix   mkfs.vfat      
-`[root@xy ~]# mkfs.xfs /dev/sdb1`  
+`[root@xy ~]# mkfs -t xfs /dev/sdb1`  
 meta-data=/dev/sdb1              isize=256    agcount=4, agsize=131072 blks  
          =                       sectsz=512   attr=2, projid32bit=1  
          =                       crc=0  
@@ -289,7 +289,7 @@ dd: error writing '/boot/tom': Disk quato exceeded 　 **限制**
 1+0 records out  
 6291456 bytes (6.3 MB) copied, 0.0201596s, 312MB/s  
 
-`[root@xy ~]# equota -u tom` 　 **equota -u 按需修改配额 vim**    
+`[root@xy ~]# edquota -u tom` 　 **edquota -u 按需修改配额**    
 Disk quotas for user tom (uid 1001):  
  Filesystem blocks   soft   hard   inodes   soft   hard  
  /dev/sda   6114     3072   8192   1        3      6  
@@ -314,16 +314,16 @@ dd: error writing '/boot/tom': Disk quato exceeded
     RAID(Redundant Array of Independent Disks,独立冗余磁盘阵列)
 
     RAID 0:把多块物理硬件设备(至少2块)通过硬件或软件凡事串联在一起,组成一个大的卷组,提升了硬盘数据的吞吐量,但不具备数据备份和错误修复能力  
-![RAID 0](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/RAID0.png)
+![RAID 0](../img/RAID0.png)
 
     RAID 1:数据写到多块硬盘设备上,当某一块硬盘发生故障后,一般会立即以热交换方式来恢复数据的正常使用,但硬盘的使用率却下降了,只有33%左右    
-![RAID 1](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/raid1.jpg)  
+![RAID 1](../img/raid1.jpg)  
 
     RAID 5:将硬盘设备的数据奇偶校验信息保存到除自身外每一块硬盘设备上,当硬盘出现问题,通过奇偶校验信息来尝试重建损坏的数据  
-![RAID 5](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/raid5.gif)  
+![RAID 5](../img/raid5.gif)  
  
     RAID 10：RAID10=RAID 1 + RAID 0
-![RAID 10](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/raid-10-1024x508.png)     
+![RAID 10](../img/raid-10-1024x508.png)     
     
 #### 12.1 部署磁盘阵列RAID 10:  
 **mdadm [模式] <RAID设备名称> [选项][成员设备名称]**　
@@ -584,7 +584,12 @@ Number Major Minor RaidDevice Status
 <div id="LVM"></div>
 ### 13. LVM (Logical Volume Manager，逻辑卷管理器)  
 在硬盘分区和文件系统之间添加了一个逻辑层,提供了一个抽象的卷组，可以把多块硬盘进行卷合并实现对硬盘分区的**动态调整**    
-![LVM图示](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/逻辑卷.png)
+
++   物理卷(PV) 就是真正的**物理硬盘或者分区**；  
++   卷组(VG)  将多个物理卷合起来组成卷组，组成同一个卷组的物理卷可以是同一个硬盘的不同分区，也可以是不同硬盘的不同分区，**抽象为一个逻辑硬盘**；  
++   逻辑卷(LV) 卷组是一个逻辑硬盘，硬盘分区后才可以使用，类似的，从卷组出来的分区为逻辑卷，**可以抽象为分区**；
+
+![LVM图示](../img/逻辑卷.png)
 
 #### 13.1 常用LVM部署命令  
 功能　PV(物理卷管理)　VG(卷组管理)　LV(逻辑卷管理)  
