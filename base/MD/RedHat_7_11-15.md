@@ -157,7 +157,21 @@ drwxr-xr-x. 2 ftp root 6 Mar  7  2014 /var/ftp/pub
 	221 Goodbye.  
 `[root@xy ~]# cat /etc/vsftpd/user_list`  
 `[root@xy ~]# cat /etc/vsftpd/ftpusers` 　**名单中含有root,默认禁止root用户**  
-
+`[root@xy ~]# ftp 192.168.37.10`
+>Connected to 192.168.37.10 (192.168.37.10).  
+220 (vsFTPd 3.0.2)    
+Name (192.168.37.10:root): xy       //  用不在 ftplist / user_list 的用户登录  
+331 Please specify the password.  
+Password:此处输入该用户密码  
+230 Login successfull.  
+Reomte system type is UNIX.  
+Using binary mode to transfer files.  
+ftp> mkdir files  
+550 Create directory operation failed.      // 依然无法访问
+  
+`[root@xy ~]# getsebool -a | grep ftp`     
+ftpd_full_access --> off      
+`[root@xy ~]# setsebool -P ftpd_full_access=on`  // 可以正常创建文件      
 #### 2.5 虚拟用户模式  
 `[root@xy ~]# cd /etc/vsftpd/`  
 `[root@xy vsftpd]# vim vuser.list`   
@@ -174,41 +188,45 @@ vuser.db: Berkeley DB (Hash, version 9, native byte-order)
 `[root@xy vsftpd]# chmod 600 vuser.db`  
 `[root@xy vsftpd]# rm -f vuser.list`  
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-`[root@xy vsftpd]# useradd -d /var/ftproot -s /sbin/nologin virtual`   
+`[root@xy ~]# useradd -d /var/ftproot -s /sbin/nologin virtual`   // 增加虚拟用户，提供家目录
     -d 设置默认家目录 	-s 设置默认Shell解释器  (命令 -参数 执行语句)    
  	
 `root@xy vsftpd]# ls -ld /var/ftproot/`  
-`drwx------. 3 virtual virtual 74 Jul 12 08:55 /var/ftproot/`
+drwx------. 3 virtual virtual 74 Jul 12 08:55 /var/ftproot/  
 `[root@xy vsftpd]# chmod -Rf 755 /var/ftproot/`  
 `[root@xy vsftpd]# ls -ld /var/ftproot/`  
 drwxr-xr-x. 3 virtual virtual 74 Jul 12 08:55 /var/ftproot/  
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-> 建立用于支持虚拟用户的PAM文件, vsftpd.vu PAM(可插拔认证模块)是一种验证机制,通过动态链接库和统一的API把系统提供的服务和认证方式分开,
-采用鉴别模块层、用接口层、应设计层三层设计方式 
- 
+> 建立用于支持虚拟用户的PAM文件, vsftpd.vu PAM(可插拔认证模块)是一种验证机制,通过动态链接库和统一的API把系统提供的服务和认证方式分开,采用鉴别模块层、用接口层、应设计层三层设计方式   
+
+`[root@xy ~]# cp -a /etc/pam.d/vsftpd /etc/pam.d/vdftpd.pam`     
 `[root@xy ~]# vim /etc/pam.d/vsftpd.vu`    　　**新建虚拟用户认证 PAM 文件 vsftp.vu**
 auth      required      pam_userdb.so db=/etc/vsftpd/vuser    
 account   required      pam_userdb.so db=/etc/vsftpd/vuser    
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-##### 2.5.1PAM文件参数:  
+##### 2.5.1主配置文件 vsftpd.conf:   
+`[root@xy ~]# mkdir /etc/vsftpd/vusers_dir/`   
 `[root@xy ~]# vim /etc/vsftpd/vsftpd.conf`  
-    anonymous_enable=NO  
-    local_enable=YES  
-    guest_enable=YES  
-    guest_username=virtual  
-    pam_service_name=vsftpd.vu   
-    allow_writeable_chroot=YES  
+
+    1  anonymous_enable=NO  
+    2  local_enable=YES  
+    3  guest_enable=YES  
+    4  guest_username=virtual  
+    5  allow_writeable_chroot=YES
+    14 pam_service_name=vsftpd.vu   
+    17 user_config_dir=/etc/vsftpd/vusers_dir
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 为了使不同用户有不同权限:  
-`[root@xy ~]# mkdir /etc/vsftpd/vusers_dir/`  
 `[root@xy ~]# cd /etc/vsftpd/vusers_dir`  
 `[root@xy vusers_dir]# touch lisi`  
 `[root@xy vusers_dir]# vim zhangsan`  
-   anon_upload_enable=YES  
-   anon_mkdir_write_enable=YES  
-   anon_other_write_enable=YES  
-`[root@xy ~]# vim /etc/vsftpd/vsftpd.conf`  
-user_config_dir=/etc/vsftpd/vuser_dir  
+
+    anon_upload_enable=YES  
+    anon_mkdir_write_enable=YES  
+    anon_other_write_enable=YES  
+`[root@xy ~]# getsebool -a | grep ftp`     
+ftpd_full_access --> off      
+`[root@xy ~]# setsebool -P ftpd_full_access=on`  // 可以正常创建文件      
 `[root@xy vusers_dir]# systemctl restart vsftpd.service`   
 `[root@xy vusers_dir]# systemctl enable vsftpd`  
 
@@ -223,7 +241,7 @@ user_config_dir=/etc/vsftpd/vuser_dir
     ascii           使用ASCII码传输  
     timeout         设置重传超时时间  
     quit            退出  
-
+`[root@xy ~]# yum install tftp-server tftp`   
 `[root@xy ~]# vim /etc/xinetd.d/tftp` 　**修改 disable = no**  
 `[root@xy ~]# systemctl restart xinetd` 
 `[root@xy ~]# netstat -a | grep tftp`　 	**查询端口启用状态**  
@@ -248,46 +266,55 @@ I love AnXiaohong
    基于**SMB**(Server Messages Block)协议,开发出SMBServer服务程序,**实现Linux与Window**s之间的文件共享变得简单  
 ![Samba logo](../img/Samba.png)  
 
+`[root@xy ~]# yum install samba`   
 `[root@xy ~]# mv /etc/samba/smb.conf /etc/samba/smb.conf.bak`  
 `[root@xy ~]# cat /etc/samba/smb.conf.bak | grep -v "#" | grep -v ";" | grep -v "^$" > /etc/samba/smb.conf` 　 **-v 反选(排除)， ^$ 空白行**  
 ![Samba参数](../img/Samba参数.jpg)  
 
 `[root@xy ~]# cat /etc/samba/smb.conf`  
 
-	[global]		#全局参数。
-		workgroup = MYGROUP	#工作组名称
-		server string = Samba Server Version %v	   
-			#服务器介绍信息，参数%v为显示SMB版本号
-		log file = /var/log/samba/log.%m	      
-			#定义日志文件的存放位置与名称，参数%m为来访的主机名
-		max log size = 50	#定义日志文件的最大容量为50KB
-		security = user		#安全验证的方式，总共有4种
+        [global]		#全局参数  
+            workgroup = MYGROUP	#工作组名称  
+            server string = Samba Server Version %v	   
+			#服务器介绍信息，参数%v为显示SMB版本号  
+            log file = /var/log/samba/log.%m  	      
+			#定义日志文件的存放位置与名称，参数%m为来访的主机名  
+            max log size = 50	
+                    #定义日志文件的最大容量为50KB
+            security = user		#安全验证的方式，总共有4种
 			#share：来访主机无需验证口令；比较方便，但安全性很差
 			#user：需验证来访主机提供的口令后才可以访问；提升了安全性
 			#server：使用独立的远程主机验证来访主机提供的口令（集中管理账户）
 			#domain：使用域控制器进行身份验证
-		passdb backend = tdbsam		#定义用户后台的类型，共有3种
+            passdb backend = tdbsam		#定义用户后台的类型，共有3种
 			#smbpasswd：使用smbpasswd命令为系统用户设置Samba服务程序的密码
 			#tdbsam：创建数据库文件并使用pdbedit命令建立Samba服务程序的用户
 			#ldapsam：基于LDAP服务进行账户验证
-		load printers = yes		#设置在Samba服务启动时是否共享打印机设备
-		cups options = raw		#打印机的选项
-	[homes]		#共享参数
-		comment = Home Directories		#描述信息
-		browseable = no		#指定共享信息是否在“网上邻居”中可见
-		writable = yes		#定义是否可以执行写入操作，与“read only”相反
-	[printers]			#打印机共享参数
-		comment = All Printers	
-		path = /var/spool/samba	#共享文件的实际路径(重要)。
-		browseable = no	
-		guest ok = no		#是否所有人可见，等同于"public"参数。
-		writable = no	
-		printable = yes
+            load printers = yes		
+                    #设置在Samba服务启动时是否共享打印机设备
+            cups options = raw		
+                    #打印机的选项
+        [homes]		#共享参数
+            comment = Home Directories		#描述信息
+            browseable = no		#指定共享信息是否在“网上邻居”中可见
+            writable = yes		#定义是否可以执行写入操作，与“read only”相反
+        [printers]			#打印机共享参数
+            comment = All Printers	
+            path = /var/spool/samba	#共享文件的实际路径(重要)。
+            browseable = no	
+            guest ok = no		#是否所有人可见，等同于"public"参数。
+            writable = no	
+            printable = yes  
+        [database]               #共享名称database
+            comment = Do not arbitrarily modify the database file
+            path = /home/database
+            public = no
+            writable = yes
 #### 4.3 pdbedit 命令管理SMB服务程序的账户信息数据库，配置Samba服务器:  
   -a 建立Samba账户　-x 删除Samba账户　-L 列出Samba账户　-Lv 列出账户详尽信息  
 `[root@xy ~]# id xy`  
 uid=1000(xy) gid=1000(xy) groups=1000(xy)    
-`[root@xy ~]# pdbedit -a -u xy`         
+`[root@xy ~]# pdbedit -a xy`         
 new password:  
 retype new password:  
 Unix username:        xy  
@@ -332,23 +359,29 @@ ln -s '/usr/lib/systemd/system/smb.service' '/etc/systemd/system/multi-user.targ
 `[root@xy ~]# iptables -F`  
 `[root@xy ~]# service iptables save`  
 iptables: Saving firewall rules to /etc/sysconfig/iptables:[  OK  ]  
-**访问Samba服务器，  //Samba 服务器IP**
 
 #### 4.4 Linux 访问文件共享服务(Samba客户端)  
 + 客户端安装 cifs-utils,配置认证文件  
+`[root@xy ~]# yum install cifs-utils`   
 `[root@xy ~]# vim auth.smb`  
-   username=xy  
-   password=redhat  
-   domain=MYGROUP  
+
+        username=xy  
+        password=redhat  
+        domain=MYGROUP  
 `[root@xy ~]# chmod 600 auth.smb`  
 在Linux客户端创建用于挂载Samba服务共享资源目录,写入/etc/fstab
 `[root@xy ~]# mkdir /database`  
 `[root@xy ~]# vim /etc/fstab`   
-//Samba服务器IP/共享目录 /客户端目录 cifs credentials=/root/auth.smb 0 0 
+//Samba服务器IP/共享目录 /客户端目录 cifs credentials=/root/auth.smb 0 0   
+`[root@xy ~]# smbclient -U 用户名 -L //服务器IP`    #查看服务器共享  
+`[root@xy ~]# smbclient -U 用户名 //服务器IP/共享名`    #登录服务器共享  
+#### 4.4 Window 登录方式  
+ `\\服务器IP\共享名       net use * /del`  
 
 <div id="NFS"></div>
 ### 5. NFS基于TCP/IP协议，用于Linux系统之间上文件资源共享 C/S
 #### 5.1 服务端 192.168.37.10  
+`[root@xy ~]# yum install -y nfs-utils`  
 `[root@xy ~]# iptables -F`  
 `[root@xy ~]# service iptables save`  
 `[root@xy ~]# mkdir /nfsfile`   
@@ -405,15 +438,71 @@ iso      -fstype=iso9660,ro,nosuid,nodev :/dev/cdrom
 `[root@xy ~]# yum install bind-chroot`  
 `[root@xy ~]# vim /etc/named.conf`	        **主配置文件**
      
-    listen-on port 53 { any; };  
-    allow-query     { any; };  
+     1 //
+     2 // named.conf
+     3 //
+     4 // Provided by Red Hat bind package to configure the ISC BIND named(8) DNS
+     5 // server as a caching only nameserver (as a localhost DNS resolver only).
+     6 //
+     7 // See /usr/share/doc/bind*/sample/ for example named configuration files.
+     8 //
+     9 
+     10 options {
+     11 listen-on port 53 { any; };     // ****重要*****
+     12 listen-on-v6 port 53 { ::1; };
+     13 directory "/var/named";
+     14 dump-file "/var/named/data/cache_dump.db";
+     15 statistics-file "/var/named/data/named_stats.txt";
+     16 memstatistics-file "/var/named/data/named_mem_stats.txt";
+     17 allow-query { any; };       // ****重要*****
+     18 
+     19 /* 
+     20 - If you are building an AUTHORITATIVE DNS server, do NOT enable re cursion.
+     1,1 Top
+     21 - If you are building a RECURSIVE (caching) DNS server, you need to enable 
+     22 recursion. 
+     23 - If your recursive DNS server has a public IP address, you MUST en able access 
+     24 control to limit queries to your legitimate users. Failing to do so will
+     25 cause your server to become part of large scale DNS amplification 
+     26 attacks. Implementing BCP38 within your network would greatly
+     27 reduce such attack surface 
+     28 */
+     29 recursion yes;
+     30 
+     31 dnssec-enable yes;
+     32 dnssec-validation yes;
+     33 dnssec-lookaside auto;
+     34 
+     35 /* Path to ISC DLV key */
+     36 bindkeys-file "/etc/named.iscdlv.key";
+     37 
+     38 managed-keys-directory "/var/named/dynamic";
+     39 
+     40 pid-file "/run/named/named.pid";
+     41 session-keyfile "/run/named/session.key";
+     42 };
+     43 
+     44 logging {
+     45 channel default_debug {
+     46 file "data/named.run";
+     47 severity dynamic;
+     48 };
+     49 };
+     50 
+     51 zone "." IN {
+     52 type hint;
+     53 file "named.ca";
+     54 };
+     55 
+     56 include "/etc/named.rfc1912.zones";
+     57 include "/etc/named.root.key";
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #### 7.1 正向解析 eg: 
 `[root@xy ~]# vim /etc/named.rfc1912.zones`   **正向解析 区域配置文件**
 
-    zone "localhost.localdomain" IN {  		  
+    zone "xy.com" IN {  		  
        type master;  
-       file "named.localhost";  
+       file "xy.com";  
        allow-update { none; };  
     };  
 
@@ -422,21 +511,22 @@ iso      -fstype=iso9660,ro,nosuid,nodev :/dev/cdrom
 `[root@xy named]# cp -a named.localhost xy.com.zone`  
 `[root@xy named]# vim xy.com.zone`  
 
-    $TTL 1D  
-    @       IN SOA  xy.com. root.xy.com. (  
-                                        0       ; serial  
-                                        1D      ; refresh  
-                                        1H      ; retry  
-                                        1W      ; expire  
-                                        3H )    ; minimum  
-            NS      ns.xy.com.  
-    ns      IN A    192.168.37.10  
-            IN MX 10        mail.xy.com.  
-    mail    IN A    192.168.37.10  
-    www     IN A    192.168.37.10  
-    bbs     IN A    192.168.37.20    
-
-`[root@xy ~]# systemctl restart network`  **虚拟机环境下把本机DNS配置为IP**  
+    $TTL 1D	#生存周期为1天				
+    @	IN SOA	xy.com.	root.xy.com.	(	
+    #授权信息开始:	#DNS区域的地址	#域名管理员的邮箱(不要用@符号)	
+                        0;serial	#更新序列号
+                        1D;refresh	#更新时间
+                        1H;retry	#重试延时
+                        1W;expire	#失效时间
+                        3H;)minimum	#无效解析记录的缓存时间
+    NS	ns.xy.com.	#域名服务器记录
+    ns	IN A	192.168.37.10	#地址记录(ns.xy.com.)
+    IN MX 10	mail.linuxprobe.com.	#邮箱交换记录
+    mail	IN A	192.168.37.10	#地址记录(mail.xy.com.)
+    www	IN A	192.168.37.10	#地址记录(www.xy.com.)
+    bbs	IN A	192.168.37.20	#地址记录(bbs.xy.com.)
+`[root@xy ~]# systemd restart named` 
+`[root@xy ~]# systemctl restart network`  **虚拟机环境下一定要先把本机DNS配置为本机IP**  
 `[root@xy ~]# nslookup`     **测试**  
 > www.xy.com  
 Server:		192.168.37.10  
@@ -454,29 +544,33 @@ Address: 192.168.37.20
 #### 7.2 反向解析 eg:  
 `[root@xy ~]# vim /etc/named.rfc1912.zones`   **反向解析 区域配置文件**
 
-    zone "1.0.0.127.in-addr.arpa" IN {   // 写到主机位就可以  
+    zone "xy.com" IN {  
        type master;  
-       file "named.loopback";  
+       file "xy.com.zone";  
        allow-update { none; };  
     };  
+    zone "37.168.192.in-addr.arpa" IN {     // 写出 IP 地址的网络位 即可
+        type master;
+        file "192.168.37.arpa";
+    };
 
 `[root@xy named]# cp -a named.loopback 192.168.37.arpa`    **反向解析 数据配置文件**   
 `[root@xy named]# vim 192.168.37.arpa`  
   
-    $TTL 1D  
-    @       IN SOA  xy.com. root.xy.com. (  
-                                         0       ; serial  
-                                         1D      ; refresh  
-                                         1H      ; retry  
-                                         1W      ; expire  
-                                         3H )    ; minimum  
-            NS      ns.xy.com.  
-            ns      A       192.168.37.10  
-    10      PTR     ns.xy.com.  
-    10      PTR     mail.xy.com.  
-    10      PTR     www.xy.com.  
-    20      PTR     bbs.xy.com.  
-   
+    $TTL 1D				
+    @	IN SOA	xy.com.	root.xy.com.	(
+                        0;serial
+                        1D;refresh
+                        1H;retry
+                        1W;expire
+                        3H);minimum
+    NS	ns.xy.com.	
+    ns	A	192.168.37.10	
+    10	PTR	ns.xy.com.	#PTR为指针记录，仅用于反向解析中。
+    10	PTR	mail.xy.com.	
+    10	PTR	www.xy.com.	
+    20	PTR	bbs.xy.com.
+`[root@xy ~]# systemd restart named`    
 `[root@xy named]# nslookup`   
 > 192.168.37.10  
 Server:		192.168.37.10  
@@ -492,45 +586,54 @@ Address:	192.168.37.10#53
 20.37.168.192.in-addr.arpa	name = bbs.xy.com.  
 > exit  
  
-### 8. 部署从服务器  
+### 8. 部署主从服务器  
 #### 8.1 无加密的传输  
 1. 主服务器的配置IP：192.168.37.10  
 `[root@xy ~]# vim /etc/named.rfc1912.zones`   
-**正向解析 eg** 
- 
-        zone "xy.com" IN {  
-              type master;  
-        	  file "xy.com.zone";  
-              allow-update { 192.168.37.20; };  
-		};  
-**反向解析 eg**
-  
-        zone "37.168.192.in-addr.arpa" IN {      写到主机位就可以  
-              type master;  
-        	  file "192.168.37.arpa";  
-        	  allow-update { 192.168.37.20; };  
-    	};  	
-`[root@xy ~]# systemctl restart named`  
-2. 从服务器的配置  
-`[root@xy ~]# vim /etc/named.rfc1912.zones`  
-**正向解析 eg** 
- 
-        zone "xy.com" IN {  
-        	 type slave;  
-        	 master { 192.168.37.10; };  
-        	 file "slave/xy.com.zone";  
-		};  
-**反向解析 eg**  
+    
+        zone "xy.com" IN {
+            type master;
+            file "xy.com.zone";
+            allow-update { 192.168.37.20; };
+        };
+        zone "37.168.192.in-addr.arpa" IN {
+            type master;
+            file "192.168.37.arpa";
+            allow-update { 192.168.37.20; };
+        };
+`[root@xy ~]# systemd restart named` 
+2. 从服务器的配置IP：192.168.37.20  
+`[root@xy ~]# vim /etc/named.rfc1912.zones`         
 
-		zone "37.168.192.in-addr.arpa" IN {       **写到主机位就可以**  
-        	 type slave;  
-        	 master { 192.168.37.10;};  
-        	 file "slaves/192.168.37.arpa";  
-     	};  
-
+         zone "xy.com" IN {
+            type slave;
+            masters { "192.168.37.10" };
+            file "slaves/xy.com.zone";
+        };
+        zone "37.168.192.in-addr.arpa" IN {
+            type slave;
+            masters { "192.168.37.10" };
+            file "slaves/192.168.37.arpa";
+        };
+`[root@xy ~]# systemd restart named`    // 重启后，从服务器的DNS服务程序一般就已经自动从主服务器同步了数据  
+`[root@xy ~]# cd /var/named/slaves`  
+`[root@xy ~]# ls`  
+192.168.37.arpa xy.com.zone  
+`[root@xy ~]# nslookup`  
+    > www.xy.com  
+    Server: 192.168.37.20
+    Address: 192.168.37.20#53  
+    Name: www.xy.com
+    Address: 192.168.37.10  
+    > 192.168.37.10  
+    Server: 192.168.37.20  
+    Address: 192.168.37.20#53  
+    10.37.168.192.in-addr.arpa name = www.xy.com.
+    10.37.168.192.in-addr.arpa name = ns.xy.com.  
+    10.37.168.192.in-addr.arpa name = mail.xy.com.  
 #### 8.2 有加密的安全传输
-1. 配置主服务器
-`[root@xy ~]# dnssec-keygen -a HMAC-MD5 -b 128 -n HOST master-slave` **主机下生成**  
+1. 主服务器下生成密钥  
+`[root@xy ~]# dnssec-keygen -a HMAC-MD5 -b 128 -n HOST master-slave`   //   -a 指定算法    
 Kmaster-slave.+157+39112  
 `[root@xy ~]# ls -al Kmaster-slave.+157+39112.`  
 -rw-------. 1 root root  56 Jul 13 13:10 Kmaster-slave.+157+39112.key  
@@ -544,7 +647,7 @@ Created: 20180713051051
 Publish: 20180713051051  
 Activate: 20180713051051  
 
-`[root@xy ~]# cd /var/named/chroot/etc/`    **主服务器创建密钥验证文件**
+`[root@xy ~]# cd /var/named/chroot/etc/`    **主服务器创建密钥验证文件**  
 `[root@xy etc]# vim transfer.key`
   
 	key "master-slave" {  
@@ -554,10 +657,14 @@ Activate: 20180713051051
 `[root@xy etc]# chown root:named transfer.key`  
 `[root@xy etc]# chmod 640 transfer.key`   
 `[root@xy etc]# ln transfer.key /etc/transfer.key `  
-`[root@xy etc]# vim /etc/named.conf`		**开启加载Bind服务的密钥验证功能，清空从服务器数据配置文件**
+
+`[root@xy etc]# vim /etc/named.conf`		**开启加载Bind服务的密钥验证功能**
   
 	include "/etc/transfer.key"   //9 行  
 	allow-transfer { key master-slave; };  
+`[root@xy ~]# systemd restart named`      
+`[root@xy ~]# rm -rf /var/named/slaves`     **清空从服务器数据配置文件**  
+`[root@xy ~]# systemd restart named`    
 2. 配置从服务器  
 `[root@xy ~]# cd /var/named/chroot/etc/`  
 `[root@xy etc]# vim transfer.key`
@@ -569,13 +676,101 @@ Activate: 20180713051051
 `[root@xy etc]# chown root:named transfer.key`  
 `[root@xy etc]# chmod 640 transfer.key`  
 `[root@xy etc]# ln transfer.key /etc/transfer.key`   
+
 `[root@xy etc]# vim /etc/named.conf`      **开启加载从服务器的密钥验证功能，填写主服务器IP和密钥名称**
   
 	include "/etc/transfer.key"   //9 行  
 	server 192.168.37.10      //43行  
 	{  
 		key { master-slave; };   //45行  
+`[root@xy ~]# systemd restart named`      
+`[root@xy ~]# ls /var/named/slaves`
+`[root@xy ~]# systemd restart named`      
+`192.168.37.arpa xy.com.zone`  
 
+#### 8.3 部署缓存服务器  
+缓存服务器就是把用户经常用的域名与IP地址的解析记录保存到主机本地，从而提升下次解析效率；
+
+1. 缓存服务器   
+    + 外网卡：通过DHCP或手动指定IP与网关信息(桥接网卡)   
+    + 内网卡： 192.168.37.10(主机模式)  
+    + 客户端： 192.168.37.20  
+2. 添加缓存转发参数：  
+`[root@xy.com ~]# vim /etc/named.conf`  
+`forwoarders {210.73.64.1}` // 17行 添加上级DNS服务器地址  
+`[root@xy.com ~]# system restart named`  
+更改客户端主机DNS为 192.168.37.10  
+
+#### 8.4 分离解析技术  
+使用多台服务器并分别部署在全球各地，然后再使用DNS服务的分离解析功能，即可让位于不同地理范围内的用户通过访问相同的网址，而从不同的服务器获取到相同的数据。  
+![DNS分离解析](../img/DNS分离解析.png)  
+
++ DNS 服务器：  
+    +   122.71.115.10   (china)    
+    +   106.185.25.10   (US)  
++ 客户端：
+    +   122.71.115.1    (国内读者)  
+    +   106.185.25.1    (国外读者)  
+   
+####8.4.1 编辑主配置文件：  
+`[root@xy.com ~]# vim /etc/named.conf`  
+删除 51-54 行的根域信息
+
+    zone "." IN {
+        type hint;
+        file "named.ca";
+    };
+####8.4.2 编辑区域配置文件：
+`[root@xy ~]# vim /etc/named.rfc1912.zones`  
+
+    1 acl "china" { 122.71.115.0/24; };
+    2 acl "american" { 106.185.25.0/24;};
+    3 view "china"{
+    4 match-clients { "china"; };
+    5 zone "linuxprobe.com" {
+    6 type master;
+    7 file "xy.com.china";
+    8 };
+    9 };
+    10 view "american" {
+    11 match-clients { "american"; };
+    12 zone "xy.com" {
+    13 type master;
+    14 file "xy.com.american";
+    15 };
+    16 };
+####8.4.3 建立数据配置文件：
+`[root@xy ~]# cd /var/named`  
+`[root@xy named]# cp -a named.localhost`      
+xy.com.china  
+`[root@xy named]# cp -a named.localhost `    
+xy.american  
+`[root@xy named]# vim xy.com.china`  
+
+    $TTL 1D	#生存周期为1天				
+    @	IN SOA	xy.com.	root.xy.com.	(	
+    #授权信息开始:	#DNS区域的地址	#域名管理员的邮箱(不要用@符号)	
+                                    0;serial	        #更新序列号
+                                    1D;refresh	 #更新时间
+                                    1H;retry	       #重试延时
+                                    1W;expire	          #失效时间
+                                    3H;)minimum     #无效解析记录的缓存时间
+    NS	ns.xy.com.	#域名服务器记录
+    ns	IN A	122.71.115.10	#地址记录(ns.xy.com.)
+    www	IN A	122.71.115.15	#地址记录(www.xy.com.)
+`[root@linuxprobe named]# vim linuxprobe.com.american`  
+
+    $TTL 1D	#生存周期为1天				
+    @	IN SOA	xy.com.	root.xy.com.	(	
+                                    #授权信息开始:	#DNS区域的地址	#域名管理员的邮箱(不要用@符号)	
+                                    0;serial	#更新序列号
+                                    1D;refresh	#更新时间
+                                    1H;retry	#重试延时
+                                    1W;expire	#失效时间
+                                    3H;)minimum	#无效解析记录的缓存时间
+    NS	ns.xy.com.	#域名服务器记录
+    ns	IN A	106.185.25.10	#地址记录(ns.xy.com.)
+    www	IN A	106.185.25.15	#地址记录(www.xy.com.)
 <div id="DHCP"></div>
 ### 9. 使用DHCP动态管理主机地址  
 + DHCP(Dynamic Host Configuration Protocol):基于UDP协议仅仅在局域网内部使用提高IP利用率,提高配置效率,降低管理维护成本  
@@ -585,6 +780,7 @@ Activate: 20180713051051
 + 地址池: 剩余的IP  
 + 租约: DHCP 客户端能够使用IP的时间  
 + 预约: 保证网络中特定设备总是获取到相同IP  
+`[root@xy ~]# yum install dhcp`   
 `[root@xy ~]# /etc/dhcp/dhcpd.conf`      
 #### 9.1 dhcpd.conf 配置:  
 #### 9.2 dhcpd服务程序配置最常见参数:  
@@ -664,11 +860,12 @@ mail.xy.com
                                          1W      ; expire  
                                          3H )    ; minimum  
             NS              ns.xy.com.  
- 	 ns      IN A            192.168.37  
+       ns      IN A            192.168.37  
 	@       IN MX 10        mail.xy.com.  
 	mail    IN A            192.168.37.10  
 
 #### 10.2 配置基于SMTP协议的Postfix服务程序  
+`[root@xy ~]# yum install postfix`   
 `[root@mail ~]# vim /etc/postfix/main.cf`
   
 	myhostname = mail.xy.com      			//76  
@@ -686,6 +883,7 @@ passwd: all authentication tokens updated successfully.
 `[root@mail ~]# systemctl enable postfix`  
 
 #### 10.3 配置基于POP3与IMAP4协议的Dovecot服务程序  
+`[root@xy ~]# yum install dovecot`   
 `[root@mail ~]# vim /etc/dovecot/dovecot.conf`
 
 	protocols = imap pop3 lmtp         			// 24  

@@ -1016,8 +1016,8 @@ job 3 at Mon Apr 27 23:30:00 2017
 `[root@xy ~]# crontab -e`       　 **crontab 有规律 周期性的执行具体任务 创建 编辑**    
 no crontab for root - using   
 an empty one  
-crontab: installing new crontab 
- 
+crontab: installing new crontab   
+![crontab](../img/crontab.png)  
 `[root@xy ~]# crontab -l`     　**crontab - l 查看  crontab -r 删除**  
 0 3 * * * cp /var/log/alternatives.log /home/shiyanlou/tmp/$(date+ \%Y\%m\%d)   
 25  3  *  * 1,3,5 /usr/bin/tar -czvf backup.tar.gz /home/wwwroot  
@@ -1233,5 +1233,11 @@ ps: /usr/bin/ps /usr/share/man/man1/ps.1.gz /usr/share/man/man1p/ps.1p.gz
     -   文件系统修复命令：`fsck -y /dev/sdb1`
 +   mount [-t  文件系统 -L  卷标名 -o  特殊选项]   设备文件名   挂载点：
     *   `mount -t vfat -o iocharset=utf-8 /dev/sdb1 /mnt/usb `
-
++   awk 基本使用：
+    -   `awk '条件1{动作1} 条件2{动作2}···' 文件名`
+    -   `df -h | awk '{print "$1 \t $3"}'`
+    -   `df -h | awk '/sda[0-9]/ {print $1 "\t" $5 "\n"}'`
++   sed 基本使用(修改文本数据)：
+    -   `sed [选型] '[动作]' 文件名`  
+    -   `sed -n '2p' example02.sh`
 [返回目录](#back)

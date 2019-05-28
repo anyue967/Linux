@@ -1284,7 +1284,7 @@ ger/ActiveConnection/2)
 
 **安全密钥验证**  
 *客户端主机生成“密钥对”*  
-`[root@xy ~]# ssh-keygen`  
+`[root@xy ~]# ssh-keygen -t rsa -b 2048`  
 Generating public/private rsa key pair. 
 Enter file in which to save the key (/root/.ssh/id_rsa):　**回车或设置密钥存储路径**  
 Enter passphrase (empty for no passphrase): 　**直接按回车或设置密钥密码**  
