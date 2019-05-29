@@ -26,7 +26,7 @@ eno16777728  5cd38b22-b35b-474b-a7a2-a0ae8f632216  802-3-ethernet  eno16777728
 `[root@xy ~]# nmcli con show eno33554968`    
 `[root@xy ~]# vim /etc/squid/squid.conf` 
  
-    http_port 3128								监听端口 
+    http_port 3128								监听端口 ✔
     cache_mem 64M							    内存缓冲区  
     cache_dir ufs /var/spool/squid 2000 16 256	硬盘缓冲区  
     cache_effective_user squid 					设置缓存的有效用户**  
@@ -38,7 +38,7 @@ eno16777728  5cd38b22-b35b-474b-a7a2-a0ae8f632216  802-3-ethernet  eno16777728
 `[root@xy ~]# systemctl restart squid`  
 `[root@xy ~]# systemctl enable squid`  
 ln -s '/usr/lib/systemd/system/squid.service' '/etc/systemd/system/multi-user.target.wants/squid.service'  
-`[root@xy ~]# semanage port -l | grep squid_port_t`
+`[root@xy ~]# semanage port -l | grep squid_port_t` ✔
   
     squid_port_t                   tcp      3128, 3401, 4827  
     squid_port_t                   udp      3401, 4827  
@@ -695,6 +695,7 @@ MariaDB [(none)]> `create database xy default character set latin1;`
 ![PXE+Kickstart](https://raw.githubusercontent.com/anyue-1993/Linux/master/notes/img/无人值守安装流程.png)  
  
 #### 4.2 DHCP服务程序配置  (192.168.37.10 无人值守系统服务器IP)
+`[root@xy ~]# yum install dhcp`
 `[root@xy ~]# vim /etc/dhcp/dhcpd.conf`
   
         #  
@@ -720,6 +721,7 @@ MariaDB [(none)]> `create database xy default character set latin1;`
 ln -s '/usr/lib/systemd/system/dhcpd.service' '/etc/systemd/system/multi-user.target.wants/dhcpd.service'  
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #### 4.3 TFTP服务程序配置，为客户机提供引导及驱动文件,默认占用端口  69/UDP   
+`[root@xy ~]# yum install tftp-server`
 `[root@xy ~]# vim /etc/xinetd.d/tftp`   
 disable = no  
 `[root@xy ~]# firewall-cmd  --permanent --add-port=69/udp`      

@@ -18,8 +18,8 @@
 1. 硬盘建立分区遵从：主分区 -- 扩展分区 -- 逻辑分区 -- 激活主分区 -- 格式化所有分区；虚拟机的三种网络模式：**桥接网络**，**NAT网络地址转换(VMnet8)**，**仅主机模式(VMnet1)**；其中，主机模式仅仅与物理主机通信，不能访问外网，而其它两种可以通过物理主机进行外网的访问。
 
 2. 主引导记录 MBR（Master Boot Record）：<div id="首扇区"></div>
-3. 硬盘由大量扇区构成，以首扇区最重要，**首扇区共512B**，**结束符占2B**，**主引导记录占446B**，所以**分区表就只有64B**，分区表记录一个分区信息需要16B，所以做多记录4个分区信息，为了解决分区不够的问题，可将其中的分区信息指向另外一个分区，称为**扩展分区**，在扩展分区里划分逻辑分区，**一块硬盘只能有一个扩展分区，1、2、3、4号只能给主分区，5、6开始为逻辑分区**。 
-![首扇区图示](../img/首扇区图示.png)    
+3. 硬盘由大量扇区构成，以首扇区最重要，**首扇区共512B**，**结束符占2B**，**主引导记录占446B**，所以**分区表就只有64B**，分区表记录一个分区信息需要16B，所以做多记录4个分区信息，为了解决分区不够的问题，可将其中的分区信息指向另外一个分区，称为**扩展分区**，在扩展分区里划分逻辑分区，**一块硬盘只能有一个扩展分区，1、2、3、4号只能给主分区，5、6开始为逻辑分区**。   
+![首扇区图示](../img/首扇区图示.png)      
 ![分区图示](../img/逻辑分区.png)    
 
 ### Linux 下的分区方案
@@ -30,38 +30,38 @@
 	5. /tmp：　存放临时文件，可有可无，划为逻辑分区；
 
 ### RPM:(红帽软件包管理器) 相当于windows 的控制面板的软件管理 <div id="RPM"></div>
-    rpm -ivh filename.rpm　　安装软件  
-    rpm -e filename.rpm　　　卸载软件
+    rpm -ivh filename.rpm　　安装软件  ✔
+    rpm -e filename.rpm　　　卸载软件 ✔
     
     rpm -Uvh filename.rpm　　升级软件   
     rpm -qpi filename.rpm　　查询软件描述信息
     rpm -qpl filename.rpm　　列出软件文件信息 
     rpm -qf filename　　　　 查询文件属于哪个RPM的命令格式
-    rpm -qa | grep filename　查询所安装的软件的名称*    
+    rpm -qa | grep filename　查询所安装的软件的名称    ✔
 
 ### Yum软件仓库: <div id="Yum"></div>
-    yum repolist all　　　　　  列出软件仓库  
-    yum list all　　　　　　　   列出仓库所有软件
+    yum repolist all　　　　　  列出软件仓库  ✔
+    yum list all　　　　　　　   列出仓库所有软件 ✔
 
-    yum info 软件包名称　　　　  查看软件包信息 
-    yum install 软件包名称　　   安装软件包 
-    yum reinstall 软件包名称　　 卸载软件包 
+    yum info 软件包名称　　　　  查看软件包信息  ✔
+    yum install 软件包名称　　   安装软件包 ✔
+    yum reinstall 软件包名称　　 卸载软件包  ✔
  
-    yum update 软件包名称　　　	升级软件包  
-    yum remove 软件包名称　　　　移除软件包 
+    yum update 软件包名称　　　	升级软件包  ✔
+    yum remove 软件包名称　　　　移除软件包 ✔
  
-    yum clean all　　　　　　　  清除所有仓库缓存
-    yum check-update　　　　　 　检查可更新的软件包  
+    yum clean all　　　　　　　  清除所有仓库缓存 ✔
+    yum check-update　　　　　 　检查可更新的软件包  ✔
 
     yum grouplist　　　　　　　　查看系统中已经安装的软件包组  
     yum groupinstall 软件包组　　 安装指定的软件包组  
     yum groupremove 软件包组　　　移除指定的软件包组 
     yum groupinfo 软件包组　　　　查询指定的软件包组信息 
 
-### BIOS--Boot Loader--内核--内核初始化--启动初始化进程(systemd)
+### BIOS--Boot Loader--内核--内核初始化--启动初始化进程(systemd) ✔
 
 ### 1. 启用多用户、无图形模式   <div id="启动模式"></div>
-`[root@xy ~]# ln -sf /lib/systemd/system/multi-user.target /etc/systemd/system/default.target`
+`[root@xy ~]# ln -sf /lib/systemd/system/multi-user.target /etc/systemd/system/default.target` 
 
 ### 2. 启用多用户、图形模式  
 `[root@xy ~]# ln -sf /lib/systemd/system/graphical.target /etc/systemd/system/default.target`
@@ -115,8 +115,9 @@ xy
 /bin/bash
 
 #### 7.3 date  
-%t 跳格　　　　　%H 小时(00~23)　　 　%S 秒(00~59)  
-%I 小时(00~12)　　%M 分钟(00~59)　　 %J 今年中的第几天  
+    %t 跳格               %H 小时(00~23)
+    %S 秒(00~59)         %I 小时(00~12)
+    %M 分钟(00~59)        %J 今年中的第几天  
 `[root@xy ~]# date`  
 Thu Jul  5 22:44:59 EDT 2018  
 `[root@xy ~]# date "+%Y-%M-%m-%d %H:%M:%S"`  
@@ -131,12 +132,13 @@ Fri Jul  6 10:49:07 EDT 2018
 `[root@xy ~]# poweroff`  
 
 #### 7.4 wget  
--b 后台下载　　-P 下载至指定目录　　-t 最大尝试次数   
--c 断点续传　　-p 下载页面搜有资源　　-r 递归下载        
+    -b 后台下载         -P 下载至指定目录
+    -t 最大尝试次数      -c 断点续传
+    -p 下载页面搜有资源   -r 递归下载        
 `[root@xy ~]# wget -r -p htpp://www.linuxprobe.com`
 
 #### 7.5 ps  
--a 显示搜有进程　　-u 用户以及其他详细信息　　-x 显示没有控制终端进程  
+    -a 显示搜有进程　　-u 用户以及其他详细信息　　-x 显示没有控制终端进程  
 `[root@xy ~]# ps -aux`  
 USER        PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND  
 root          1  0.8  0.3  53784  7716 ?        Ss   10:37   0:09 /usr/lib/  systetemd    
@@ -277,7 +279,8 @@ Please send this file to your support representative.
 `[root@xy etc]# cd ..`  
 
 #### 9.3 ls                        
--a 全部文件(包括隐藏文件)　　-l 查看文件属性、大小等详细信息　　-d 查看目录属性信息  -Z   
+    -a 全部文件(包括隐藏文件) -l 查看文件属性、大小等详细信息   
+    -d 查看目录属性信息  -Z 查看安全上下文
 `[root@xy ~]# ls -al`    
 total 64  
 dr-xr-x---. 14 root root 4096 Jul  6 11:06 .  
@@ -306,7 +309,7 @@ drwxr-xr-x. 132 root root 8192 Jul  6 06:37 /etc
 ........省略部分输出信息........
 
 #### 10.2 more  
-`[root@xy ~]# more initial-setup-ks.cfg`       　　 **长篇文本查看 翻滚 空格键**
+`[root@xy ~]# more initial-setup-ks.cfg`       　　 **长篇文本查看 翻滚 空格键**  
    1  #version=RHEL7  
    2  # X Window System configuration information  
    3  xconfig  --startxonboot  
@@ -423,7 +426,7 @@ Change: 2018-07-06 12:21:08.983950168 -0400
  Birth: -  
 
 #### 10.6 cut   提取列 字符串  不识别空格
--f  指定列数    -c  按字符提取   -d  分隔符
+    -f  指定列数    -c  按字符提取   -d  分隔符
 `[root@xy ~]# head -n 2 /etc/passwd`  
 root:x:0:0:root:/root:/bin/bash  
 bin:x:1:1:bin:/bin:/sbin/nologin  
@@ -467,7 +470,7 @@ sshd
 tcpdump  
 xy  
 
-#### 10.7 tr　　**替换文本字符串**
+#### 10.7 tr　**替换文本字符串**
 `[root@xy ~]# cat anaconda-ks.cfg | tr [a-z] [A-Z]`  
 
 ### 11. 文件目录管理命令  
@@ -496,7 +499,7 @@ Desktop          Downloads  *install.log*           Pictures  Templates
 
 #### 11.3 cp  
 `[root@xy ~]# cp install.log x.log`  
-`[root@xy ~]# ls`
+`[root@xy ~]# ls`  
 anaconda-ks.cfg  Documents  initial-setup-ks.cfg  Music     Public     Videos  
 Desktop          Downloads  *install.log*           Pictures  Templates  *x.log*  
 
@@ -522,7 +525,8 @@ anaconda-ks.cfg  Documents  initial-setup-ks.cfg  Pictures  Templates
 Desktop          Downloads  Music                 Public    Video  
 
 #### 11.6 dd          　　按照指定大小和个数的数据块复制文件或转换文件  
-if-输入文件名称　　of-输出文件名称　　bs-设置块大小　　count-设置复制块的个数  
+    if-输入文件名称　　of-输出文件名称　　
+    bs-设置块大小　　count-设置复制块的个数  
 `[root@xy ~]# dd if=/dev/zero of=10_file bs=10M count=1`  
 `[root@xy ~]# dd if=/dev/cdrom of=RHEL-server-7.0-x86_64.iso`  
 `[root@xy ~]# file anaconda-ks.cfg`  
@@ -534,9 +538,11 @@ anaconda-ks.cfg: ASCII text
 
 ### 12. 打包压缩与搜索命令  <div id="tar"></div>
 #### 12.1 tar  
--c 创建压缩文档　　       -x 解开压缩文档　　    -t 查看压缩包内容　　-z 用Gzip压缩/解压
--j 用bzip2压缩/解压　　   -v 显示压缩/解压过程　　-f 目标文件名
--p 保留原文件的权限属性    -P 使用绝对路径来压缩　　-C 指定压缩目录  
+    -c 创建压缩文档　　       -x 解开压缩文档　　    
+    -t 查看压缩包内容　　    -z 用Gzip压缩/解压
+    -j 用bzip2压缩/解压　　   -v 显示压缩/解压过程　　
+    -f 目标文件名            -p 保留原文件的权限属性    
+    -P 使用绝对路径来压缩　　  -C 指定压缩目录  
 `[root@xy tmp]# tar -czvf ect.`dtae +"+%Y-%m-%d"`.tar.gz /ect`  
 `[root@xy tmp]# tar -czvf diff.tar.gz /diff`  
 diff/  
@@ -544,11 +550,22 @@ diff/diff_A.txt
 diff/diff_B.txt  
 diff/diff_B.txt~  
 diff/diff.tar.gz  
-`[root@xy diff]# tar -xzvf diff.tar.gz -C /diff`  
-
+`[root@xy diff]# tar -xzvf diff.tar.gz -C /diff`
+  
+    1、*.tar 用 tar -xvf 解压
+    2、*.gz 用 gzip -d或者gunzip 解压
+    3、*.tar.gz和*.tgz 用 tar -xzf 解压
+    4、*.bz2 用 bzip2 -d或者用bunzip2 解压
+    5、*.tar.bz2用tar -xjf 解压
+    6、*.Z 用 uncompress 解压
+    7、*.tar.Z 用tar -xZf 解压
+    8、*.rar 用 unrar e解压
+    9、*.zip 用 unzip 解压
+[tar相关命令参考](https://www.cnblogs.com/lhm166/articles/6604852.html)  
 #### 12.2 grep     　　提取行    字符串搜索常用！！！！  
--b 将可执行binary当做text搜索　　-c 仅显示找到的行数　　　-i 忽略大小写 
--n 显示行号      　　　-v 反向选择，仅列出没有关键词的行  
+    -b 将可执行binary当做text搜索　　-c 仅显示找到的行数　　　
+    -i 忽略大小写                    -n 显示行号      　
+    -v 反向选择，仅列出没有关键词的行  
 `[root@xy ~]# grep -n /sbin/nologin /etc/passwd`  
 1:bin:x:1:1:bin:/bin:/sbin/nologin  
 2:daemon:x:2:2:daemon:/sbin:/sbin/nologin  
@@ -558,10 +575,11 @@ diff/diff.tar.gz
 6:operator:x:11:0:operator:/root:/sbin/nologin  
 
 #### 12.3 find       　　文件搜索 实用  
--name 匹配名称　　-perm 匹配权限　　-user 匹配所有者  
--group 匹配所有组　　　-mtime -n +n 匹配修改内容的时间  
--atime -n +n 匹配访问文件的时间　　　　
--exec ... {} ... \;　　　**-exec 后可跟进 执行的命令**  
+    -name 匹配名称　　    -perm 匹配权限　　
+    -user 匹配所有者     -group 匹配所有组　　　
+    -mtime -n +n 匹配修改内容的时间  
+    -atime -n +n 匹配访问文件的时间　　　　
+    -exec ... {} ... \;　　　-exec 后可跟进 执行的命令
 
 `[root@xy ~]# find /etc/ -name "host*" -print`     　　**find 查找路径 -参数**  
 /etc/avahi/hosts  
@@ -588,17 +606,19 @@ find: ‘/run/user/1000/gvfs’: Permission denied
 `[root@xy ~]# find / -user xy -exec cp -a {} /root/findresults/ \;`   
 **厉害！！**  -exec ... {} ... \;  
 
-### 13. 重定向操作符 >　 >>　 <　 <<      　　尖头在哪哪边为输出  <div id="重定向"></div>
-**输入重定向 O-I**  
-  命令 <  文件              
-  命令 << 分界符                        　　 **遇见分界符为止**  
-  命令 < 文件1 > 文件2　　　**将文件1作为命令的标准输入并将标准输出到文件2**
-**输出重定向 I-O**  
-  命令 >   文件                         　　 **清空原有文件**  
-  命令 2>  文件         
-  命令 >>  文件                         　　 **追加到原有文件内容的后面**  
-  命令 2>> 文件
-  命令 >>  文件 2>&1 或 命令 &>> 文件   　　**将标准输出与错误输出共同写到文件**     
+### 13. 重定向操作符 <div id="重定向"></div>
+    >　 >>　 <　 <<      　　尖头在哪哪边为输出  
+* 输入重定向 O-I  
+    - 命令 <  文件              
+    - 命令 << 分界符                        　　 **遇见分界符为止**  
+    - 命令 < 文件1 > 文件2　**将文件1作为命令的标准输入并将标准输出到文件2**  
+* 输出重定向 I-O**  
+    - 命令 >   文件                         　　 **清空原有文件**  
+    - 命令 2>  文件         
+    - 命令 >>  文件                         　　 **追加到原有文件内容的后面**  
+    - 命令 2>> 文件
+    - 命令 >>  文件 2>&1 或 命令 &>> 文件   **将标准输出与错误输出共同写到文件**     
+
 `[root@xy ~]# man bash > readme.txt`  
 `[root@xy ~]# echo "Welcome to Linuxprobe.Com" > readme.txt`  
 `[root@xy ~]# echo "Quality linux learning materials" >> readme.txt`   
@@ -606,9 +626,9 @@ find: ‘/run/user/1000/gvfs’: Permission denied
 Welcome to Linuxprobe.Com  
 Quality linux learning materials  
 `[root@xy ~]# ls -l xxxxxxx`  
-ls: cannot access xxxxxxx: No such file or directory
+ls: cannot access xxxxxxx: No such file or directory  
 `[root@xy ~]# ls -l xxxxxxx > readme.txt`   
-ls: cannot access xxxxxxx: No such file or directory
+ls: cannot access xxxxxxx: No such file or directory  
 `[root@xy ~]# ls -l  xxxxxxx 2> readme.txt`       　　**2的用法**    
 `[root@xy ~]# cat readme.txt`     
 ls: cannot access xxxxxxx: No such file or directory  
@@ -645,8 +665,11 @@ brw-rw----. 1 root disk 8, 2 Jul  6  2018 /dev/sda2
 brw-rw----. 1 root disk 8, 1 Jul  6  2018 /dev/sda1  
 brw-rw----. 1 root disk 8, 2 Jul  6  2018 /dev/sda2  
  
-### 16. 常用的转义字符  \ 、''、""、``(把其中的命令执行后返回结果)
-  \  使反斜杠后的一个变量变为单纯的字符串　　　''  转义其中所有的变量为单纯的字符串  　　   "" 保留其中的变量属性,不进行转义处理     　　  
+### 16. 常用的转义字符
+    \  使反斜杠后的一个变量变为单纯的字符串　　　
+    ''  转义其中所有的变量为单纯的字符串  　　   
+    "" 保留其中的变量属性,不进行转义处理     　
+    ``  命令执行后并返回结果　  
 `[root@xy ~]# PRICE=5`  
 `[root@xy ~]# echo "Price is $PRICE"`        　　**$ 取变量的值**  
 Price is 5  
@@ -686,12 +709,12 @@ true is a shell builtin
 /usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:　　**/root/bin**    
 
 ### 18. Vim文本编辑器 ESC  
-:w　　:q　　:q!　　:wq!　　a　　i　　o　　u 撤销上一步操作  
+    :w　　:q　　:q!　　:wq!　　a　　i　　o　　u 撤销上一步操作  
 
 ### 19. 配置主机名
 `[root@xy ~]# vim /etc/hostname`  
 xy.com  
-`[root@xy ~]# hostname`
+`[root@xy ~]# hostname`  
 xy.com  
 
 ### 20. 配置网卡信息  
@@ -760,7 +783,7 @@ Complete!
   #For Example BY xy.com  
   pwd  
   ls -al  
-`[root@xy test]# bash example.sh` 
+`[root@xy test]# bash example.sh`   
   /root/test  
   total 8  
   drwxr-xr-x.  2 root root   23 Jul  7 18:29 .  
@@ -789,9 +812,13 @@ Complete!
 
 ### 24. 判断用户的参数
 #### 24.1 文件  
--d **测试文件是否为目录类型**    -e **测试文件是否存在**     -f **判断文件是否为一般文件**   
--r **测试当前用户是否有读权限**  -w **当前用户是否有写权限** -x **当前用户是否有执行权限**  
-$? **显示上一次命令的执行返回值**  
+    -d  测试文件是否为目录类型
+    -e  测试文件是否存在     
+    -f  判断文件是否为一般文件   
+    -r  测试当前用户是否有读权限
+    -w 当前用户是否有写权限
+    -x 当前用户是否有执行权限
+    $? 显示上一次命令的执行返回值  
 `[root@xy ~]# [ -d /etc/fstab ]`		　**测试文件是否为目录类型**  
 `[root@xy ~]# echo $?`  
 1  				
@@ -809,12 +836,12 @@ logout
 administrator  
 
 #### 24.2 数字
--eq **是否相等**     　-ne **是否不等于**       　-gt **是否大于**  
--lt **是否小于**     　-le **是否等于/小于**   　 -ge **是否等于/大于**  
+    -eq 是否相等     　-ne 是否不等于       　-gt 是否大于 
+    -lt 是否小于     　-le 是否等于/小于  　 -ge 是否等于/大于 
 `[root@xy ~]# [ 10 -gt 10 ]`      
-[root@xy ~]# echo $?  
-1  
-`[root@xy ~]# [ 10 -eq 10 ]`  
+`[root@xy ~]# echo $?`  
+1    
+`[root@xy ~]# [ 10 -eq 10 ]`    
 `[root@xy ~]# echo $?`  
 0  
 `[root@xy ~]# free -m`  
@@ -826,16 +853,16 @@ Swap:         2063          0       2063
 Mem:          1987       1198        789          9          0        280  
 `[root@xy ~]# free -m | grep Mem: | awk '{print $4}'`  
 789  
-[root@xy ~]# FreeMem=`free -m | grep Mem: | awk '{print $4}'`  
+`[root@xy ~]# FreeMem=`free -m | grep Mem: | awk '{print $4}'` ` 
 `[root@xy ~]# echo $FreeMem`  
 789  
 `[root@xy ~]# [ $FreeMem -lt 1024 ] && echo "Insufficient Memory"`  
 Insufficient Memory  
 
 #### 24.3 字符串
-= **比较字符串内容是否相同** 　!= **比较字符串内容是否不同**　　-z **判断字符串内容是否为空**  
+    = **比较字符串内容是否相同** 　!= **比较字符串内容是否不同**　　-z **判断字符串内容是否为空**  
 `[root@xy ~]# [ -z $String ]`  
-`[root@xy ~]# echo $?`
+`[root@xy ~]# echo $?`  
 0  
 `[root@xy ~]# echo $LANG`  
 en_US.UTF-8  
@@ -858,8 +885,8 @@ Not en.US
 
 `[root@xy test]# vim chkhost.sh`  
 `[root@xy test]# bash mkcdrom.sh`  
-	-c **规定尝试的次数**  　 -i **每个数据发送间隔**  　 -W **定义等待超时时间**  
 
+    -c **规定尝试的次数**  　 -i **每个数据发送间隔**  　 -W **定义等待超时时间**  
       #!/bin/bash  
       ping -c 3 -i 0.2 -W 3 $1 &> /dev/null   **/dev/null 没有回收功能的垃圾箱**  
       if [ $? -eq 0 ]  			
@@ -924,13 +951,13 @@ Enter your score (0-100): 88
   barry ,Create success  
   carl ,Create success  
   duck ,Create success  
-`[root@xy test]# tail -6 /etc/passwd`
+`[root@xy test]# tail -6 /etc/passwd`  
   andy:x:1001:1001::/home/andy:/bin/bash  
   barry:x:1002:1002::/home/barry:/bin/bash  
   carl:x:1003:1003::/home/carl:/bin/bash  
   duck:x:1004:1004::/home/duck:/bin/bash  
 
-`[root@xy test]# vim ipadds.txt`
+`[root@xy test]# vim ipadds.txt`  
   192.168.37.10  
   192.168.37.11  
   192.168.37.12  
@@ -1037,8 +1064,13 @@ crontab: installing new crontab
 UID(User IDentification)	　**管理员 0**　**系统用户 1-999**　**普通用户 1000 往上**  
 GID(Group IDentification)  
 #### 28.1 useradd:  
--d **指定用户家目录(默认/home/username)**　-e **账户到期时间(YYYY-MM-DD)**　　 
--u **指定该用户默认UID** 　-g **指定一个初始用户基本组**　　　　　　　　　　　　　　　-G **指定一个/多个扩展用户组** 　-N **不创建于用户同名的基本用户组**   　　　　　　　　-s **指定该用户默认Shell解释器**  
+    -d  指定用户家目录(默认/home/username)               
+    -e  账户到期时间(YYYY-MM-DD)
+    -u  指定该用户默认UID                                             
+    -g  指定一个初始用户基本组 
+    -G  指定一个/多个扩展用户组      　                          
+    -N  不创建于用户同名的基本用户组  
+    -s  指定该用户默认Shell解释器      
 `[root@xy ~]# useradd -d /home/linux -u 8888 -s /sbin/nologin xy`   　**useradd**  
 `[root@xy ~]# id xy`                    　 **id**  
 uid=8888(xy) gid=8888(xy) groups=8888(xy)  
@@ -1046,10 +1078,15 @@ uid=8888(xy) gid=8888(xy) groups=8888(xy)
 `[root@xy ~]# groupadd ronny`           　**groupadd**  
 
 #### 28.2 usermod  
--c **填写用户备注信息**　　-d -m **重新指定用户的家目录并自动迁移数据**  
--e **账户到期时间(YYYY-MM-DD)**　　-g **变更所属用户组**　　-G **变更扩展用户组**  　 
--L **锁定用户禁止登陆系统**　　-U **解锁用户,允许登陆系统**   　　　　　　　　　　　　
--s **变更默认终端**　　 -u **修改用户UID**  
+    -c **填写用户备注信息**  　　
+    -d -m **重新指定用户的家目录并自动迁移数据**    
+    -e **账户到期时间(YYYY-MM-DD)**  　　
+    -g **变更所属用户组**  　　
+    -G **变更扩展用户组**    　 
+    -L **锁定用户禁止登陆系统**  　　
+    -U **解锁用户,允许登陆系统**     　　　　　　　　　　　　
+    -s **变更默认终端**  　　 
+    -u **修改用户UID**    
 `[root@xy ~]# usermod -G root xy`   
 `[root@xy ~]# id xy`  
 uid=1000(xy) gid=1000(xy) groups=1000(xy),0(root)
@@ -1057,10 +1094,10 @@ uid=1000(xy) gid=1000(xy) groups=1000(xy),0(root)
 `[root@xy ~]# id xy`  
 uid=8888(xy) gid=1000(xy) groups=1000(xy),0(root)  
 
--l **锁定用户禁止登陆系统** 　-u **解锁用户,允许登陆系统** 
---stdin**允许标准输入改密码**　`echo "NewPassWord" | passwd --stdin Username)` 　
--d **使该用户可以用空密码登陆系统**  　　-e **强制用户下次登陆修改密码** 　　　　　
--S **显示用户密码是否锁定,以及密码采用的加密算法名称**  
+    -l 锁定用户禁止登陆系统 　-u 解锁用户,允许登陆系统 
+    --stdin 允许标准输入改密码　`echo "NewPassWord" | passwd --stdin Username)` 　
+    -d 使该用户可以用空密码登陆系统  　　-e 强制用户下次登陆修改密码 　　　　　
+    -S 显示用户密码是否锁定,以及密码采用的加密算法名称  
 `[root@xy ~]# passwd`  
 Changing password for user root.  
 New password:   
@@ -1073,19 +1110,19 @@ New password:
 Retype new password:  
 asswd: all authentication tokens updated successfully.   
 
-`[root@xy ~]# passwd -l xy`
+`[root@xy ~]# passwd -l xy`  
 Locking password for user xy.  
 passwd: Success  
-`[root@xy ~]# passwd -S xy`
+`[root@xy ~]# passwd -S xy`  
 xy LK 2018-07-06 0 99999 7 -1 (Password locked.)  
 `[root@xy ~]# passwd -u xy`  
 Unlocking password for user xy.  
 passwd: Success  
-`[root@xy ~]# passwd -S xy`
+`[root@xy ~]# passwd -S xy`  
 xy PS 2018-07-06 0 99999 7 -1 (Password set, SHA512 crypt.)  
 
 #### 28.3 userdel  
--f **强制删除用户**　　-r **同时删除用户及家目录**  
+    -f 强制删除用户　　-r 同时删除用户及家目录
 `[root@xy ~]# id xy`  
 uid=8888(xy) gid=1000(xy) groups=1000(xy),0(root)  
 `[root@xy ~]# userdel -r xy`  
@@ -1093,17 +1130,18 @@ uid=8888(xy) gid=1000(xy) groups=1000(xy),0(root)
 id: xy: no user  
 
 ### 29. netstat          
--t **指明显示TCP端口**　-u **指明显示UDP端口**　-a  **all**
--l **仅显示监听套接字**　-p **显示进程标识符**　-n **不进行DNS轮询**  
+    -t 指明显示TCP端口　-u 指明显示UDP端口　-a  all
+    -l 仅显示监听套接字　-p 显示进程标识符　-n 不进行DNS轮询  
 
 ### 30. lsof            *list open files
 **lsof -i:8022**   
 
 ### 31. 文件归属与权限
--**普通文件**　　d **目录文件**　　l **链接文件**   
-b**块设备文件**　c **字符设备文件**　　p **管道文件**  
-r **(可读) 4**　　w **(可写:编辑、新增、修改、删除文件实际内容) 2**  
-x **(执行) 1**    
+    - 普通文件　　d 目录文件　　l 链接文件  
+    b 块设备文件　c 字符设备文件　　p 管道文件  
+    r (可读)-4　　
+    w (可写:编辑、新增、修改、删除文件实际内容)-2  
+    x (执行)-1    
 `[root@xy ~]# ls -l initial-setup-ks.cfg`   
 -rw- r-- r--. 1 root   root 1233 Jul  6 09:44 initial-setup-ks.cfg   
 文件类型  6   4   4      属主   属组  大小 修改时间      文件名  
@@ -1117,7 +1155,7 @@ x **(执行) 1**
 **SGID:让执行者临时拥有属组的权限(对拥有执行权限的二进制程序进行设置)在某个目录中创建的文件自动集成该目录的用户组(只可以对目录进行设置)**  
 `[root@xy ~]# cd /tmp`  
 `[root@xy tmp]# mkdir testdir`  
-`[root@xy tmp]# ls -ald testdir/`  
+`[root@xy tmp]# ls -ald testdir/`    
 drwxr-xr-x. 2 root root 6 Feb 11 11:50 testdir/  
 `[root@xy tmp]# chmod -Rf 777 testdir/`         **chmod 设置文件或目录的权限，-R：递归**  
 `[root@xy tmp]# chmod -Rf g+s testdir/`  
@@ -1127,10 +1165,10 @@ drwxrwsrwx. 2 root root 6 Feb 11 11:50 testdir/		         **SGID**
 `[root@xy xy ~]# ls -al test`  
 -rw-rw-r--. 1 xy root 15 Feb 11 11:50 test  
 `[root@xy xy ~]# chmod 760 test`  			**chmod[参数] 权限 文件或目录名称**  
-`[root@xy xy ~]# ls -l test`  
--rwxrw----. 1 xy root 15 Feb 11 11:50 test  
+`[root@xy xy ~]# ls -l test`      
+-rwxrw----. 1 xy root 15 Feb 11 11:50 test    
 `[root@xy xy ~]# chown root:bin test` 		**chown[参数] 所有者:所属组 文件或目录名称**  
-`[root@xy xy ~]# ls -l test`
+`[root@xy xy ~]# ls -l test`  
 -rwxrw----. 1 root bin 15 Feb 11 11:50 test  
 
 **SBIT(Sticky Bit):特殊权限位可确保用户只能删除自己的文件,而不能删除其它用户的文件.即当对某个目录设置了SBIT粘滞位权限后,那么该目录中的文件就只能被其所有者执行删除操作了**  
@@ -1138,7 +1176,7 @@ drwxrwsrwx. 2 root root 6 Feb 11 11:50 testdir/		         **SGID**
 Last login: Sun Jul  8 10:07:22 CST 2018 on :0  
 Last failed login: Sun Jul  8 11:03:38 CST 2018 from :0 on :0  
 There was 1 failed login attempt since the last successful login.  
-`[xy@xy ~]$ ls -ald /tmp`
+`[xy@xy ~]$ ls -ald /tmp`  
 drwxrwxrwt. 15 root root 4096 Jul  8 15:16 /tmp  
 `[xy@xy ~]$ cd /tmp/`  
 `[xy@xy tmp]$ ls -ald`  

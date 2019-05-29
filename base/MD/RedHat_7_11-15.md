@@ -51,13 +51,13 @@ iptables: Saving firewall rules to /etc/sysconfig/iptables:[  OK  ]
     anonymous_enable=[YES|NO]             是否允许匿名用户访问  
     anon_upload_enable=[YES|NO]           是否允许匿名用户上传文件  
     anon_umask=022                        匿名用户上传文件的umask值  
-    anon_root=/var/ftp                    匿名用户FTP根目录  
+    anon_root=/var/ftp                    匿名用户FTP根目录  ✔
     anon_mkdir_write_enable=[YES|NO]      是否允许匿名用户创建目录 
     anon_other_write_enable=[YES|NO]      是否允许匿名用户其他写入权限 重命名 删除等  
     anon_max_rate=0                       匿名用户最大传输速率  
     local_enable=[YES|NO]                 是否允许本地用户登陆FTP  
     local_umask=022                       本地用户上传文件的umask值  
-    local_root=/var/ftp                   本地用户FTP根目录  
+    local_root=/var/ftp                   本地用户FTP根目录  ✔
     chroot_local_user=[YES|NO]            是否将用户权限禁锢在FTP目录,以确保安全  
     local_max_rate=0                      本地用户最大传输速率  
 
@@ -89,7 +89,7 @@ iptables: Saving firewall rules to /etc/sysconfig/iptables:[  OK  ]
 
 `[root@xy ~]# ls -ld /var/ftp/pub`　**ls -Zd**  
 drwxr-xr-x. 2 root root 6 Mar  7  2014 /var/ftp/pub  
-`[root@xy ~]# chown -Rf ftp /var/ftp/pub`　**更改目录所属主身份为ftp**  
+`[root@xy ~]# chown -Rf ftp /var/ftp/pub`　**更改目录所属主身份为ftp ✔**  
 `[root@xy ~]# ls -ld /var/ftp/pub`  
 drwxr-xr-x. 2 ftp root 6 Mar  7  2014 /var/ftp/pub  
 `[root@xy ~]# ftp 192.168.37.10` 
@@ -189,6 +189,7 @@ vuser.db: Berkeley DB (Hash, version 9, native byte-order)
 `[root@xy vsftpd]# rm -f vuser.list`  
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 `[root@xy ~]# useradd -d /var/ftproot -s /sbin/nologin virtual`   // 增加虚拟用户，提供家目录
+
     -d 设置默认家目录 	-s 设置默认Shell解释器  (命令 -参数 执行语句)    
  	
 `root@xy vsftpd]# ls -ld /var/ftproot/`  
@@ -215,7 +216,7 @@ account   required      pam_userdb.so db=/etc/vsftpd/vuser
     5  allow_writeable_chroot=YES
     14 pam_service_name=vsftpd.vu   
     17 user_config_dir=/etc/vsftpd/vusers_dir
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  
 为了使不同用户有不同权限:  
 `[root@xy ~]# cd /etc/vsftpd/vusers_dir`  
 `[root@xy vusers_dir]# touch lisi`  
@@ -232,9 +233,9 @@ ftpd_full_access --> off
 
 ### 3. 简单文件传输协议(TFTP:Trivial File Transfer Protocol)：
 #### TFTP 基于UDP(69)协议在（客户端与服务器）之间进行简单文件传输的协议
-    ?               帮助  
-    put             上传文件   
-    get             下载文件  
+    ?               帮助  ✔
+    put             上传文件   ✔
+    get             下载文件  ✔
     verbose         显示详细处理信息   
     status          显示当前状态信息  
     binary          使用二进制进行传输  
@@ -273,48 +274,48 @@ I love AnXiaohong
 
 `[root@xy ~]# cat /etc/samba/smb.conf`  
 
-        [global]		#全局参数  
-            workgroup = MYGROUP	#工作组名称  
-            server string = Samba Server Version %v	   
+    [global]		#全局参数  
+        workgroup = MYGROUP	#工作组名称  
+        server string = Samba Server Version %v	   
 			#服务器介绍信息，参数%v为显示SMB版本号  
-            log file = /var/log/samba/log.%m  	      
+        log file = /var/log/samba/log.%m  	      
 			#定义日志文件的存放位置与名称，参数%m为来访的主机名  
-            max log size = 50	
+        max log size = 50	
                     #定义日志文件的最大容量为50KB
-            security = user		#安全验证的方式，总共有4种
+        security = user		#安全验证的方式，总共有4种
 			#share：来访主机无需验证口令；比较方便，但安全性很差
 			#user：需验证来访主机提供的口令后才可以访问；提升了安全性
 			#server：使用独立的远程主机验证来访主机提供的口令（集中管理账户）
 			#domain：使用域控制器进行身份验证
-            passdb backend = tdbsam		#定义用户后台的类型，共有3种
+        passdb backend = tdbsam		#定义用户后台的类型，共有3种
 			#smbpasswd：使用smbpasswd命令为系统用户设置Samba服务程序的密码
 			#tdbsam：创建数据库文件并使用pdbedit命令建立Samba服务程序的用户
 			#ldapsam：基于LDAP服务进行账户验证
-            load printers = yes		
+        load printers = yes		
                     #设置在Samba服务启动时是否共享打印机设备
-            cups options = raw		
+        cups options = raw		
                     #打印机的选项
-        [homes]		#共享参数
-            comment = Home Directories		#描述信息
-            browseable = no		#指定共享信息是否在“网上邻居”中可见
-            writable = yes		#定义是否可以执行写入操作，与“read only”相反
-        [printers]			#打印机共享参数
-            comment = All Printers	
-            path = /var/spool/samba	#共享文件的实际路径(重要)。
-            browseable = no	
-            guest ok = no		#是否所有人可见，等同于"public"参数。
-            writable = no	
-            printable = yes  
-        [database]               #共享名称database
-            comment = Do not arbitrarily modify the database file
-            path = /home/database
-            public = no
-            writable = yes
+    [homes]		#共享参数
+        comment = Home Directories		#描述信息
+        browseable = no		#指定共享信息是否在“网上邻居”中可见
+        writable = yes		#定义是否可以执行写入操作，与“read only”相反
+    [printers]			#打印机共享参数
+        comment = All Printers	
+        path = /var/spool/samba	#共享文件的实际路径(重要)。
+        browseable = no	
+        guest ok = no		#是否所有人可见，等同于"public"参数。
+        writable = no	
+        printable = yes  
+    [database]               #共享名称database  ✔
+        comment = Do not arbitrarily modify the database file
+        path = /home/database   ✔
+        public = no
+        writable = yes
 #### 4.3 pdbedit 命令管理SMB服务程序的账户信息数据库，配置Samba服务器:  
-  -a 建立Samba账户　-x 删除Samba账户　-L 列出Samba账户　-Lv 列出账户详尽信息  
+    -a 建立Samba账户　-x 删除Samba账户　-L 列出Samba账户　-Lv 列出账户详尽信息  
 `[root@xy ~]# id xy`  
 uid=1000(xy) gid=1000(xy) groups=1000(xy)    
-`[root@xy ~]# pdbedit -a xy`         
+`[root@xy ~]# pdbedit -a xy`  ✔       
 new password:  
 retype new password:  
 Unix username:        xy  
@@ -418,9 +419,9 @@ Export list for 192.168.37.10:
 ### 6. auto自动挂载服务  
 `[root@xy ~]# yum install autofs`  
 `[root@xy ~]# vim /etc/auto.master`　　**autofs 的配置文件**  
-eg. /media /etc/iso.misc　　**挂载目录 子配置文件; 挂在目录是设备挂载位置的上一级目录**  
+`/media /etc/iso.misc`　　**挂载目录 子配置文件; 挂在目录是设备挂载位置的上一级目录**  
 `[root@xy ~]# vim /etc/iso.misc`		**子配置文件**  
-iso      -fstype=iso9660,ro,nosuid,nodev :/dev/cdrom   
+`iso      -fstype=iso9660,ro,nosuid,nodev :/dev/cdrom`   
 **挂载目录  挂载文件类型及权限                :设备名称**
 
 <div id="Bind"></div>

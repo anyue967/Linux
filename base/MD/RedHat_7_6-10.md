@@ -13,47 +13,47 @@
                                      根目录 /                  
         /root	/bin	/dev	/etc	/home	/lib	/usr	/media	/tmp
 
-/boot　　**开机所需文件——内核、开机菜单以及所需配置文件**  
-/dev　　**以文件形式存放任何设备及接口**  
-/etc　　**配置文件**  
-/home　　**用户家目录**  
-/bin　**存放单用户模式下还可以操作的命令**   
-/lib　**开机时用到的函数库**   
-/sbin　**开机过程中用到的命令**  
-/media　 **挂载设备文件的目录**  
-/opt　**第三方软件**  
-/root　**系统管理员家目录**  
-/srv	　 **网络服务的数据文件目录**  
-/tmp　 **任何人均可使用的“共享”临时目录**  
-/proc　 **虚拟文件系统**  
-/usr/local　 **用户自行安装的软件**  
-/usr/sbin　**开机不会使用的软件及脚本**  
-/usr/share　 **帮助与说明文件**  
-/var	　**经常变化文件,日志**  
-/lost+found	　**当文件系统发生错误，存放丢失的文件片段**  
+- /boot　　**开机所需文件——内核、开机菜单以及所需配置文件**  ✔  
+- /dev　　**以文件形式存放任何设备及接口**  ✔
+- /etc　　**配置文件**  ✔
+- /home　　**用户家目录**  ✔
+- /bin　**存放单用户模式下还可以操作的命令**   
+- /lib　**开机时用到的函数库**   
+- /sbin　**开机过程中用到的命令**  
+- /media　 **挂载设备文件的目录**  ✔
+- /opt　**第三方软件**  
+- /root　**系统管理员家目录**  ✔
+- /srv	　 **网络服务的数据文件目录**  
+- /tmp　 **任何人均可使用的“共享”临时目录**  
+- /proc　 **虚拟文件系统**  
+- /usr/local　 **用户自行安装的软件**  ✔
+- /usr/sbin　**开机不会使用的软件及脚本**  
+- /usr/share　 **帮助与说明文件**  
+- /var	　**经常变化文件,日志**  ✔
+- /lost+found	　**当文件系统发生错误，存放丢失的文件片段**  
 
 ### 2. 路径   
 绝对路径：从根目录(/)开始写起的文件或目录  
 相对路径：相对于当前路径的写法  `./  ../  ~`
 
 ### 3. 物理设备的命名规则  
-IDE　/dev/hd[a-d]  
-SCSI/SATA/U盘　 /dev/sd[a-p]  
-软驱　/dev/fd[0-1]  
-打印机　/dev/lp[0-15]  
-光驱　/dev/cdrom  
-鼠标　 /dev/mouse  
-磁带机　 /dev/st0   /dev/ht0   
-**注:** 主分区/扩展分区编号从1开始，到4结束　逻辑分区从编号5开始  
+- IDE　/dev/hd[a-d]   ✔ 
+- SCSI/SATA/U盘　 /dev/sd[a-p]  ✔
+- 软驱　/dev/fd[0-1]  
+- 打印机　/dev/lp[0-15]  
+- 光驱　/dev/cdrom  ✔
+- 鼠标　 /dev/mouse  
+- 磁带机　 /dev/st0   /dev/ht0   
+- **注:** **主分区/扩展分区编号从1开始，到4结束　逻辑分区从编号5开始**  
   
 硬盘设备是由大量扇区组成的，**每个扇区的容量为512字节**。其中**第一个扇区最重要**，它里面保存了**主引导记录与分区表信息**。第一个扇区,主引导记录需要占用446字节，分区表为64字节，结束符占用2字节；分区表每记录一个**分区信息需要16字节**，这样就最多只有4个分区信息可以写到第一个扇区中，这四个分区就是4个主分区。 
 
 为了解决分区个数不够,可以将第一个扇区分区表中16字节(原本写入主分区信息)的空间(称为扩展分区)拿出来指向另外一个分区表。**扩展分区不是一个真正的分区**,是一个占用16字节分区表空间的指针。所以,**用户一般会选择3个主分区加1个扩展分区,在扩展分区中建立数个逻辑分区**。
  
 ### 4. 文件系统与数据资料
-   Ext3：日志文件系统  
-   Ext4：Ext3改进版,RHEL6系统默认文件管理系统,支持存储容量高达1EB  
-   XFS：高性能的日志文件系统,RHEL7默认文件管理系统,最大支持存储容量18EB  
+- Ext3：日志文件系统  
+- Ext4：Ext3改进版,RHEL6系统默认文件管理系统,支持存储容量高达1EB  
+- XFS：高性能的日志文件系统,RHEL7默认文件管理系统,最大支持存储容量18EB  
 
 ### 5. 挂载硬件设备 
 **注：** mount -a 会自动检查/etc/fstab文件有无疏漏的挂载设备，若有则自动进行挂载
@@ -78,9 +78,10 @@ SCSI/SATA/U盘　 /dev/sd[a-p]
 `[root@xy ~]# umount /dev/sdb2`　**umount [设备文件/挂在目录]**  
 ### 7. 分区-格式化-挂载:  
 #### fdisk    
--m **查看全部可用参数**　-n **添加新的分区**　-d **删除某个分区信息** 　
--q **不保存退出**　-l **列出所以可用的分区类型**　-t **改变某个分区的信息** 　　　
--p **查看分区信息**　-w **保存并退出**     
+    -m 查看全部可用参数　-n 添加新的分区　
+    -d 删除某个分区信息　-q 不保存退出　  
+    -l ✔列出所以可用的分区类型　-t ✔改变某个分区的信息　　　
+    -p ✔查看分区信息　-w 保存并退出   
  
 #### 7.1 分区： 
 `[root@xy ~]# fdisk /dev/sdb`  
@@ -253,9 +254,9 @@ UUID=28d7b2f5-a322-4990-ab6c-5936d156fce7 /boot  xfs       defaults        1 2
 /dev/sdb1                          /newFS        xfs       defaults        0 0    
 /dev/sdb2                          swap          swap      defaults        0 0    
 
-### 9. 删除手动增加的交换分区swap  
-`[root@xy ~]# /sbin/swapoff /dev/sdb2`
-`[root@xy ~]# vim /etc/fstab` 
+### 9. 删除手动增加的交换分区swap    
+`[root@xy ~]# /sbin/swapoff /dev/sdb2`  
+`[root@xy ~]# vim /etc/fstab`   
 /dev/sdb2    swap     swap     defaults       0 0 　**删除**  
 `[root@xy ~]# swapon -s`  
 Filename        Type    Size  Used  Priority  
@@ -263,7 +264,7 @@ Filename        Type    Size  Used  Priority
 
 <div id="uquota"></div>
 ### 10. 磁盘容量配额技术  
-UUID=28d7b2f5-a322-4990-ab6c-5936d156fce7 /boot    xfs    defaults,uquota 1 2 　
+    UUID=28d7b2f5-a322-4990-ab6c-5936d156fce7 /boot    xfs    defaults,uquota 1 2 　
 **配置/etc/fstab,使/boot目录支持uquota,磁盘容量配额技术** 
  
 `[root@xy ~]# reboot`  
@@ -275,7 +276,7 @@ UUID=28d7b2f5-a322-4990-ab6c-5936d156fce7 /boot    xfs    defaults,uquota 1 2 �
 `[root@xy ~]# xfs_quota -x -c report /boot`　**xfs_quota -x -c**  
 User quota on /boot (/dev/sda1)	  Blocks  
 User ID Used Soft Hard Warn/Grace  
------------ ----------------------------------------------  
+`----------- ----------------------------------------------`  
 root 95084   0     0    00 [--------]  
 tom  0       3072  6144 00 [--------]  
 `[root@xy ~]# su - tom`  
@@ -306,30 +307,37 @@ dd: error writing '/boot/tom': Disk quato exceeded
 8388608 bytes (8.4 MB) copied, 0.0238044s, 313MB/s  
 
 ### 11. 创建链接文件ln  
--s **创建符号链接(不带-s,默认创建硬链接)**　  -f **强制创建文件/目录的链接** 　
--i **覆盖前先询问** 　 -v **显示创建链接的过程**  
+    -s **创建符号链接(不带-s,默认创建硬链接)**✔　  
+    -f **强制创建文件/目录的链接** 　✔
+    -i **覆盖前先询问** 　 
+    -v **显示创建链接的过程**  
 
 <div id="RAID"></div>
 ### 12. RAID与LVM磁盘阵列技术  
     RAID(Redundant Array of Independent Disks,独立冗余磁盘阵列)
 
-    RAID 0:把多块物理硬件设备(至少2块)通过硬件或软件凡事串联在一起,组成一个大的卷组,提升了硬盘数据的吞吐量,但不具备数据备份和错误修复能力  
+    RAID 0:把多块物理硬件设备(至少2块)通过硬件或软件凡事串联在一起,组成一个大的卷组,
+    提升了硬盘数据的吞吐量,但不具备数据备份和错误修复能力  
 ![RAID 0](../img/RAID0.png)
 
-    RAID 1:数据写到多块硬盘设备上,当某一块硬盘发生故障后,一般会立即以热交换方式来恢复数据的正常使用,但硬盘的使用率却下降了,只有33%左右    
+    RAID 1:数据写到多块硬盘设备上,当某一块硬盘发生故障后,一般会立即以热交换方式来恢复数据的正常使用,
+    但硬盘的使用率却下降了,只有33%左右 ✔   
 ![RAID 1](../img/raid1.jpg)  
 
-    RAID 5:将硬盘设备的数据奇偶校验信息保存到除自身外每一块硬盘设备上,当硬盘出现问题,通过奇偶校验信息来尝试重建损坏的数据  
+    RAID 5:将硬盘设备的数据奇偶校验信息保存到除自身外每一块硬盘设备上,当硬盘出现问题,
+    通过奇偶校验信息来尝试重建损坏的数据  ✔
 ![RAID 5](../img/raid5.gif)  
  
     RAID 10：RAID10=RAID 1 + RAID 0
 ![RAID 10](../img/raid-10-1024x508.png)     
     
 #### 12.1 部署磁盘阵列RAID 10:  
-**mdadm [模式] <RAID设备名称> [选项][成员设备名称]**　
--a **检测设备名称**　-n **指定设备数量**　 -l **指定RAID级别**　-C **创建**　
--v **显示过程**　-f **模拟设备损坏**　-r **移除设备** 　 -Q **查看摘要信息**　
--D **查看详细信息**　-S **停止RAID磁盘阵列**  　
+    mdadm [模式] <RAID设备名称> [选项][成员设备名称]　
+    -a 检测设备名称　  -n 指定设备数量 ✔　 
+    -l 指定RAID级别　-C 创建 ✔
+    -v 显示过程　    -f 模拟设备损坏　
+    -r 移除设备 　   -Q 查看摘要信息　
+    -D 查看详细信息 ✔　  -S 停止RAID磁盘阵列  　
  
 ##### 1) 创建 RAID 10:
 `[root@xy ~]# mdadm -Cv /dev/md0 -a yes -n 4 -l 10 /dev/sdc /dev/sdd /dev/sde /dev/sdf`                **名字**                      
@@ -592,13 +600,13 @@ Number Major Minor RaidDevice Status
 ![LVM图示](../img/逻辑卷.png)
 
 #### 13.1 常用LVM部署命令  
-功能　PV(物理卷管理)　VG(卷组管理)　LV(逻辑卷管理)  
-扫描　pvscan　vgscan　lvscan   
-建立　pvcreate　vgcreate　lvcreate  
-显示　pvdisplay　vgdisplay　lvdisplay  
-删除　pvremove　vgremove　lvremove  
-扩展　vgextend　lvextend  
-缩小　vgreduce　lvreduce  
+- 功能　PV(物理卷管理)　VG(卷组管理)　LV(逻辑卷管理)  
+- 扫描　pvscan　vgscan　lvscan   
+- 建立　pvcreate　vgcreate　lvcreate  
+- 显示　pvdisplay　vgdisplay　lvdisplay  
+- 删除　pvremove　vgremove　lvremove  
+- 扩展　vgextend　lvextend  
+- 缩小　vgreduce　lvreduce  
 
 #### 13.2 创建LVM: PV -> VG -> LV -> mkfs.ext4 /dev/storage/vo -> monut
 ##### 1) pvcrate 创建物理卷：
@@ -652,8 +660,9 @@ Number Major Minor RaidDevice Status
   Free  PE / Size       10238 / 39.99 GiB  
   VG UUID               pjR9cJ-VoyM-TZsz-NdMb-s05a-0VQZ-wHhEBo 
 ##### 4) lvcrate 创建逻辑卷：   
-`[root@xy ~]# lvcreate -n vo -l 37 storage`　**创建逻辑卷 lvcreate**    
--L **以容量为单位**　-l **以基本单元4MB为单位**  
+`[root@xy ~]# lvcreate -n vo -l 37 storage`　**从卷组里边 创建逻辑卷 lvcreate**    
+
+    -L **以容量为单位**　-l **以基本单元4MB为单位**  
 ##### 5) lvdisplay 显示逻辑卷：
   Logical volume "vo" created  
 `[root@xy ~]# lvdisplay`　**显示 lvdisplay**               
@@ -985,7 +994,7 @@ Do you really want to remove active logical volume vo? [y/n]: y
     POSTROUTING 　　在进行路由选择后处理数据包 
 
 #### 17.3 动作：
-ACCEPT　REJECT(拒绝请求，同时返回拒绝信息)　LOG　DROP(丢包，不响应)  
+    ACCEPT　REJECT(拒绝请求，同时返回拒绝信息)　LOG　DROP(丢包，不响应)  
 
 `[root@xy ~]# iptables -L`　**-L 查看规则链 Look**  
 Chain INPUT (policy ACCEPT)  
@@ -1007,7 +1016,7 @@ Chain OUTPUT (policy ACCEPT)
 target     prot opt source               destination                             
 ........省略部分输出信息........  
 
-`[root@xy ~]# iptables -P INPUT DROP`　**iptables -P默认策略 INPUT规则链 DROP动作**  
+`[root@xy ~]# iptables -P INPUT DROP`　**iptables -P参数默认策略 INPUT规则链 DROP动作**  
 `[root@xy ~]# iptables -L`  
 Chain INPUT (policy DROP)    
 ........省略部分输出信息........  
@@ -1346,7 +1355,7 @@ There is a screen on:
 
 <div id="Apache"></div>
 ### 22. Apache 服务部署静态网站
-+ Web 服务程序:IIS Nginx Apache  
++ Web 服务程序:IIS、Nginx、Apache  
 `[root@xy ~]# yum install httpd`  
 `[root@xy ~]# systemctl start httpd`  
 `[root@xy ~]# systemctl enable httpd`  
@@ -1359,15 +1368,15 @@ There is a screen on:
 
 `[root@xy ~]# vim /etc/httpd/conf/httpd.conf` 
  
-    ServerRoot                   服务目录  
+    ServerRoot                   服务目录  ✔
     ServerAdmin                  管理员邮箱  
     User                         运行服务的用户  
     Group                        运行服务的用户组  
     ServerName                   网站服务器的域名  
-    DocumentRoot                 网站数据目录  
+    DocumentRoot                 网站数据目录  ✔
     Directory                    网站数据目录的权限  
-    Listen                       监听IP与端口号  
-    DirectoryIndex               默认索引页面  
+    Listen                       监听IP与端口号  ✔
+    DirectoryIndex               默认索引页面  ✔
     ErrorLog                     错误日志文件  
     CustomLog                    访问日志文件   
     Timeout                      网页超时时间,默认300s  
@@ -1398,8 +1407,8 @@ drwxr-xr-x. root root system_u:object_r:httpd_sys_content_t:s0 /var/www/html/
 drwxr-xr-x. root root unconfined_u:object_r:home_root_t:s0 /home/wwwroot/  
 
 #### 22.3 semanage [参数] [选项] [文件]
--l **用于查询**　-a **用于添加**　-m **用于修改**　-d **用于删除**  
-**semanage fcontext -a -t 用于添加新的SELinux安全上下文**     
+    -l **用于查询**　-a **用于添加**　-m **用于修改**　-d **用于删除**  
+    semanage fcontext -a -t 用于添加新的SELinux安全上下文 ✔     
 `[root@xy ~]# semanage fcontext -a -t httpd_sys_content_t /home/wwwroot`    
 `[root@xy ~]# semanage fcontext -a -t httpd_sys_content_t /home/wwwroot/*`  
 `[root@xy ~]# restorecon -Rv /home/wwwroot/`　**restorcon -Rv 更新安全上下文** 
@@ -1412,7 +1421,7 @@ drwxr-xr-x. root root unconfined_u:object_r:home_root_t:s0 /home/wwwroot/
 #### 22.4 个人用户主页功能  
 `[root@xy ~]# vim /etc/httpd/conf.d/userdir.conf`   
    #UserDir disabled  
-   UserDir public_html　　去掉#   网站在用户家目录中保存的名称 
+   UserDir public_html　　24行 去掉#   网站在用户家目录中保存的名称 
  
 `[root@xy ~]# su - xy`  
 `[xy@xy ~]$ mkdir public_html`  
@@ -1442,22 +1451,22 @@ Adding password for user xy
     利用该功能可以把一台物理服务器分割为多个"虚拟服务器",VPS共享物理服务器硬件
     资源,Apache的VPS是基于用户请求不同IP、主机域名、端口号,实现提供多个网站同时为外部提供访问服务技术  
 ##### 1. 基于多个IP地址(192.168.37.10 ; 192.168.37.20 ; 192.168.37.30)  
-`[root@xy ~]# mkdir -p /home/wwwroot/30`  
-`[root@xy ~]# echo "IP:192.168.37.30" > /home/wwwroot/10/index.html`  
+`[root@xy ~]# mkdir -p /home/wwwroot/10`  
+`[root@xy ~]# echo "IP:192.168.37.10" > /home/wwwroot/10/index.html`  
 `[root@xy ~]# vim /etc/httpd/conf/httpd.conf` 
   
-        <VirtualHost 192.168.37.30>  
-        <DocumentRoot "/home/wwwroot/30">  
+        <VirtualHost 192.168.37.10>  
+        <DocumentRoot "/home/wwwroot/10">  
         ServerName tech.xy.com  
-        <Directory "/home/wwwroot/30">  
+        <Directory "/home/wwwroot/10">  
         AllowOverride None  
         Require all granted  
         </Directory>  
         </VirtualHost>   
 `[root@xy ~]# systemctl restart httpd`  
 `[root@xy ~]# semanage fcontext -a -t httpd_sys_content_t /home/wwwroot`  
-`[root@xy ~]# semanage fcontext -a -t httpd_sys_content_t /home/wwwroot/30`  
-`[root@xy ~]# semanage fcontext -a -t httpd_sys_content_t /home/wwwroot/30/*`  
+`[root@xy ~]# semanage fcontext -a -t httpd_sys_content_t /home/wwwroot/10`  
+`[root@xy ~]# semanage fcontext -a -t httpd_sys_content_t /home/wwwroot/10/*`  
 `[root@xy ~]# restorecon -Rv /home/wwwroot`  
 
 ##### 2. 基于主机域名(192.168.37.10 www.xy.com bbs.xy.com tech.xy.com)  
@@ -1467,12 +1476,12 @@ Adding password for user xy
         ::1 localhost localhost.localdomain localhost6 localhost6.localdomain6  
         192.168.37.10 www.xy.com bbs.xy.com tech.xy.com  
 
-`[root@xy ~]# mkdir -p /home/wwwroot/tech`
+`[root@xy ~]# mkdir -p /home/wwwroot/www`
   
     <VirtualHost 192.168.37.10>  
-	DocumentRoot "/home/wwwroot/tech"  
+	DocumentRoot "/home/wwwroot/www"  
 	ServerName tech.xy.com  
-	<Directory "/home/wwwroot/tech">  
+	<Directory "/home/wwwroot/www">  
 	AllowOverride None  
 	Require all granted  
 	</Directory>  
@@ -1485,23 +1494,23 @@ Adding password for user xy
 `[root@xy ~]# restorecon -Rv /home/wwwroot`  
 
 ##### 3. 基于端口号80 443 8080比较合理  (测试:6111 6222)  
-`[root@xy ~]# mkdir -p /home/wwwroot/6222`
-`[root@xy ~]# echo "port:6222" > /home/wwwroot/6222/index.html`
+`[root@xy ~]# mkdir -p /home/wwwroot/6111`
+`[root@xy ~]# echo "port:6111" > /home/wwwroot/6111/index.html`
 `[root@xy ~]# vim /etc/httpd/conf/httpd.conf` 
 
-	    Listen 6222  
-    	<VirtualHost 192.168.37.10:6222>  
-    	DocumentRoot "/home/wwwroot/6222"  
+	 Listen 6222  
+    	<VirtualHost 192.168.37.10:6111>  
+    	DocumentRoot "/home/wwwroot/6111"  
     	ServerName www.xy.com  
-    	<Directory "/home/wwwroot/6222">  
+    	<Directory "/home/wwwroot/6111">  
     	AllowOverride None  
     	Require all granted  
     	</Directory>  
     	</VirtualHost>  
 
 `[root@xy ~]# semanage fcontext -a -t httpd_sys_content_t /home/wwwroot`  
-`[root@xy ~]# semanage fcontext -a -t httpd_sys_content_t /home/wwwroot/6222`  
-`[root@xy ~]# semanage fcontext -a -t httpd_sys_content_t /home/wwwroot/6222/*`  
+`[root@xy ~]# semanage fcontext -a -t httpd_sys_content_t /home/wwwroot/6111`  
+`[root@xy ~]# semanage fcontext -a -t httpd_sys_content_t /home/wwwroot/6111/*`  
 `[root@xy ~]# restorecon -Rv /home/wwwroot`  
 `[root@xy ~]# semanage port -l | grep http` **semanage port -l 查询端口**
   
@@ -1510,12 +1519,12 @@ Adding password for user xy
 	http_port_t                  tcp      80, 81, 443, 488, 8008, 8009, 8443, 9000  
 	pegasus_http_port_t          tcp      5988  
 	pegasus_https_port_t         tcp      5989  
-`[root@xy ~]# semanage port -a -t http_port_t -p tcp 6222`  **semanage port -a -t**  
+`[root@xy ~]# semanage port -a -t http_port_t -p tcp 6111`  **semanage port -a -t**  
 `[root@xy ~]# semanage port -l | grep http` 
  
 	http_cache_port_t    tcp   8080, 8118, 8123, 10001-10010  
 	http_cache_port_t    udp   3130  
-	http_port_t          tcp   6222, 6111, 80, 81, 443, 488, 8008, 8009, 8443, 9000  
+	http_port_t          tcp   6111, 80, 81, 443, 488, 8008, 8009, 8443, 9000  
 	pegasus_http_port_t  tcp   5988  
 	pegasus_https_port_t tcp   5989  
 `[root@xy ~]# systemctl restart httpd`  
