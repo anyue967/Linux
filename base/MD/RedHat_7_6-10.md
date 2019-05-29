@@ -674,7 +674,7 @@ Number Major Minor RaidDevice Status
   LV Write Access        read/write  
   LV Creation host, time localhost, 2018-07-06 16:44:30 +0800  
   LV Status              available  
-  # open                 0  
+  `# open                 0`  
   LV Size                2.02 GiB  
   Current LE             516  
   Segments               1  
@@ -691,7 +691,7 @@ Number Major Minor RaidDevice Status
   LV Write Access        read/write
   LV Creation host, time localhost, 2018-07-06 16:44:32 +0800   
   LV Status              available  
-  # open                 1  
+  `# open                 1`  
   LV Size                27.49 GiB  
   Current LE             7038  
   Segments               1  
@@ -708,7 +708,7 @@ Number Major Minor RaidDevice Status
   LV Write Access        read/write  
   LV Creation host, time xy.com, 2018-07-10 10:03:43 +0800  
   LV Status              available  
-  # open                 0  
+  `# open                 0`  
   LV Size                148.00 MiB  
   Current LE             37  
   Segments               1  
@@ -870,7 +870,7 @@ drwx------. 2 root root 12288 Jul 10 13:52 lost+found
   LV snapshot status     source of  
                          SNAP [active]  
   LV Status              available  
-  # open                 1  
+  `# open                 1`  
   LV Size                148.00 MiB  
   Current LE             37  
   Segments               1  
@@ -888,7 +888,7 @@ drwx------. 2 root root 12288 Jul 10 13:52 lost+found
   LV Creation host, time xy.com, 2018-07-10 14:00:46 +0800  
   LV snapshot status     active destination for vo  
   LV Status              available  
-  # open                 0  
+  `# open                 0`  
   LV Size                148.00 MiB  
   Current LE             37  
   COW-table size         148.00 MiB  
@@ -916,7 +916,7 @@ drwx------. 2 root root 12288 Jul 10 13:52 lost+found
   LV snapshot status     source of  
                          SNAP [active]  
   LV Status              available  
-  # open                 1  
+  `# open                 1`  
   LV Size                148.00 MiB  
   Current LE             37  
   Segments               1  
@@ -934,7 +934,7 @@ drwx------. 2 root root 12288 Jul 10 13:52 lost+found
   LV Creation host, time xy.com, 2018-07-10 14:00:46 +0800  
   LV snapshot status     active destination for vo  
   LV Status              available  
-  # open                 0  
+  `# open                 0`  
   LV Size                148.00 MiB  
   Current LE             37  
   COW-table size         148.00 MiB  

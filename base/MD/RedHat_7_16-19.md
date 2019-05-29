@@ -5,18 +5,16 @@
 * [无人值守安装服务](#无人值守安装)
 
 <div id="Squid"></div>
-### 1. 使用Squid部署代理缓存服务  
-+ Squid 替代用户向网站服务器请求页面数据并进行缓存,当用户再次再请求相同数据,则可以将
-存储服务器本地数据交付给用户,减少了用户等待时间,支持HTTP、FTP、SSL等多种协议  
-+ Squid分为正向代理 与 反向代理: 
-    - 正向代理:用户(局域网)-->Squid-->网站资源,以及基于ACL功能对用户访问网站进行限制,具体分为标准代理模式 与 透明代理模式,标准模式是把网站数据缓存到本地服
-务器上,提高数据资源再次访问时的效率,但用户必须填写代理服务器IP与端口;透明模式则不需要  
+### 1. 使用Squid部署代理缓存服务    
++ Squid 替代用户向网站服务器请求页面数据并进行缓存,当用户再次再请求相同数据,则可以将存储服务器本地数据交付给用户,减少了用户等待时间,支持HTTP、FTP、SSL等多种协议  
++ Squid分为正向代理 与 反向代理:   
+    - 正向代理:用户(局域网)-->Squid-->网站资源,以及基于ACL功能对用户访问网站进行限制,具体分为标准代理模式 与 透明代理模式,标准模式是把网站数据缓存到本地服务器上,提高数据资源再次访问时的效率,但用户必须填写代理服务器IP与端口;透明模式则不需要    
 ![Squid正向代理图示](../img/Squid正向代理.jpg)  
     - 反向代理:让多节点主机反向缓存网站数据 服务器机房(多节点主机-->Squid服务器-->Internet-->用户)   
 ![Squid反向代理图示](../img/Squid反向代理.jpg)    
 + 测试设备:  
-   - Linux主机(**内网卡:仅主机模式192.168.37.10，外网卡:桥接模式DHCP**)    
-   - Windows主机(**网卡:仅主机模式192.168.37.20**) 
+   - Linux主机(**内网卡:仅主机模式192.168.37.10，外网卡:桥接模式DHCP**)      
+   - Windows主机(**网卡:仅主机模式192.168.37.20**)   
    
 `[root@xy ~]# nmtui` 					**GUI下配置网卡参数**  
 `[root@xy ~]# nmcli connection show`  
@@ -78,36 +76,37 @@ ln -s '/usr/lib/systemd/system/squid.service' '/etc/systemd/system/multi-user.ta
 `[root@xy ~]# iptables -t nat -A PREROUTING -s 192.168.37.0/24 -o eno33554968 -j SNAT --to 桥接网卡IP`  
  
 <div id="iSCSI"></div>
-### 2. 使用iSCSI(Internet Small Computer System Interface)  
-+ IDE(成熟稳定,价格便宜并行传输接口) 
-+ SATA(传输速度更快,数据校验更完整串行传输接口)
-+ SCSI(计算机和硬盘、光驱等设备间系统级接口通用标准,系统资源占用率低、转速快、传输速度快)
-+ 基于TCP/IP协议和SCSI接口协议的iSCSI是将SCSI接口与以太网技术结合的新型存储技术,可以来在网络中传输SCSI接口命令和数据,
-+ 需要网卡传输,iSCSI-HBA网卡,该网卡连接SCSI接口或者FC(光纤通道)总线和内存,用于主机之间交换存储数据
-### 2.1 配置iSCSI服务端  
-#### 2.1.2 创建RAID 5磁盘阵列:  
-`[root@xy ~]# mdadm -Cv /dev/md0 -n 3 -l 5 -x 1 /dev/sdb /dev/sdc /dev/sdd /dev/sde`  
-`[root@xy ~]# mdadm -D /dev/md0` 				**查看设备详细信息**  
-#### 2.1.3 安装iSCSI服务端(192.168.37.1)： 
-`[root@xy ~]# yum -y install targetd targetcli`    
-`[root@xy ~]# systemctl restart targetd`  
-`[root@xy ~]# systemctl enable targetd`  
-ln -s '/usr/lib/systemd/system/targetd.service' '/etc/systemd/system/multi-user.target.wants/targetd.service'  
-+++++++++++++++++++++++++++++++++++++++++++++++++  +++++  
-`[root@xy ~]# targetcli`       	**交互式配置界面**  
+### 2. 使用iSCSI(Internet Small Computer System Interface)    
++ IDE(成熟稳定,价格便宜并行传输接口)   
++ SATA(传输速度更快,数据校验更完整串行传输接口)  
++ SCSI(计算机和硬盘、光驱等设备间系统级接口通用标准,系统资源占用率低、转速快、传输速度快)  
++ 基于TCP/IP协议和SCSI接口协议的iSCSI是将SCSI接口与以太网技术结合的新型存储技术,可以来在网络中传输SCSI接口命令和数据;  
++ 需要网卡传输,iSCSI-HBA网卡,该网卡连接SCSI接口或者FC(光纤通道)总线和内存,用于主机之间交换存储数据  
+### 2.1 配置iSCSI服务端    
+#### 2.1.2 创建RAID 5磁盘阵列:    
+`[root@xy ~]# mdadm -Cv /dev/md0 -n 3 -l 5 -x 1 /dev/sdb /dev/sdc /dev/sdd /dev/sde`    
+`[root@xy ~]# mdadm -D /dev/md0` 				**查看设备详细信息**   
+#### 2.1.3 安装iSCSI服务端(192.168.37.1)：   
+`[root@xy ~]# yum -y install targetd targetcli`      
+`[root@xy ~]# systemctl restart targetd`    
+`[root@xy ~]# systemctl enable targetd`    
+ln -s '/usr/lib/systemd/system/targetd.service' '/etc/systemd/system/multi-user.target.wants/targetd.service'    
++++++++++++++++++++++++++++++++++++++++++++++++++++++++     
+ 
+`[root@xy ~]# targetcli`       	**交互式配置界面**    
 Warning: Could not load preferences file /root/.targetcli/prefs.bin.  
 targetcli shell version 2.1.fb34  
-Copyright 2011-2013 by Datera, Inc and others.  
-For help on commands, type 'help'.  
-/> **ls**  
-o- / ..................................................................... [...]  
-  o- backstores .......................................................... [...]  
-  | o- block .............................................. [Storage Objects: 0]  
-  | o- fileio ............................................. [Storage Objects: 0]  
-  | o- pscsi .............................................. [Storage Objects: 0]  
-  | o- ramdisk ............................................ [Storage Objects: 0]  
-  o- iscsi ........................................................ [Targets: 0]  
-  o- loopback ..................................................... [Targets: 0]  
+Copyright 2011-2013 by Datera, Inc and others.    
+For help on commands, type 'help'.    
+/> **ls**    
+o- / ..................................................................... [...]    
+  o- backstores .......................................................... [...]    
+  | o- block .............................................. [Storage Objects: 0]    
+  | o- fileio ............................................. [Storage Objects: 0]    
+  | o- pscsi .............................................. [Storage Objects: 0]    
+  | o- ramdisk ............................................ [Storage Objects: 0]    
+  o- iscsi ........................................................ [Targets: 0]    
+  o- loopback ..................................................... [Targets: 0]    
 
 > **cd /backstores/block**           共享设备位置  
 /backstores/block> **create disk0 /dev/md0**  
@@ -201,14 +200,14 @@ UUID="b6b6d578-3ba5-450b-b967-d1a81a71d600   /iscsi   xfs   defaults,_netdev   0
 + 系统安全-->管理工具-->iSCSI发起程序-->目标填写iSCSI服务端IP-->快速连接-->配置-->更改-->填写服务端ACL所定义的名称  
 
 <div id="MangoDB"></div>
-### 3. 使用MariaDB数据库管理系统  
-`[root@xy ~]# yum -y install mariadb mariadb-server`  
-`[root@xy ~]# systemctl restart mariadb`  
-`[root@xy ~]# systemctl enable mariadb`  
-ln -s '/usr/lib/systemd/system/mariadb.service' '/etc/systemd/system/multi-user.target.wants/mariadb.service'  
+### 3. 使用MariaDB数据库管理系统    
+`[root@xy ~]# yum -y install mariadb mariadb-server`    
+`[root@xy ~]# systemctl restart mariadb`    
+`[root@xy ~]# systemctl enable mariadb`    
+ln -s '/usr/lib/systemd/system/mariadb.service' '/etc/systemd/system/multi-user.target.wants/mariadb.service'    
 * 数据库初始化  
-`[root@xy ~]# mysql_secure_installation`  **mariaDB初始化**  
-/bin/mysql_secure_installation: line 379: find_mysql_client: command not found  
+`[root@xy ~]# mysql_secure_installation`  **mariaDB初始化**    
+/bin/mysql_secure_installation: line 379: find_mysql_client: command not found    
 
 NOTE: RUNNING ALL PARTS OF THIS SCRIPT IS RECOMMENDED FOR ALL MariaDB  
       SERVERS IN PRODUCTION USE!  PLEASE READ EACH STEP CAREFULLY!  

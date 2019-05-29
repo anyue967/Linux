@@ -11,13 +11,13 @@
 + rpm -e fielname.rpm  
 
 <div id="vsftp"></div>
-### 1. 使用vsftpd服务传输文件  
-    FTP(File Transfer Protocol),基于C/S模式,默认端口:-21-(数据端口),22(命令端口) 
-#### 1.1 主动 被动 2种模式
-    vsftpd(very secure ftp daemon) 非常安全的FTP守护进程,  匿名开放 本地用户 
-#### 1.2 虚拟用户 3种模式 
+### 1. 使用vsftpd服务传输文件    
++ FTP(File Transfer Protocol),基于C/S模式,默认端口:-21-(数据端口),22(命令端口) 
+#### 1.1 主动 被动 2种模式  
++ vsftpd(very secure ftp daemon) 非常安全的FTP守护进程,  匿名开放 本地用户 
+#### 1.2 虚拟用户 3种模式   
    
-### 2. 服务端  
+### 2. 服务端    
 `[root@xy ~]# yum install vsftpd`  
 `[root@xy ~]# iptables -F`  
 `[root@xy ~]# service iptables save`   

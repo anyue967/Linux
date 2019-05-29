@@ -428,8 +428,9 @@ Change: 2018-07-06 12:21:08.983950168 -0400
 #### 10.6 cut   提取列 字符串  不识别空格
     -f  指定列数    -c  按字符提取   -d  分隔符
 `[root@xy ~]# head -n 2 /etc/passwd`  
-root:x:0:0:root:/root:/bin/bash  
-bin:x:1:1:bin:/bin:/sbin/nologin  
+
+    root:x:0:0:root:/root:/bin/bash  
+    bin:x:1:1:bin:/bin:/sbin/nologin  
 `[root@xy ~]# cut -d: -f 1 /etc/passwd`      　　 **按列提取文本字符**  
 root  
 bin  
@@ -566,13 +567,14 @@ diff/diff.tar.gz
     -b 将可执行binary当做text搜索　　-c 仅显示找到的行数　　　
     -i 忽略大小写                    -n 显示行号      　
     -v 反向选择，仅列出没有关键词的行  
-`[root@xy ~]# grep -n /sbin/nologin /etc/passwd`  
-1:bin:x:1:1:bin:/bin:/sbin/nologin  
-2:daemon:x:2:2:daemon:/sbin:/sbin/nologin  
-3:adm:x:3:4:adm:/var/adm:/sbin/nologin  
-4:lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin  
-5:mail:x:8:12:mail:/var/spool/mail:/sbin/nologin  
-6:operator:x:11:0:operator:/root:/sbin/nologin  
+`[root@xy ~]# grep -n /sbin/nologin /etc/passwd` 
+ 
+    1:bin:x:1:1:bin:/bin:/sbin/nologin  
+    2:daemon:x:2:2:daemon:/sbin:/sbin/nologin  
+    3:adm:x:3:4:adm:/var/adm:/sbin/nologin  
+    4:lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin  
+    5:mail:x:8:12:mail:/var/spool/mail:/sbin/nologin  
+    6:operator:x:11:0:operator:/root:/sbin/nologin  
 
 #### 12.3 find       　　文件搜索 实用  
     -name 匹配名称　　    -perm 匹配权限　　
@@ -951,11 +953,12 @@ Enter your score (0-100): 88
   barry ,Create success  
   carl ,Create success  
   duck ,Create success  
-`[root@xy test]# tail -6 /etc/passwd`  
-  andy:x:1001:1001::/home/andy:/bin/bash  
-  barry:x:1002:1002::/home/barry:/bin/bash  
-  carl:x:1003:1003::/home/carl:/bin/bash  
-  duck:x:1004:1004::/home/duck:/bin/bash  
+`[root@xy test]# tail -6 /etc/passwd` 
+
+    andy:x:1001:1001::/home/andy:/bin/bash  
+    barry:x:1002:1002::/home/barry:/bin/bash  
+    carl:x:1003:1003::/home/carl:/bin/bash  
+    duck:x:1004:1004::/home/duck:/bin/bash  
 
 `[root@xy test]# vim ipadds.txt`  
   192.168.37.10  
