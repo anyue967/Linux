@@ -6,6 +6,7 @@
 * [Bind 域名解析服务](#Bind)
 * [DHCP 服务](#DHCP)
 * [邮件系统](#Email)
+* [rsync](#rsync)
 
 + rpm -qa | grep vsftp  　**查询安装的软件**  
 + rpm -e fielname.rpm  
@@ -900,4 +901,32 @@ logout
 `[root@mail ~]# systemctl restart dovecot`  
 `[root@mail ~]# systemctl enable dovecot`  
 ln -s '/usr/lib/systemd/system/dovecot.service' '/etc/systemd/system/multi-user.target.wants/dovecot.service'  
+
+###11.rsync 同步服务：<div id="rsync"></div>  
+####11.1rsync基本使用：
+    使用格式：-a 归档模式 -v 显示同步过程 -z 传输时压缩
+    下载：
+        rsync -avz 服务器IP:/服务器目录/* /本地目录  
+        rsync -avz root@192.168.37.10:/filesrc/* /filedst
+    上传：
+        rsync -avz /本地目录/* 服务器IP:/服务器目录/
+        rsync -avz /filedst/* root@192.168.37.10:/filesrc/
+####11.2rsync + inotifywait 实现单向实时同步：
+`[root@xy ~]# yum -y install gcc*`  
+`[root@xy ~]# tar -xvf inotify-tools-3.14.tar.gz`  
+`[root@xy ~]# cd inotify-tools-3.14.tar.gz`  
+`[root@xy ~]# ./configure && make make install`   
+
+    inotifywait 命令格式：-m 始终保持监听 -r 递归查询目录 -q 只打印监控事件信息
+        inotifywait -mrq -e 监控动作1,监控动作2 /监控目录 
+        inotifywait -mrq -e create,delete /filesrc  
+    监控动作：modify,create,attrib,move,delete
+
+    #!/bin/bash  
+    Inotfiy = "inotifywait -mrq -e create,delete,modify /filesrc"
+    Rsync = "rsync -avz /filesrc/* root@192.168.37.20:/filedst"
+    $Inotfiy | while read directory event file
+    do
+	$Rsync
+    done  
 [返回目录](#back)

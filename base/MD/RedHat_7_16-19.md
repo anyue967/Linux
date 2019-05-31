@@ -275,6 +275,7 @@ success
 success  
 
 #### 3.1 基本操作  
+[mysql参考](https://www.cnblogs.com/gaojian/p/3317456.html)  
 `[root@xy ~]# mysql -u root -p`    **进入数据库**  
 Enter password:   
 Welcome to the MariaDB monitor.  Commands end with ; or \g.  
@@ -419,6 +420,8 @@ You can turn off this feature to get a quicker startup with -A
 Database changed  
 
 MariaDB [mysql]> `REVOKE SELECT,UPDATE,DELETE,INSERT ON mysql.user FROM luke@localhost;`  **移除对luke的授权 REVOKE**  
+MariaDB [(none)]> `revoke select,update,insert,delete on mysql.user from xy@localhost;`
+MariaDB [(none)]> `revoke all privileges on *.* for xy@localhost;`
 Query OK, 0 rows affected (0.01 sec)  
 
 MariaDB [mysql]> `SHOW GRANTS FOR luke@LOCALHOST;`  
@@ -451,7 +454,7 @@ Copyright (c) 2000, 2013, Oracle, Monty Program Ab and others.
 
 Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.  
 
-MariaDB [(none)]>` CREATE DATABASE xy;`  **创建数据库xy**  
+MariaDB [(none)]>` CREATE DATABASE mybook;`  **创建数据库xy**  
 Query OK, 1 row affected (0.01 sec)  
 
 MariaDB [(none)]> `SHOW databases;` 
@@ -462,11 +465,11 @@ MariaDB [(none)]> `SHOW databases;`
 	 | information_schema |  
 	 | mysql              |  
 	 | performance_schema |  
-	 | xy                 |  
+	 | mybook                |  
 	 +--------------------+  
 	 4 rows in set (0.02 sec)  
 
-MariaDB [(none)]> `use xy;`  
+MariaDB [(none)]> `use mybook;`  
 Database changed  
 MariaDB [xy]> `CREATE TABLE mybook (name char(15),price int,pages int);` **创建表单**  
 Query OK, 0 rows affected (0.03 sec)  
@@ -670,7 +673,7 @@ MariaDB [(none)]> `grant all privileges on *.* to xy@localhost identified by '12
 MariaDB [(none)]> `grant all privileges on *.* to root@localhost identified by '123456'`  
 MariaDB [(none)]> `grant all privileges on *.* to root@127.0.0.1 identified by '123456'`  
 MariaDB [(none)]> `use mysql;`  
-MariaDB [(none)]> `select user,host,password form user;`
+MariaDB [(none)]> `select user,host,password from mysql.user;`
   
 	 +------+-----------+-------------------------------------------+  
 	 | user | host      | password                                  |  
