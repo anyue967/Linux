@@ -1,8 +1,8 @@
-<div style="font-size:24px; font-weight:bold; color:black;">Linux 集群</div>
-##1.liunx集群概述：
-###1.1集群概念：
+# Linux 集群
+## 1.liunx集群概述：
+### 1.1 集群概念：  
 >一组协同工作的服务器，对外表现为一个整体，更好的利用现有资源实现服务的高度可用  
-###1.2集群的分类：
+### 1.2集群的分类：
 + LBC：负载均衡集群
     - 减轻单台服务器的压力，将用户请求分担给多台主机一起处理
     - 实现方法：
@@ -18,10 +18,10 @@
 + HPC：高性能运算集群  
 ![ARP-Level](../img/ARP-Level.png)
 
-##2.负载均衡集群(LBC)
-###2.1LVS 相关原理：
+## 2.负载均衡集群(LBC)  
+### 2.1LVS 相关原理：  
 > LVS 运行在**系统内核空间**，用户空间无法直接管理，用**IPVSADM命令行工具**管理集群服务；根据用户请求的套接字判断，分流至真实服务器的工作模块
-###2.2LVS工作模式：
+### 2.2LVS工作模式：
 + NAT ✔
     - 模式特点：
         * 集群节点，必须在一个网络中；
@@ -44,8 +44,8 @@
         * 发送方和接收方必须支持隧道功能  
         
 ![LVS工作模式](../img/LVS.png)
-###2.3LVS工作模式构建：
-####2.3.1 DR 模式构建：  
+### 2.3LVS工作模式构建： 
+#### 2.3.1 DR 模式构建：  
 + 负载调度器配置  
 `[root@xy ~]# service NetworkManager stop`  
 `[root@xy ~]# vim /etc/sysconfig/network-scripts/`  
@@ -90,7 +90,7 @@ net.ipv4.conf.lo.arp_announce = 2
 `[root@xy ~]# service httpd start`  
 ![LVS-DR](../img/LVS-DR.png)  
 
-####2.3.2 NAT 模式构建：  
+#### 2.3.2 NAT 模式构建：  
 + 负载调度器配置  
 `[root@xy ~]# vim /etc/sysctl.conf`  开启负载调度器路由转发功能  
 net.ipv4.ip_forward=1  
@@ -115,13 +115,13 @@ net.ipv4.ip_forward=1
 `[root@xy ~]# chkconfig httpd on`  
 ![LVS-NAT](../img/LVS-NAT.png)
 
-##3.集群通用算法
-###3.1静态调度算法：
+## 3.集群通用算法
+### 3.1静态调度算法：
 + **RR** 轮询算法：第一台服务器开始到N台结束，然后循环
 + **WRR** 加权算法：按权重比例实现多台主机之间进行调度
 + **SH** 源地址散列：将同一个IP用户请求，发送给同一个服务器
 + **DH** 目标地址散列：将同一个目标地址的用户请求发送给通一个真实服务器(提高缓存服务率)
-###3.2动态调度算法：
+### 3.2动态调度算法：
 + **LC**：Lest-connection，最少连接，将新的连接请求，分配给连接数最少的服务器
     - 活动连接*256 + 非活动连接
 + **WLC**：加权最少连接，特殊的LC算法，权重越大承担请求越多
@@ -131,20 +131,20 @@ net.ipv4.ip_forward=1
 + **NQ**：无需等待，特殊的SED算法，若有正是服务器的连接数等于0就直接分配不需要运算  
 + **LBLC**：特殊的DH算法，即提高缓存命中率，有考虑了服务器性能
 + **LBLCR**：LBLC+缓存，尽可能提高负载均衡和缓存命中率折中方案
-###3.3持久化连接(类似于SH优先级最高)
+### 3.3持久化连接(类似于SH优先级最高)
 + **PCC**：持久客户端连接
     - 将来自于同一个客户端的所有请求统统定向此前选定的RS，只要IP相同，分配的服务器始终相同
 + **PPC**：持久端口连接
     - 将来自于同一个客户端对同一个服务(端口)的请求，始终定向此前选定的RS
 + **PMFC**：持久防火墙标记连接
     - 将来自同一个客户端指定服务(端口)的请求，始终定向至此选定的RS，不过它可以将2个不相关的端口定义为一个集群服务
-##3.高可用集群(HAC)
-###3.1Keeplived原理：
+## 3.高可用集群(HAC)
+### 3.1Keeplived原理：
 + 热备方式：VRRP 虚拟路由冗余协议
     - 一主+多备，共用同一个IP，但优先级不同
     - 支持故障自动切换
     - 支持节点健康状态检查  
-###3.2LVS-DR+Keeplived：
+### 3.2LVS-DR+Keeplived：
 ![LVS-DR-Keepalived](../img/LVS-DR-Keepalived.png)  
 `[root@xy ~]# service NetworkManager stop`  
 `[root@xy ~]# chkconfig NetworkManager off`  
@@ -215,7 +215,7 @@ IPADDR=10.10.10.100
 NETMASK=255.255.255.0  
 `[root@xy network-scripts]# vim ifup-eth`  256行左右，注释arp命令  
 `[root@xy network-scripts]# ifup eth0:0`  
-###3.3Heartbeat+Nginx：
+### 3.3Heartbeat+Nginx：
 ![Heartbeat-Nginx](../img/Heartbeat-Nginx.png)  
 `[root@xy ~]# yum -y install pcre pcre-devel zlib zlib-devel`  10.10.10.11  
 `[root@xy nginx-1.2.6]# useradd -s /sbin/no-login -M nginx`  -M 家目录  
