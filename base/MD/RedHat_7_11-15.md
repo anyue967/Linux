@@ -11,8 +11,8 @@
 + rpm -qa | grep vsftp  　**查询安装的软件**  
 + rpm -e fielname.rpm  
 
-<div id="vsftp"></div>
-### 1. 使用vsftpd服务传输文件    
+
+### 1. 使用vsftpd服务传输文件    <div id="vsftp"></div>
 + FTP(File Transfer Protocol),基于C/S模式,默认端口:-21-(数据端口),22(命令端口) 
 #### 1.1 主动 被动 2种模式  
 + vsftpd(very secure ftp daemon) 非常安全的FTP守护进程,  匿名开放 本地用户 
@@ -188,7 +188,7 @@ ftpd_full_access --> off
 vuser.db: Berkeley DB (Hash, version 9, native byte-order)  
 `[root@xy vsftpd]# chmod 600 vuser.db`  
 `[root@xy vsftpd]# rm -f vuser.list`  
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  
 `[root@xy ~]# useradd -d /var/ftproot -s /sbin/nologin virtual`   // 增加虚拟用户，提供家目录
 
     -d 设置默认家目录 	-s 设置默认Shell解释器  (命令 -参数 执行语句)    
@@ -198,14 +198,14 @@ drwx------. 3 virtual virtual 74 Jul 12 08:55 /var/ftproot/
 `[root@xy vsftpd]# chmod -Rf 755 /var/ftproot/`  
 `[root@xy vsftpd]# ls -ld /var/ftproot/`  
 drwxr-xr-x. 3 virtual virtual 74 Jul 12 08:55 /var/ftproot/  
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  
 > 建立用于支持虚拟用户的PAM文件, vsftpd.vu PAM(可插拔认证模块)是一种验证机制,通过动态链接库和统一的API把系统提供的服务和认证方式分开,采用鉴别模块层、用接口层、应设计层三层设计方式   
 
 `[root@xy ~]# cp -a /etc/pam.d/vsftpd /etc/pam.d/vdftpd.pam`     
 `[root@xy ~]# vim /etc/pam.d/vsftpd.vu`    　　**新建虚拟用户认证 PAM 文件 vsftp.vu**
 auth      required      pam_userdb.so db=/etc/vsftpd/vuser    
 account   required      pam_userdb.so db=/etc/vsftpd/vuser    
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  
 ##### 2.5.1主配置文件 vsftpd.conf:   
 `[root@xy ~]# mkdir /etc/vsftpd/vusers_dir/`   
 `[root@xy ~]# vim /etc/vsftpd/vsftpd.conf`  
@@ -263,9 +263,8 @@ Documents        Music                 readme.txt  Videos
 `[root@xy ~]# cat readme.txt`   
 I love AnXiaohong  
 
-<div id="Samba"></div>
-### 4. 使用Samba或NFS实现文件"共享"  
-   基于**SMB**(Server Messages Block)协议,开发出SMBServer服务程序,**实现Linux与Window**s之间的文件共享变得简单  
+### 4. 使用Samba或NFS实现文件"共享"  <div id="Samba"></div>
+基于**SMB**(Server Messages Block)协议,开发出SMBServer服务程序,**实现Linux与Window**s之间的文件共享变得简单  
 ![Samba logo](../img/Samba.png)  
 
 `[root@xy ~]# yum install samba`   
@@ -380,8 +379,7 @@ iptables: Saving firewall rules to /etc/sysconfig/iptables:[  OK  ]
 #### 4.4 Window 登录方式  
  `\\服务器IP\共享名       net use * /del`  
 
-<div id="NFS"></div>
-### 5. NFS基于TCP/IP协议，用于Linux系统之间上文件资源共享 C/S
+### 5. NFS基于TCP/IP协议，用于Linux系统之间上文件资源共享 C/S <div id="NFS"></div>
 #### 5.1 服务端 192.168.37.10  
 `[root@xy ~]# yum install -y nfs-utils`  
 `[root@xy ~]# iptables -F`  
@@ -416,8 +414,7 @@ Export list for 192.168.37.10:
 `[root@xy ~]# cat /nfsfile/readme`   
 192.168.10.10:/nfsfile /nfsfile nfs defaults 0 0  
 
-<div id="autofs"></div>
-### 6. auto自动挂载服务  
+### 6. auto自动挂载服务  <div id="autofs"></div>  
 `[root@xy ~]# yum install autofs`  
 `[root@xy ~]# vim /etc/auto.master`　　**autofs 的配置文件**  
 `/media /etc/iso.misc`　　**挂载目录 子配置文件; 挂在目录是设备挂载位置的上一级目录**  
@@ -425,8 +422,7 @@ Export list for 192.168.37.10:
 `iso      -fstype=iso9660,ro,nosuid,nodev :/dev/cdrom`   
 **挂载目录  挂载文件类型及权限                :设备名称**
 
-<div id="Bind"></div>
-### 7. 使用BIND提供域名解析服务(Berkeley Internet Name Domain)  
+### 7. 使用BIND提供域名解析服务(Berkeley Internet Name Domain)  <div id="Bind"></div>
 + DNS(Domain Name System)：管理和解析(*域名 与 IP*)的对应关系，域名-->IP(正向解析)，IP-->域名(反向解析)  
 + DNS服务器:主服-masster、从服-slave、缓存服三种,DNS域名解析服务采用分布式数据结构,执行查询请求有 
 + 递归查询(必须向用户返回结果) 迭代查询(一台接一台,直到返回结果)  
@@ -498,7 +494,7 @@ Export list for 192.168.37.10:
      55 
      56 include "/etc/named.rfc1912.zones";
      57 include "/etc/named.root.key";
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  
 #### 7.1 正向解析 eg: 
 `[root@xy ~]# vim /etc/named.rfc1912.zones`   **正向解析 区域配置文件**
 
@@ -773,8 +769,8 @@ xy.american
     NS	ns.xy.com.	#域名服务器记录
     ns	IN A	106.185.25.10	#地址记录(ns.xy.com.)
     www	IN A	106.185.25.15	#地址记录(www.xy.com.)
-<div id="DHCP"></div>
-### 9. 使用DHCP动态管理主机地址  
+
+### 9. 使用DHCP动态管理主机地址  <div id="DHCP"></div>
 + DHCP(Dynamic Host Configuration Protocol):基于UDP协议仅仅在局域网内部使用提高IP利用率,提高配置效率,降低管理维护成本  
 + 作用域:完整的IP段,DHCP协议根据作用域分配IP  
 + 超级作用域:	管理处于一个物理网络中多个逻辑子网段  
@@ -823,8 +819,7 @@ xy.american
 		fixed-address 192.168.37.55;  
 	}
 
-<div id="Email"></div>
-### 10. 使用Postfix 与 Dovecot部署邮件系统  
+### 10. 使用Postfix 与 Dovecot部署邮件系统  <div id="Email"></div>
 + 电子邮件协议:
    - 简单邮件传输协议（Simple Mail Transfer Protocol，**SMTP**）：用于**发送和中转发出的电子邮件**，占用服务器的**25/TCP端口**。
    - 邮局协议版本3（**Post Office Protocol 3**）：用于将**电子邮件存储到本地主机**，占用服务器的**110/TCP**端口。
@@ -902,8 +897,8 @@ logout
 `[root@mail ~]# systemctl enable dovecot`  
 ln -s '/usr/lib/systemd/system/dovecot.service' '/etc/systemd/system/multi-user.target.wants/dovecot.service'  
 
-###11.rsync 同步服务：<div id="rsync"></div>  
-####11.1rsync基本使用：
+### 11.rsync 同步服务：<div id="rsync"></div>  
+#### 11.1rsync基本使用：
     使用格式：-a 归档模式 -v 显示同步过程 -z 传输时压缩
     下载：
         rsync -avz 服务器IP:/服务器目录/* /本地目录  
@@ -911,7 +906,7 @@ ln -s '/usr/lib/systemd/system/dovecot.service' '/etc/systemd/system/multi-user.
     上传：
         rsync -avz /本地目录/* 服务器IP:/服务器目录/
         rsync -avz /filedst/* root@192.168.37.10:/filesrc/
-####11.2rsync + inotifywait 实现单向实时同步：
+#### 11.2rsync + inotifywait 实现单向实时同步：
 `[root@xy ~]# yum -y install gcc*`  
 `[root@xy ~]# tar -xvf inotify-tools-3.14.tar.gz`  
 `[root@xy ~]# cd inotify-tools-3.14.tar.gz`  
@@ -929,4 +924,5 @@ ln -s '/usr/lib/systemd/system/dovecot.service' '/etc/systemd/system/multi-user.
     do
 	$Rsync
     done  
+    
 [返回目录](#back)
