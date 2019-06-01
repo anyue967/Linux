@@ -73,8 +73,7 @@
 11 /dev/cdrom                              /media/cdrom iso9660   defaults        0 0  
 12 /dev/sdb2								/backup		 ext4      defaults        0 0  
 
-<div id="fdisk"></div>
-### 6. 撤销挂载设备  
+### 6. 撤销挂载设备  <div id="fdisk"></div>
 `[root@xy ~]# umount /dev/sdb2`　**umount [设备文件/挂在目录]**  
 ### 7. 分区-格式化-挂载:  
 #### fdisk    
@@ -262,8 +261,7 @@ UUID=28d7b2f5-a322-4990-ab6c-5936d156fce7 /boot  xfs       defaults        1 2
 Filename        Type    Size  Used  Priority  
 /dev/dm-0                               partition 2113532 0 -1  
 
-<div id="uquota"></div>
-### 10. 磁盘容量配额技术  
+### 10. 磁盘容量配额技术  <div id="uquota"></div>
     UUID=28d7b2f5-a322-4990-ab6c-5936d156fce7 /boot    xfs    defaults,uquota 1 2 　
 **配置/etc/fstab,使/boot目录支持uquota,磁盘容量配额技术** 
  
@@ -312,8 +310,7 @@ dd: error writing '/boot/tom': Disk quato exceeded
     -i **覆盖前先询问** 　 
     -v **显示创建链接的过程**  
 
-<div id="RAID"></div>
-### 12. RAID与LVM磁盘阵列技术  
+### 12. RAID与LVM磁盘阵列技术  <div id="RAID"></div>
     RAID(Redundant Array of Independent Disks,独立冗余磁盘阵列)
 
     RAID 0:把多块物理硬件设备(至少2块)通过硬件或软件凡事串联在一起,组成一个大的卷组,
@@ -589,8 +586,7 @@ Number Major Minor RaidDevice Status
      4   8    48       2      active sync      /dev/sde   
      0   8    16       -      faulty           /dev/sdc  
 
-<div id="LVM"></div>
-### 13. LVM (Logical Volume Manager，逻辑卷管理器)  
+### 13. LVM (Logical Volume Manager，逻辑卷管理器)  <div id="LVM"></div>
 在硬盘分区和文件系统之间添加了一个逻辑层,提供了一个抽象的卷组，可以把多块硬盘进行卷合并实现对硬盘分区的**动态调整**    
 
 +   物理卷(PV) 就是真正的**物理硬盘或者分区**；  
@@ -985,8 +981,7 @@ Do you really want to remove active logical volume vo? [y/n]: y
      --dport num　　匹配目标端口号  
      --sport num　　匹配来源端口号  
 
-<div id="iptables"></div>
-#### 17.2 策略规则链[iptables]服务把用于处理或过滤流量的策略条目称为规则,多条规则可组成一个规则链,而规则链则依据数据包处理位置的不同进行分类,具体如下：
+#### 17.2 策略规则链[iptables]服务把用于处理或过滤流量的策略条目称为规则,多条规则可组成一个规则链,而规则链则依据数据包处理位置的不同进行分类,具体如下：<div id="iptables"></div>
     PREROUTING　　在进行路由选择前处理数据包  
     INPUT　　处理流入数据包  
     OUTPUT　　处理流出数据包  
@@ -1093,8 +1088,7 @@ iptables: Saving firewall rules to /etc/sysconfig/iptables:[  OK  ]
 `[root@xy ~]# iptables -I INPUT -s 192.168.10.0/24 -p tcp --dport 22 -j REJECT`  
 `[root@xt ~]# service iptables save`
 
-<div id="firewalld"></div>
-### 17.8 firewalld(Dynamic Firewall Manager of Linux system):Linux动态防火墙管理器  
+### 17.8 firewalld(Dynamic Firewall Manager of Linux system):Linux动态防火墙管理器  <div id="firewalld"></div>
 管理方式:CLI(命令行界面) 与 GUI(图形用户界面)
                              
 #### 17.8.1 firewalld中常用的区域名及策略规则:    
@@ -1272,8 +1266,7 @@ ger/ActiveConnection/2)
 `[root@xy ~]# ping 192.168.37.10`  
 **断开其中一块网卡,另一块会继续为用户提供服务** 
 
-<div id="SSH"></div>
-### 20. 配置sshd服务:    
+### 20. 配置sshd服务:    <div id="SSH"></div>
 `[root@xy ~]# vim /etc/ssh/sshd_config`   
 
     Port 22                               sshd服务默认端口  
@@ -1325,8 +1318,7 @@ and check to make sure that only the key(s) you wanted were added.
 `[root@xy ~]# vim /etc/ssh/sshd_config`   
 PasswordAuthentication no  
 
-<div id="scp"></div>
-### 21. 远程传输命令scp(secure copy) 基于SSH协议 Liunx主机之间:  
+### 21. 远程传输命令scp(secure copy) 基于SSH协议 Liunx主机之间:  <div id="scp"></div>
 
      scp [参数] 本地文件 远程用户@远程IP地址:远程目录	上传到远程主机
 
@@ -1353,8 +1345,7 @@ There is a screen on:
         3127.backup     (Attached)  
 1 Socket in /var/run/screen/S-root.  
 
-<div id="Apache"></div>
-### 22. Apache 服务部署静态网站
+### 22. Apache 服务部署静态网站  <div id="Apache"></div>
 + Web 服务程序:IIS、Nginx、Apache  
 `[root@xy ~]# yum install httpd`  
 `[root@xy ~]# systemctl start httpd`  
@@ -1528,4 +1519,5 @@ Adding password for user xy
 	pegasus_http_port_t  tcp   5988  
 	pegasus_https_port_t tcp   5989  
 `[root@xy ~]# systemctl restart httpd`  
+
 [返回目录](#back)
