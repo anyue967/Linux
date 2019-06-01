@@ -212,11 +212,11 @@ disable_functions = passthru,exec,system,chroot,scandir,chgrp,chown,shell_exec,p
  71 }  
  72   
 ………………省略部分输出信息………………  
-`[root@xy php-5.5.14]# systemctl restart nginx`
-`[root@xy php-5.5.14]# systemctl restart php-fpm`
-`[root@xy php-5.5.14 ]# cd /usr/local/src/`
-`[root@xy src]# unzip Discuz_X3.2_SC_GBK.zip`
-`[root@xy src]# rm -rf /usr/local/nginx/html/{index.html,50x.html}*`
-`[root@xy src]# mv upload/* /usr/local/nginx/html/`
-`[root@xy src]# chown -Rf www:www /usr/local/nginx/html`
-`[root@xy src]# chmod -Rf 755 /usr/local/nginx/html`
+`[root@xy php-5.5.14]# systemctl restart nginx`  
+`[root@xy php-5.5.14]# systemctl restart php-fpm`  
+`[root@xy php-5.5.14 ]# cd /usr/local/src/`  
+`[root@xy src]# unzip Discuz_X3.2_SC_GBK.zip`  
+`[root@xy src]# rm -rf /usr/local/nginx/html/{index.html,50x.html}*`  
+`[root@xy src]# mv upload/* /usr/local/nginx/html/`  
+`[root@xy src]# chown -Rf www:www /usr/local/nginx/html`  
+`[root@xy src]# chmod -Rf 755 /usr/local/nginx/html`  
