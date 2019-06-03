@@ -267,7 +267,7 @@ success
 
 #### 3.1 基本操作  
 [mysql参考](https://www.cnblogs.com/gaojian/p/3317456.html)  
-`[root@xy ~]# mysql -u root -p`    **进入数据库**  
+`[root@xy ~]# mysql -uroot -p`    **进入数据库**  
 Enter password:   
 Welcome to the MariaDB monitor.  Commands end with ; or \g.  
 Your MariaDB connection id is 10  
@@ -307,7 +307,7 @@ MariaDB [(none)]> `exit`
 Bye  
 
 ### 3.2 授予权限操作  
-`[root@xy ~]# mysql -u luke -p`       **mysql -u username -p**  
+`[root@xy ~]# mysql -uluke -p`       **mysql -uusername -p**  
 Enter password:   
 Welcome to the MariaDB monitor.  Commands end with ; or \g.  
 Your MariaDB connection id is 12  
@@ -359,7 +359,7 @@ MariaDB [(none)]> `exit`
 Bye  
 
 ### 3.3 移除权限操作  
-`[root@xy ~]# mysql -u luke -p`  
+`[root@xy ~]# mysql -uluke -p`  
 Enter password:   
 Welcome to the MariaDB monitor.  Commands end with ; or \g.  
 Your MariaDB connection id is 14  
@@ -395,7 +395,7 @@ MariaDB [mysql]> `show tables;`
 MariaDB [(none)]> `exit`  
 Bye  
 
-`[root@xy ~]# mysql -u root -p `  
+`[root@xy ~]# mysql -uroot -p `  
 Enter password:   
 Welcome to the MariaDB monitor.  Commands end with ; or \g.  
 Your MariaDB connection id is 15  
@@ -509,7 +509,7 @@ Bye
 ### 3.5 忘记密码问题解决  
 1. `service mysql stop`  
 2. `mysqld_safe --user=mysql --skip-grant-tables &`        **跳过授权表模式**  
-3. `mysql -u root -p`        **不输密码直接回车**
+3. `mysql -uroot -p`        **不输密码直接回车**
 4. `use mysql;`              **注意一定要输入分号，输入分号才能执行！！**  
 5. `update user set password=PASSWORD("123") where user ='root';` **设置新密码为123**  
 6. `exit`  
@@ -569,9 +569,9 @@ MariaDB [(none)]> `exit`
 Bye  
 
 ### 3.7 数据库的备份mysqldump  
-`[root@xy ~]# mysqldump -u root -p xy > /root/xy.dump`  
+`[root@xy ~]# mysqldump -uroot -p xy > /root/xy.dump`  
 Enter password:   
-`[root@xy ~]# mysql -u root -p`   
+`[root@xy ~]# mysql -uroot -p`   
 Enter password:   
 Welcome to the MariaDB monitor.  Commands end with ; or \g.  
 Your MariaDB connection id is 20  
@@ -601,9 +601,9 @@ MariaDB [(none)]> `exit`
 Bye  
 
 ### 3.8 数据库还原  
-`[root@xy ~]# mysql -u root -p xy < /root/xy.dump`   
+`[root@xy ~]# mysql -uroot -p xy < /root/xy.dump`   xy 是 数据库，不是密码
 Enter password:   
-`[root@xy ~]# mysql -u root -p`  
+`[root@xy ~]# mysql -uroot -p`  
 Enter password:   
 Welcome to the MariaDB monitor.  Commands end with ; or \g.  
 Your MariaDB connection id is 22  
@@ -640,7 +640,7 @@ MariaDB [xy]> `DESCRIBE mybook;`
 MariaDB [(none)]> `exit`  
 Bye  
 ### 4.0 练习:  
-`[root@Xingyue ~]# mysql -u root -p`
+`[root@Xingyue ~]# mysql -uroot -p`
 Enter password: 
 Welcome to the MariaDB monitor.  Commands end with ; or \g.  
 Your MariaDB connection id is 11  
