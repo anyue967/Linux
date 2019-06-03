@@ -7,20 +7,15 @@
 ### 1. 使用Squid部署代理缓存服务    <div id="Squid"></div>
 + Squid 替代用户向网站服务器请求页面数据并进行缓存,当用户再次再请求相同数据,则可以将存储服务器本地数据交付给用户,减少了用户等待时间,支持HTTP、FTP、SSL等多种协议  
 + Squid分为正向代理 与 反向代理:   
-    - 正向代理:用户(局域网)-->Squid-->网站资源,以及基于ACL功能对用户访问网站进行限制,具体分为标准代理模式 与 透明代理模式,标准模式是把网站数据缓存到本地服务器上,提高数据资源再次访问时的效率,但用户必须填写代理服务器IP与端口;透明模式则不需要    
+    - 正向代理:**用户(局域网)**-->Squid-->网站资源,以及基于ACL功能对用户访问网站进行限制,具体分为标准代理模式 与 透明代理模式,标准模式是把网站数据缓存到本地服务器上,提高数据资源再次访问时的效率,但用户必须填写代理服务器IP与端口；  
+    - 透明模式则不需要  
+![Squid透明模式](../img/Squid透明模式.jpg)   
 ![Squid正向代理图示](../img/Squid正向代理.jpg)  
-    - 反向代理:让多节点主机反向缓存网站数据 服务器机房(多节点主机-->Squid服务器-->Internet-->用户)   
+    - 反向代理:让多节点主机反向缓存网站数据 服务器机房(多节点主机-->Squid服务器-->Internet-->公网用户)
 ![Squid反向代理图示](../img/Squid反向代理.jpg)    
 + 测试设备:  
-   - Linux主机(**内网卡:仅主机模式192.168.37.10，外网卡:桥接模式DHCP**)      
+   - Squid服务器(**内网卡:仅主机模式192.168.37.10，外网卡:桥接模式DHCP**)      
    - Windows主机(**网卡:仅主机模式192.168.37.20**)   
-   
-`[root@xy ~]# nmtui` 					**GUI下配置网卡参数**  
-`[root@xy ~]# nmcli connection show`  
-NAME         UUID                                  TYPE            DEVICE        
-eno33554968  516ae9a1-831d-4a5e-a76a-fb74933f6436  802-3-ethernet   eno33554968   
-eno16777728  5cd38b22-b35b-474b-a7a2-a0ae8f632216  802-3-ethernet  eno16777728  
-`[root@xy ~]# nmcli con show eno33554968`    
 `[root@xy ~]# vim /etc/squid/squid.conf` 
  
     http_port 3128								监听端口 ✔
@@ -43,10 +38,6 @@ ln -s '/usr/lib/systemd/system/squid.service' '/etc/systemd/system/multi-user.ta
   
      squid_port_t                   tcp      10000, 3128, 3401, 4827  
      squid_port_t                   udp      3401, 4827  
-`[root@xy ~]# getsebool -a | grep squid` 
- 
-    squid_connect_any --> on  
-    squid_use_tproxy --> off  
 `[root@xy ~]# vim /etc/squid/squid.conf`    **Squid 提供的ACL功能**
 
     acl client src = 192.168.37.20   仅允许192.168.37.20使用Squid提供的代理服务  
@@ -59,9 +50,9 @@ ln -s '/usr/lib/systemd/system/squid.service' '/etc/systemd/system/multi-user.ta
     http_access allow client  
     http_access deny all  
 
-`[root@xy ~]# iptables -F`  
+`[root@xy ~]# iptables -F`      **透明模式**   
 `[root@xy ~]# iptables -t nat -A POSTROUTING -p udp --dport 53 -o eno33554968 -j MASQUERADE` **实现DNS地址解析服务53端口的数据转发功能**   
-`[root@xy ~]# echo "net.ipv4.ip_forwrad=1" >> /etc/sysctl.conf`  
+`[root@xy ~]# echo "net.ipv4.ip_forwrad=1" >> /etc/sysctl.conf` ** 开启路由转发功能**  
 `[root@xy ~]# sysctl -p`  
 `[root@xy ~]# net.ipv4.ip_forward = 1`  
 `[root@xy ~]# vim /etc/squid/squid.conf`  
@@ -70,10 +61,13 @@ ln -s '/usr/lib/systemd/system/squid.service' '/etc/systemd/system/multi-user.ta
     cache_dir ufs /var/spool/squid 100 16 256  
 `[root@xy ~]# squid -k parse` 		**检测主配置文件是否有错**  
 `[root@xy ~]# squid -z`                     **对服务程序透明化进行初始化**  
-`[root@xy ~]# iptables -t nat -A PREROUTING -p tcp -m tcp --dport 80 -j REDIRECT --to -ports 3128`     
 **SNAT 设置对网站80端口请求转发至Squid服务器本地3128端口**  
+`[root@xy ~]# iptables -t nat -A PREROUTING -p tcp -m tcp --dport 80 -j REDIRECT --to -ports 3128`     
 `[root@xy ~]# iptables -t nat -A PREROUTING -s 192.168.37.0/24 -o eno33554968 -j SNAT --to 桥接网卡IP`  
  
+`[root@xy ~]# vim /etc/squid/squid.conf`  
+http_port 桥接网卡 IP:80 vhost  
+cahe_peer 网站服务器 IP parent 80 0 originserver  
 ### 2. 使用iSCSI(Internet Small Computer System Interface)    <div id="iSCIS"></div>
 + IDE(成熟稳定,价格便宜并行传输接口)   
 + SATA(传输速度更快,数据校验更完整串行传输接口)  

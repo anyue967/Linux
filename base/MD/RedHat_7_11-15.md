@@ -423,18 +423,18 @@ Export list for 192.168.37.10:
 **挂载目录  挂载文件类型及权限                :设备名称**
 
 ### 7. 使用BIND提供域名解析服务(Berkeley Internet Name Domain)  <div id="Bind"></div>
-+ DNS(Domain Name System)：管理和解析(*域名 与 IP*)的对应关系，域名-->IP(正向解析)，IP-->域名(反向解析)  
++ DNS(Domain Name System)：管理和解析(*域名 与 IP*)的对应关系，**域名-->IP(正向解析)**，**IP-->域名(反向解析)  **
 + DNS服务器:主服-masster、从服-slave、缓存服三种,DNS域名解析服务采用分布式数据结构,执行查询请求有 
 + 递归查询(必须向用户返回结果) 迭代查询(一台接一台,直到返回结果)  
    - 配置Bind(Berkely Internet Name Domain)服务:  
-   - 主配置文件`/etc/named.conf`----定义bind服务程序的运行  
-   - 区域配置文件`/etc/named.rfc1912.zones`----保存域与IP所在的具体位置  
-   - 数据配置文件目录`/var/named`----保存域名与IP真实对应关系数据  
+   - **主配置文件**`/etc/named.conf`----定义bind服务程序的运行  
+   - **区域配置文件**`/etc/named.rfc1912.zones`----保存域与IP所在的具体位置  
+   - **数据配置文件目录**`/var/named`----保存域名与IP真实对应关系数据  
 ![Bind正向解析参数](../img/bind正向解析图示.jpg)    
 ![Bind反向解析](../img/bind反向解析图示.jpg)   
  
 `[root@xy ~]# yum install bind-chroot`  
-`[root@xy ~]# vim /etc/named.conf`	        **主配置文件**
+`[root@xy ~]# vim /etc/named.conf`	        **主配置文件 配置**
      
      1 //
      2 // named.conf
@@ -496,7 +496,7 @@ Export list for 192.168.37.10:
      57 include "/etc/named.root.key";
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  
 #### 7.1 正向解析 eg: 
-`[root@xy ~]# vim /etc/named.rfc1912.zones`   **正向解析 区域配置文件**
+`[root@xy ~]# vim /etc/named.rfc1912.zones`   **正向解析 区域配置文件配置**
 
     zone "xy.com" IN {  		  
        type master;  
@@ -504,7 +504,7 @@ Export list for 192.168.37.10:
        allow-update { none; };  
     };  
 
-`[root@xy named]# ls -al named.localhost`     **正向解析 数据配置文件**  
+`[root@xy named]# ls -al named.localhost`     **正向解析 数据配置文件配置**  
 -rw-r-----. 1 root named 152 Jun 21  2007 named.localhost  
 `[root@xy named]# cp -a named.localhost xy.com.zone`  
 `[root@xy named]# vim xy.com.zone`  
@@ -780,6 +780,7 @@ xy.american
 + 预约: 保证网络中特定设备总是获取到相同IP  
 `[root@xy ~]# yum install dhcp`   
 `[root@xy ~]# /etc/dhcp/dhcpd.conf`      
+`[root@xy ~]# cp -a /usr/share/doc/dhcp-4.*.*/dhcpd.conf.sample /etc/dhcp/dhcpd.conf`  模版配置文件目录  ✔
 #### 9.1 dhcpd.conf 配置:  
 #### 9.2 dhcpd服务程序配置最常见参数:  
     ddns-update-style [类型]           	DNS 服务更新类型 none interim ad-hoc  
@@ -801,14 +802,15 @@ xy.american
        
 	ddns-update-style none;  
 	ignore client-updates;  
-	subnet 192.168.10.1 netmask 255.255.255.0 {  
-          range 192.168.10.50 192.168.10.150;  
+	subnet 192.168.10.1 netmask 255.255.255.0 {  # 声明要分配的网段和子网掩码
+          range 192.168.10.50 192.168.10.150;   # 声明可用 IP 地址池  
           option subnet-mask 255.255.255.0;  
-          option domain-name-servers 192.168.10.1;       定义默认搜索域
-          option domain-name "xy.com";  
-          option routers 192.168.10.1;         定义客户端网关 
-          default-lease-time 21600;  
-          max-lease-time 43200;  
+          option domain-name-servers 192.168.10.1;       #  设置 DNS 服务器地址
+          option domain-name "xy.com";    # 设置 DNS 域
+          option routers 192.168.10.1;        # 默认网关地址 
+          option broadcast-address 192.168.10.255 # 广播地址(可不写)  
+          default-lease-time 21600;  # 默认租约  
+          max-lease-time 43200;   # 最大租约
     }  
 `[root@xy ~]# systemctl start dhcpd`   
 `[root@xy ~]# systemctl enable dhcpd`  

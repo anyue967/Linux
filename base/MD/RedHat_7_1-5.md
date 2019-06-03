@@ -23,12 +23,12 @@
 ![分区图示](../img/逻辑分区.png)    
 
 ### Linux 下的分区方案
-	1. /：　用于存放系统，划为主分区
-	2. /boot：　引导分区，划为主分区，大概200M即可；
-	3. /swap：　充当虚拟内存，划为逻辑分区，大致为电脑内存；
-	4. /home：　划为逻辑分区，用于存放用户文件；
+	1. /：　用于存放系统，划为主分区 ✔
+	2. /boot：　引导分区，划为主分区，大概200M即可； ✔
+	3. /swap：　充当虚拟内存，划为逻辑分区，大致为电脑内存； ✔
+	4. /home：　划为逻辑分区，用于存放用户文件； ✔
 	5. /tmp：　存放临时文件，可有可无，划为逻辑分区；
-
+![分区方案](../img/分区方案.png)  
 ### RPM:(红帽软件包管理器) 相当于windows 的控制面板的软件管理 <div id="RPM"></div>
     rpm -ivh filename.rpm　　安装软件  ✔
     rpm -e filename.rpm　　　卸载软件 ✔
@@ -130,6 +130,14 @@ Fri Jul  6 10:49:07 EDT 2018
 187         
 `[root@xy ~]# reboot`   
 `[root@xy ~]# poweroff`  
+##### CentOS 6.x  
+`[root@xy ~]# ntpd -p`  时间同步  
+`[root@xy ~]# /etc/sysconfig/clock`  修改时区  
+`[root@xy ~]# /etc/sysconfig/il8n`  修改语言  
+##### CentOS 7.x  
+`[root@xy ~]# chronyc source`  时间同步  
+`[root@xy ~]#timedatectl set-timezone Asia/Shanghai`  修改时区  
+`[root@xy ~]# localectl set-locale LANG=zh_UTF-8`  修改语言  
 
 #### 7.4 wget  
     -b 后台下载         -P 下载至指定目录
@@ -561,7 +569,8 @@ diff/diff.tar.gz
     6、*.Z 用 uncompress 解压
     7、*.tar.Z 用tar -xZf 解压
     8、*.rar 用 unrar e解压
-    9、*.zip 用 unzip 解压
+    9、*.zip 用 unzip 解压 unzip -d /tmp/ ana.zip  解压 zip
+    10、zip ana.zip anaconda-ks.cfg   zip 压缩命令
 [tar相关命令参考](https://www.cnblogs.com/lhm166/articles/6604852.html)  
 #### 12.2 grep     　　提取行    字符串搜索常用！！！！  
     -b 将可执行binary当做text搜索　　-c 仅显示找到的行数　　　
@@ -1264,7 +1273,7 @@ ps: /usr/bin/ps /usr/share/man/man1/ps.1.gz /usr/share/man/man1p/ps.1p.gz
 [RHEL-7-yum优先级设置-2](https://blog.csdn.net/conling_/article/details/70399694)  
 
 +   [umask 命令参考](https://www.cnblogs.com/sench/p/8933638.html)    
-    - 若用户创建一个文件，则**文件的默认访问权限**为 `-rw-rw-rw-` ，创建目录的默认权限 `drwxrwxrwx` ，而umask值则表明了需要**从默认权限中去掉哪些权限**来成为最终的默认权限值。
+    - 若用户创建一个文件，则**文件的默认访问权限**为 `-rw-rw-rw-` ，创建目录的默认权限 `drwxrwxrwx` ，而**umask**值则表明了需要**从默认权限中去掉哪些权限**来成为最终的默认权限值。
 +   文件系统命令补充：
     -   查看分区概览信息：`dumpe2fs -h /dev/sd*`
     -   统计文件占用空间(准确)  /   查看空间占用大小：`du -ahs` /   `df -ahT`
@@ -1272,14 +1281,21 @@ ps: /usr/bin/ps /usr/share/man/man1/ps.1.gz /usr/share/man/man1p/ps.1p.gz
         *   显示磁盘信息：`fdisk -l`
         *   更改分区系统的ID：`fdisk -t`
     -   文件系统修复命令：`fsck -y /dev/sdb1`
-+   mount [-t  文件系统 -L  卷标名 -o  特殊选项]   设备文件名   挂载点：
++   **mount** [-t  文件系统 -L  卷标名 -o  特殊选项]   设备文件名   挂载点：
     *   `mount -t vfat -o iocharset=utf-8 /dev/sdb1 /mnt/usb `
-+   awk 基本使用：
++   **awk** 基本使用：
     -   `awk '条件1{动作1} 条件2{动作2}···' 文件名`
     -   `df -h | awk '{print "$1 \t $3"}'`
     -   `df -h | awk '/sda[0-9]/ {print $1 "\t" $5 "\n"}'`
-+   sed 基本使用(修改文本数据)：
++   **sed** 基本使用(修改文本数据)：
     -   `sed [选型] '[动作]' 文件名`  
     -   `sed -n '2p' example02.sh`  
-    
++   **nslookup**：域名解析测试命令  
+    -   `/etc/sysconfig/network-scripts/ifcfg-eth0`   局部配置文件 DNS=ip
+    -   `/etc/resolv.conf`  全局配置文件 nameserver ip  相关文件是 `/etc/hosts`  
++ **shutdown**：
+    * -c 取消已执行的 shutdown 命令  
+    * -h 关机  **不建议使用 halt，poweroff**
+    * -r 重启
+
 [返回目录](#back)
