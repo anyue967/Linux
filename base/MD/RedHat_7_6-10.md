@@ -967,12 +967,18 @@ Do you really want to remove active logical volume vo? [y/n]: y
 
 ### 17. iptables 与 firewalld 防火墙(四表五链)  
 #### 17.1 iptables命令  参数 + 策略规则链 + 动作 ：  
-     -P　　设置默认策略   
-     -F 　　清空规则链  
-     -L　　查看规则链  
-     -A　　在规则链的 末尾 添加新规则   
-     -I num　　在规则链的 头部 添加新规则    
-     -D num　　删除某一条规则  
+> **iptables  [-t 表名]  选项 [链名]    [条件]    [-j 控制类型]**    
+> `表名   参数   链名   条件   动作`
+> **默认filter表**   
+> **默认表内所有链**  
+> **选项、链名、控制类型使用大写字母，其余均为小写**
+
+     -P　　设置默认策略   ✔  
+     -F 　　清空规则链  ✔  
+     -L　　查看规则链  ✔  
+     -A　　在规则链的 末尾 添加新规则   ✔  
+     -I num　　在规则链的 头部 添加新规则    ✔
+     -D num　　删除某一条规则  ✔
      -s　　匹配来源地址IP/MASK,加!表示除这个IP外  
      -d　　匹配目标地址  
      -i 网卡名称　　匹配从这块网卡流入的数据  
@@ -980,16 +986,34 @@ Do you really want to remove active logical volume vo? [y/n]: y
      -p　　匹配协议,如:TCP/UDP/ICMP  
      --dport num　　匹配目标端口号  
      --sport num　　匹配来源端口号  
-
+     -v         数据报文 字节数显示
+     -n        以数字形式显示地址、端口
+     --line-numbers         查看规则，显示序号   
+     -m multiport --sport    源端口列表  
+     -m multiport --dport    目的端口列表  
+     -m iprange --src-range  IP范围
+     -m mac --macl-source   MAC地址
+     -m state --state 连接状态  
+     -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 #### 17.2 策略规则链[iptables]服务把用于处理或过滤流量的策略条目称为规则,多条规则可组成一个规则链,而规则链则依据数据包处理位置的不同进行分类,具体如下：<div id="iptables"></div>
-    PREROUTING　　在进行路由选择前处理数据包  
-    INPUT　　处理流入数据包  
-    OUTPUT　　处理流出数据包  
-    FORWARD　　处理转发数据包  
-    POSTROUTING 　　在进行路由选择后处理数据包 
+    raw表：确定是否对该数据包进行状态跟踪
+    mangle表：为数据包设置标记
+    nat表：修改数据包中的源、目标IP地址或者端口
+    filter表：确定是否放行该数据包
 
+    PREROUTING链：在进行路由选择前处理数据包  
+    INPUT链：处理流入数据包  
+    OUTPUT链：处理流出数据包  
+    FORWARD链：处理转发数据包  
+    POSTROUTING链：在进行路由选择后处理数据包 
 #### 17.3 动作：
-    ACCEPT　REJECT(拒绝请求，同时返回拒绝信息)　LOG　DROP(丢包，不响应)  
+    ACCEPT　
+    REJECT(拒绝请求，同时返回拒绝信息)　
+    LOG(记录日志信息，然后传给下一条规则继续匹配)
+    DROP(丢包，不响应)  
+    SNAT(修改数据包源地址)
+    DNAT(修改数据包目的地址)
+    REDIRECT(重定向)
 
 `[root@xy ~]# iptables -L`　**-L 查看规则链 Look**  
 Chain INPUT (policy ACCEPT)  
@@ -1066,11 +1090,6 @@ REJECT     tcp  --  anywhere             anywhere             tcp dpt:italk
 reject-with icmp-port-unreachable  
 ACCEPT     tcp  --  192.168.37.0/24      anywhere             tcp dpt:ssh  
 REJECT     tcp  --  anywhere             anywhere             tcp dpt:ssh   
-reject-with icmp-port-unreachable  
-REJECT     tcp  --  anywhere             anywhere             tcp   
-dpts:cadlock2:1024 reject-with icmp-port-unreachable  
-REJECT     udp  --  anywhere             anywhere             udp   
-dpts:cadlock2:1024 reject-with icmp-port-unreachable  
 ........省略部分输出信息........  
 
 #### 17.7 INPUT 规则链加入拒绝192.168.37.5访问本机80端口的策略规则  
@@ -1087,6 +1106,19 @@ iptables: Saving firewall rules to /etc/sysconfig/iptables:[  OK  ]
 ####  禁止源自192.168.10.0/24 网段的流量访问本机sshd服务：
 `[root@xy ~]# iptables -I INPUT -s 192.168.10.0/24 -p tcp --dport 22 -j REJECT`  
 `[root@xt ~]# service iptables save`
+####  SNAT 转换规则：
+`[root@xy ~]# iptables -t nat -A  POSTROUTING -s 10.10.10.0/24 -o eth1 -j SNAT --to-source 192.168.239.129`  
+`[root@xy ~]# iptables -t nat -A  POSTROUTING -s 10.10.10.0/24 -o eth1 -j MASQUERADE`  
+`[root@xt ~]# service iptables save`
+`[root@xt ~]# vim /etc/sysconfig/iptables`  
+DNS1=114.144.114.114 8.8.8.8  
+####  DNAT 转换规则：
+`[root@xy ~]# iptables -t nat -A  PREROUTING -i eth0 -d 218.29.30.31 -p tcp --dport 80 -j DNAT --to-destination 192.168.1.6`    
+`[root@xt ~]# service iptables save`
+
+`[root@xy ~]# iptables-save > 1.iptables`  
+`[root@xy ~]# iptables-restore < 1.iptables`  
+
 
 ### 17.8 firewalld(Dynamic Firewall Manager of Linux system):Linux动态防火墙管理器  <div id="firewalld"></div>
 管理方式:CLI(命令行界面) 与 GUI(图形用户界面)

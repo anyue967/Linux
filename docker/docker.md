@@ -1,53 +1,21 @@
-#docker  
+# docker  
 ![docker-logo](../base/img/docker-logo.jpg)  
-##什么是docker?  
-###**Docker** 是一个**开源**的应用**容器引擎**，基于Go，Docker 使用客户端-服务器 (C/S) 架构模式，使用远程API来管理和创建Docker容器。Docker 容器通过 Docker 镜像来创建。  
-###容器是解决从一个计算环境移动到另一个计算环境时如何使软件可靠运行的问题的解决方案。这可以是从开发人员的笔记本电脑到测试环境，从临时环境到生产，从数据中心的物理机器到私有云或公共云中的虚拟机。  
-###一个容器包含了完整的运行时环境：一个应用、这个应用所需的全部依赖、类库、其他二进制文件、配置文件，它们统一被打入了一个包中。通过将应用平台和其依赖容器化，操作系统发行版本和其他基础环境造成的差异，都被抽象掉了。
+## 什么是docker?  
+### **Docker** 是一个**开源**的应用**容器引擎**，基于Go，Docker 使用客户端-服务器 (C/S) 架构模式，使用远程API来管理和创建Docker容器。Docker 容器通过 Docker 镜像来创建。  
+### 容器是解决从一个计算环境移动到另一个计算环境时如何使软件可靠运行的问题的解决方案。这可以是从开发人员的笔记本电脑到测试环境，从临时环境到生产，从数据中心的物理机器到私有云或公共云中的虚拟机。  
+### 一个容器包含了完整的运行时环境：一个应用、这个应用所需的全部依赖、类库、其他二进制文件、配置文件，它们统一被打入了一个包中。通过将应用平台和其依赖容器化，操作系统发行版本和其他基础环境造成的差异，都被抽象掉了。
 
-##虚拟化和容器有什么不同？  
-###传统虚拟机技术是虚拟出一套硬件后，在其上运行一个完整操作系统，在该系统上再运行所需应用进程；而容器内的应用进程直接运行于宿主的内核，容器内没有自己的内核，而且也没有进行硬件虚拟。因此容器要比传统虚拟机更为轻便。
+## 虚拟化和容器有什么不同？  
+### 传统虚拟机技术是虚拟出一套硬件后，在其上运行一个完整操作系统，在该系统上再运行所需应用进程；而容器内的应用进程直接运行于宿主的内核，容器内没有自己的内核，而且也没有进行硬件虚拟。因此容器要比传统虚拟机更为轻便。
 ![docker-logo](../base/img/Container.jpg)
 
-#docker三个基本概念：
-+ 镜像(image)：镜像采用**分层存储**，并不是传统的ISO打包，实际上是由多层文件系统联合组成。镜像构建时，会一层层构建，前一层是后一层的基础。每一层构建完就不会再发生改变后一层上的任何改变只发生在自己这一层。因此每一层尽量只包含该层需要添加的东西，任何额外的东西应该在该层构建结束前清理掉。
+# docker三个基本概念：
++ 镜像(image)：镜像采用**分层存储 UFS**，并不是传统的ISO打包，实际上是由多层文件系统联合组成。镜像构建时，会一层层构建，前一层是后一层的基础。每一层构建完就不会再发生改变后一层上的任何改变只发生在自己这一层。因此每一层尽量只包含该层需要添加的东西，任何额外的东西应该在该层构建结束前清理掉。
 + 容器(container)：镜像（ Image ）和容器（ Container ）的关系，就像是面向对象程序设计中的 **类 和 实例**一样，镜像是静态的定义，容器是镜像运行时的实体。**容器可以被创建、启动、停止、删除、暂停等**。**容器的实质是进程**，但与直接在宿主执行的进程不同，**容器进程**运行于属于自己的独立的 **命名空间**。  
-+ 仓库(repository)：Docker 仓库用来保存镜像，可以理解为代码控制中的代码仓库。分为公开与私有。
-
-#docker安装：
-+ Ubuntu：  
-    `$ uname -r`    // 查看是否支持Docker
-
-    >`$sudo apt-get remove docker \`      
-    >   `docker-engine \`        
-    >   `docker.io`  
-
-    `$sudo apt-get update`  
-
-    > `$sudo apt-get install \`  
-    >`apt-transport-https \`  
-    >`ca-certificates \`  
-    >`curl \`  
-    >`software-properties-commom`  
-
-    `$ curl -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu/gpg | sudo apt-key add -`
-
-    >`$ sudo add-apt-repository \`
-    >`"deb [arch=amd64] https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu \`  
-    >  `$(lsb_release -cs) \`  
-    >`stable"`  
-
-    `$ sudo apt-get update`  
-    `$ sudo apt-get install docker-ce` 
-    `$ curl -fsSL get.docker.com -o get-docker.sh`     
-    `$ sudo sh get-docker.sh --mirror Aliyun`  
-    `$ sudo systemctl enable docker`
-    `$ sudo systemctl start docker`
-    `$ sudo service docker start`   // Ubuntu 14.04
-
-    `$ sudo groupadd docker`  
-    `$ sudo usermod -aG docker $USER`  
-#使用镜像：
++ 仓库(repository)：Docker 仓库用来保存镜像，可以理解为代码控制中的代码仓库。分为公开与私有。  
+![dockerStr](../base/img/dockerStr.jpg)  
+![docker-command](../base/img/docker-command.jpg)  
+# 使用镜像：
 + 获取镜像：`docker pull` 
 - `docker pull [选项] [Docker Registry 地址[:端口号]/]仓库名[:标签]`
 
@@ -124,7 +92,7 @@
 - `docker commit [选项] <容器ID或容器名> [<仓库名>[:<标签>]]`  
 **镜像是多层存储，每一层是在前一层的基础上进行的修改；而容器同样也是多层存储，是在以镜像为基础层，在其基础上加一层作为容器运行时的存储层。commit导致镜像极为臃肿,docker commit 意味着所有对镜像的操作都是黑箱操作，生成的镜像也被称为黑箱镜像**
 
-        $ docker run --name webserver -d -p 80:80 nginx 
+        $ docker run --name webserver -d -p 80:80 nginx  本地端口:容器端口  
 
         $ docker exec -i -t webserver bash
         root@3729b97e8226:/# echo '<h1>Hello, Docker!</h1>' > /usr/share/nginx/html/index.html
@@ -136,6 +104,7 @@
         webserver \
         nginx:v2
         sha256:07e33465974800ce65751acc279adc6ed2dc5ed4e0838f8b86f0c87aa1795214
+        docker rm -f $( docker ps -a -q )
 + 使用 `Dockerfile` 定制镜像：
 **Dockerfile 支持 Shell 类的行尾添加 `\ `的命令换行方式，以及行首 `#` 进行注释的格式。**
 
@@ -162,13 +131,13 @@
         ---> 44aa4490ce2c
         Removing intermediate container 9cdc27646c7b
         Successfully built 44aa4490ce2c
-#操作容器：
+# 操作容器：
 + 启动容器：
 
         $ docker run ubuntu:14.04 /bin/echo 'Hello world'
         Hello world
 
-        $ docker run -t -i ubuntu:14.04 /bin/bash
+        $ docker run -it ubuntu:14.04 /bin/bash
         root@af8bae53bdd3:/#
 
         root@af8bae53bdd3:/# ls

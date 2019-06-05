@@ -2,7 +2,8 @@
 * [Squid 服务](#Squid)  
 * [iSCIS 服务](#iSCIS)  
 * [MangoDB 服务](#MangoDB)  
-* [无人值守安装服务](#无人值守安装)
+* [无人值守安装服务](#无人值守安装)  
+* [Cobbler](#Cobbler)
 
 ### 1. 使用Squid部署代理缓存服务    <div id="Squid"></div>
 + Squid 替代用户向网站服务器请求页面数据并进行缓存,当用户再次再请求相同数据,则可以将存储服务器本地数据交付给用户,减少了用户等待时间,支持HTTP、FTP、SSL等多种协议  
@@ -684,7 +685,7 @@ MariaDB [(none)]> `create database xy default character set latin1;`
 + **PXE(Preboot eXecute Environment)**---预启动执行环境,可以让计算机通过网络来启动操作系统,主要用于在无人值守安装系统中引导客户端安装Linux操作系统  
 + **Kickstat无人值守安装方式**,预先把手工填写参数保存为**ks.cfg**文件,安装过程自动匹配Kickstat生成的文件  
 + **DHCP +  vsftp + tftp + Kickstart**   
-![PXE+Kickstart](../img/无人值守安装流程.png)  
+![PXE+Kickstart](../img/PXE.png)  
  
 #### 4.2 DHCP服务程序配置  (192.168.37.10 无人值守系统服务器IP)
 `[root@xy ~]# yum install dhcp`
@@ -699,14 +700,14 @@ MariaDB [(none)]> `create database xy default character set latin1;`
         allow bootp;  
         ddns-update-style interim;  
         ignore client-updates;  
-        subnet 192.168.37.10 netmask 255.255.255.0 {  
+        subnet 192.168.37.0 netmask 255.255.255.0 {  // 填写网段 
         	option subnet-mask  255.255.255.0  
         	option domain-name-server   192.168.37.10;  
         	range dynamic-bootp 192.168.37.100  192.168.37.200;  
         	default-lease-time  21600;  
         	max-server  43200;  
-    		next-server 192.168.37.10;  
-            filename"pxelinux.0";  *客户机获取IP 主动获取引导驱动文件*  
+    		next-server 192.168.37.10;    // tftp server 的 IP
+            filename"pxelinux.0";       // 客户机获取IP 主动获取引导驱动文件 
     	}
 `[root@xy ~]# systemctl restart dhcpd`  
 `[root@xy ~]# systemctl enable dhcpd`  
@@ -770,4 +771,48 @@ success
 + 4. vsftp：将光盘镜像挂载到 media/cdrom，复制到 vsftp 工作目录；
 + 5. 创建 Kickstart 应答文件：/var/ftp/pub/ks.cfg  
 
+### 4.1 Cobbler 无人值守安装服务  <div id="Cobbler"></div>  
+`[root@xy ~]# yum -y instal epel-release`  
+`[root@xy ~]# yum -y install cobbler cobbler-web`    
+`[root@xy ~]# systemctl restart httpd`  
+`[root@xy ~]# systemctl restart cobblerd`  
+`[root@xy ~]# netstat -antp | grep 25151`  
+`[root@xy ~]# vim /etc/cobbler/settings`  
+server: 10.10.10.11  
+next_server: 10.10.10.11  
+`[root@xy ~]# cobbler get-loaders`  
+`[root@xy ~]# systemctl enable rsyncd`  
+`[root@xy ~]# vim /etc/debmirror.conf`  
+
+    @dists="sid"  
+    #@arches="i386"  
+`[root@xy ~]# openssl passwd -l -salt $(openssl rand -hex 4)`  
+`[root@xy ~]# vim /etc/cobbler/settings`  
+default_passsword_cryptes  
+`[root@xy ~]# yum install cmam fence-agents`  
+`[root@xy ~]# vim /etc/xinetd.d/tftp`  
+disabled=yes  
+`[root@xy ~]# systemctl restart cobblerd`  
+`[root@xy ~]# cobbler sync`  
+`[root@xy ~]# cobbler check`  
+`[root@xy ~]# yum -y install dhcp`  
+`[root@xy ~]# vim /etc/dhcp/dhcpd.conf`  
+
+        subnet 192.168.37.0 netmask 255.255.255.0 {  // 填写网段 
+        	option subnet-mask  255.255.255.0  
+        	option domain-name-server 192.168.37.10;  
+        	range dynamic-bootp 192.168.37.100 192.168.37.200;  
+        	default-lease-time  21600;  
+        	max-server  43200;  
+    		next-server 192.168.37.10;    // tftp server 的 IP
+             filename"pxelinux.0";       // 客户机获取IP 主动获取引导驱动文件 
+    	}
+`[root@xy ~]# systemctl restart dhcpd`  
+`[root@xy ~]# systemctl enable tftp`  
+`[root@xy ~]# systemctl enable dhcpd`  
+`[root@xy ~]# mount -t iso9660 /dev/cdrom /mnt/cdrom`    
+`[root@xy ~]# cobbler import --name="centos7.6" --path=/mnt/cdrom`    
+`[root@xy ~]# cobbler distro list`  
+`[root@xy ~]# cobbler profile remove --name=centos7.6-x86_64`  
+`[root@xy ~]# `  
 [返回目录](#back)
