@@ -7,13 +7,14 @@
 * [DHCP 服务](#DHCP)
 * [邮件系统](#Email)
 * [rsync](#rsync)
+* [ELK](#ELK)  
 
 + rpm -qa | grep vsftp  　**查询安装的软件**  
 + rpm -e fielname.rpm  
 
 
 ### 1. 使用vsftpd服务传输文件    <div id="vsftp"></div>
-+ FTP(File Transfer Protocol),基于C/S模式,默认端口:-21-(数据端口),22(命令端口) 
++ FTP(File Transfer Protocol),基于C/S模式,默认端口：**21(数据端口)，22(命令端口)** 
 #### 1.1 主动 被动 2种模式  
 + vsftpd(very secure ftp daemon) 非常安全的FTP守护进程,  匿名开放 本地用户 
 #### 1.2 虚拟用户 3种模式   
@@ -63,11 +64,13 @@ iptables: Saving firewall rules to /etc/sysconfig/iptables:[  OK  ]
     local_max_rate=0                      本地用户最大传输速率  
 
 #### 2.2 匿名用户模式开发权限参数
-    anonymous_enable=YES                 
-    anon_upload_enable=YES               
-    anon_umask=022                                                  
+    anonymous_enable=YES   
+    anon_umask=022    
+    anno_root=/var/ftp       # 匿名用户默认的FTP根目录           
+    anon_upload_enable=YES                                        
     anon_mkdir_write_enable=YES            
     anon_other_write_enable=YES 
+    anno_max_rate=0
  
 #### 2.3 客户端:
 `[root@xy ~]# yum install ftp`　　　　ftp是Linux以命令行的方式管理FTP传输服务的客户端工具  
@@ -142,10 +145,14 @@ drwxr-xr-x. 2 ftp root 6 Mar  7  2014 /var/ftp/pub
 #### 2.4 本地用户模式参数:cat /etc/vsftpd/vsftpd.conf  
     anonymous_enable=NO  
     local_enable=YES  
+    local_root=/var/ftp     # 设置本地用户的FTP根目录
+    chroot_local_user=YES   # 是否将用户禁锢在主目录
+    local_max_rate=0
     write_enable=YES  
     local_umask=022  
     userlist_enable=YES  
     userlist_deny=YES  
+    ftp_banner=Welcome to use FTP Service
 
 `[root@xy ~]# ftp 192.168.37.10` 
  
@@ -175,7 +182,7 @@ ftpd_full_access --> off
 `[root@xy ~]# setsebool -P ftpd_full_access=on`  // 可以正常创建文件      
 #### 2.5 虚拟用户模式  
 `[root@xy ~]# cd /etc/vsftpd/`  
-`[root@xy vsftpd]# vim vuser.list`   
+`[root@xy vsftpd]# vim vuser.list`   # 建立虚拟用户的用户数据库文件 
    
 	zhangsan     账户名
 	123456 		密码
@@ -191,7 +198,7 @@ vuser.db: Berkeley DB (Hash, version 9, native byte-order)
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  
 `[root@xy ~]# useradd -d /var/ftproot -s /sbin/nologin virtual`   // 增加虚拟用户，提供家目录
 
-    -d 设置默认家目录 	-s 设置默认Shell解释器  (命令 -参数 执行语句)    
+   ** -d 设置默认家目录 	-s 设置默认Shell解释器  (命令 -参数 执行语句**)    
  	
 `root@xy vsftpd]# ls -ld /var/ftproot/`  
 drwx------. 3 virtual virtual 74 Jul 12 08:55 /var/ftproot/  
@@ -202,7 +209,7 @@ drwxr-xr-x. 3 virtual virtual 74 Jul 12 08:55 /var/ftproot/
 > 建立用于支持虚拟用户的PAM文件, vsftpd.vu PAM(可插拔认证模块)是一种验证机制,通过动态链接库和统一的API把系统提供的服务和认证方式分开,采用鉴别模块层、用接口层、应设计层三层设计方式   
 
 `[root@xy ~]# cp -a /etc/pam.d/vsftpd /etc/pam.d/vdftpd.pam`     
-`[root@xy ~]# vim /etc/pam.d/vsftpd.vu`    　　**新建虚拟用户认证 PAM 文件 vsftp.vu**
+`[root@xy ~]# vim /etc/pam.d/vsftpd.pam`    　　**新建虚拟用户认证 PAM 文件 vsftp.pam**
 auth      required      pam_userdb.so db=/etc/vsftpd/vuser    
 account   required      pam_userdb.so db=/etc/vsftpd/vuser    
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  
@@ -210,13 +217,13 @@ account   required      pam_userdb.so db=/etc/vsftpd/vuser
 `[root@xy ~]# mkdir /etc/vsftpd/vusers_dir/`   
 `[root@xy ~]# vim /etc/vsftpd/vsftpd.conf`  
 
-    1  anonymous_enable=NO  
-    2  local_enable=YES  
-    3  guest_enable=YES  
-    4  guest_username=virtual  
-    5  allow_writeable_chroot=YES
-    14 pam_service_name=vsftpd.vu   
-    17 user_config_dir=/etc/vsftpd/vusers_dir
+    anonymous_enable=NO  
+    local_enable=YES  
+    guest_enable=YES  
+    guest_username=virtual  
+    allow_writeable_chroot=YES
+    pam_service_name=vsftpd.pam   
+    user_config_dir=/etc/vsftpd/vusers_dir
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  
 为了使不同用户有不同权限:  
 `[root@xy ~]# cd /etc/vsftpd/vusers_dir`  
@@ -226,6 +233,8 @@ account   required      pam_userdb.so db=/etc/vsftpd/vuser
     anon_upload_enable=YES  
     anon_mkdir_write_enable=YES  
     anon_other_write_enable=YES  
+`[root@xy ~]# vim /etc/vsftpd/vsftpd.conf`  
+user_config_dir=/etc/vsftpd/vusers_dir  
 `[root@xy ~]# getsebool -a | grep ftp`     
 ftpd_full_access --> off      
 `[root@xy ~]# setsebool -P ftpd_full_access=on`  // 可以正常创建文件      
@@ -264,7 +273,7 @@ Documents        Music                 readme.txt  Videos
 I love AnXiaohong  
 
 ### 4. 使用Samba或NFS实现文件"共享"  <div id="Samba"></div>
-基于**SMB**(Server Messages Block)协议,开发出SMBServer服务程序,**实现Linux与Window**s之间的文件共享变得简单  
+基于**SMB**(Server Messages Block)协议,开发出SMBServer服务程序,**实现Linux与Window**s之间的文件共享变得简单 ,TCP 139、445   
 ![Samba logo](../img/Samba.png)  
 
 `[root@xy ~]# yum install samba`   
@@ -277,36 +286,36 @@ I love AnXiaohong
     [global]		#全局参数  
         workgroup = MYGROUP	#工作组名称  
         server string = Samba Server Version %v	   
-			#服务器介绍信息，参数%v为显示SMB版本号  
+			# 服务器介绍信息，参数%v为显示SMB版本号  
         log file = /var/log/samba/log.%m  	      
-			#定义日志文件的存放位置与名称，参数%m为来访的主机名  
+			# 定义日志文件的存放位置与名称，参数%m为来访的主机名  
         max log size = 50	
-                    #定义日志文件的最大容量为50KB
+                    # 定义日志文件的最大容量为50KB
         security = user		#安全验证的方式，总共有4种
-			#share：来访主机无需验证口令；比较方便，但安全性很差
-			#user：需验证来访主机提供的口令后才可以访问；提升了安全性
-			#server：使用独立的远程主机验证来访主机提供的口令（集中管理账户）
-			#domain：使用域控制器进行身份验证
+			# share：来访主机无需验证口令；比较方便，但安全性很差
+			# user：需验证来访主机提供的口令后才可以访问；提升了安全性
+			# server：使用独立的远程主机验证来访主机提供的口令（集中管理账户）
+			# domain：使用域控制器进行身份验证
         passdb backend = tdbsam		#定义用户后台的类型，共有3种
-			#smbpasswd：使用smbpasswd命令为系统用户设置Samba服务程序的密码
-			#tdbsam：创建数据库文件并使用pdbedit命令建立Samba服务程序的用户
-			#ldapsam：基于LDAP服务进行账户验证
+			# smbpasswd：使用smbpasswd命令为系统用户设置Samba服务程序的密码
+			# tdbsam：创建数据库文件并使用pdbedit命令建立Samba服务程序的用户
+			# ldapsam：基于LDAP服务进行账户验证
         load printers = yes		
-                    #设置在Samba服务启动时是否共享打印机设备
+                    # 设置在Samba服务启动时是否共享打印机设备
         cups options = raw		
-                    #打印机的选项
-    [homes]		#共享参数
+                    # 打印机的选项
+    [homes]		# 共享参数
         comment = Home Directories		#描述信息
-        browseable = no		#指定共享信息是否在“网上邻居”中可见
-        writable = yes		#定义是否可以执行写入操作，与“read only”相反
-    [printers]			#打印机共享参数
+        browseable = no		# 指定共享信息是否在“网上邻居”中可见
+        writable = yes		# 定义是否可以执行写入操作，与“read only”相反
+    [printers]			# 打印机共享参数
         comment = All Printers	
-        path = /var/spool/samba	#共享文件的实际路径(重要)。
+        path = /var/spool/samba	# 共享文件的实际路径(重要)。
         browseable = no	
-        guest ok = no		#是否所有人可见，等同于"public"参数。
+        guest ok = no		# 是否所有人可见，等同于"public"参数。
         writable = no	
         printable = yes  
-    [database]               #共享名称database  ✔
+    [database]               # 自定义共享名称database  ✔
         comment = Do not arbitrarily modify the database file
         path = /home/database   ✔
         public = no
@@ -434,7 +443,7 @@ Export list for 192.168.37.10:
 ![Bind反向解析](../img/bind反向解析图示.jpg)   
  
 `[root@xy ~]# yum install bind-chroot`  
-`[root@xy ~]# vim /etc/named.conf`	        **主配置文件 配置**
+`[root@xy ~]# vim /etc/named.conf`	        **主配置文件 配置 /etc/named.conf**
      
      1 //
      2 // named.conf
@@ -504,7 +513,7 @@ Export list for 192.168.37.10:
        allow-update { none; };  
     };  
 
-`[root@xy named]# ls -al named.localhost`     **正向解析 数据配置文件配置**  
+`[root@xy named]# ls -al named.localhost`     **正向解析 数据配置文件配置 /var/named.localhost**  
 -rw-r-----. 1 root named 152 Jun 21  2007 named.localhost  
 `[root@xy named]# cp -a named.localhost xy.com.zone`  
 `[root@xy named]# vim xy.com.zone`  
@@ -771,7 +780,7 @@ xy.american
     www	IN A	106.185.25.15	#地址记录(www.xy.com.)
 
 ### 9. 使用DHCP动态管理主机地址  <div id="DHCP"></div>
-+ DHCP(Dynamic Host Configuration Protocol):基于UDP协议仅仅在局域网内部使用提高IP利用率,提高配置效率,降低管理维护成本  
++ DHCP(Dynamic Host Configuration Protocol):基于**UDP协议**仅仅在局域网内部使用提高IP利用率,提高配置效率,降低管理维护成本  
 + 作用域:完整的IP段,DHCP协议根据作用域分配IP  
 + 超级作用域:	管理处于一个物理网络中多个逻辑子网段  
 + 排除范围: 把作用域的某些IP排除  
@@ -783,21 +792,21 @@ xy.american
 `[root@xy ~]# cp -a /usr/share/doc/dhcp-4.*.*/dhcpd.conf.sample /etc/dhcp/dhcpd.conf`  模版配置文件目录  ✔
 #### 9.1 dhcpd.conf 配置:  
 #### 9.2 dhcpd服务程序配置最常见参数:  
-    ddns-update-style [类型]           	DNS 服务更新类型 none interim ad-hoc  
+    ddns-update-style [类型]           	# DNS 服务更新类型 none interim ad-hoc  
     [allow | ignore] client-update 
-    default-lease-time [21600]            默认超时时间  
+    default-lease-time [21600]           # 默认超时时间  
     max-lease-time [43200]                 
     option domain-name-server [8.8.8.8]  
     option domain-name ["domain.org"]  
-    range                                  定义分配的IP地址池  
-    option subnet-mask                  定义客户端子网掩码 
-    option routers                         定义客户端网关地址  
+    range                                  # 定义分配的IP地址池  
+    option subnet-mask                  # 定义客户端子网掩码 
+    option routers                         # 定义客户端网关地址  
     broadcast-address [广播地址]          
-    ntp-server [IP]                    定义客户端网络时间服务器(NTP)  
-    nis-servers [IP]                   定义客户端NIS域服务器地址                  
+    ntp-server [IP]                    # 定义客户端网络时间服务器(NTP)  
+    nis-servers [IP]                   # 定义客户端NIS域服务器地址                  
     Hardware [网卡物理地址]             
-    server-name [主机名]			向DHCP客户端通知DHCP服务器的主机名  
-    fixed-address [IP]          将某个固定IP地址分配给指定主机
+    server-name [主机名]			# 向DHCP客户端通知DHCP服务器的主机名  
+    fixed-address [IP]          # 将某个固定IP地址分配给指定主机
     time-offset [偏移误差]      
        
 	ddns-update-style none;  
@@ -815,11 +824,55 @@ xy.american
 `[root@xy ~]# systemctl start dhcpd`   
 `[root@xy ~]# systemctl enable dhcpd`  
 
-#### 9.3分配固定IP：IP与MAC地址绑定  
+#### 9.3 分配固定IP：IP与MAC地址绑定  
 	host xy {  
 		hardware ethernet 00:0c:29:11:26:05;  
 		fixed-address 192.168.37.55;  
 	}
+#### 9.4 超级作用域(同一局域网)
+> DHCP服务器可为单个物理网络上的客户端提供多个作用域租约地址
+
+`[root@xy ~]# cp -a /etc/sysconfig/network-scripts/ifcfg-eth0 ifcfg-eth0:0`  
+`[root@xy ~]# vim /etc/sysctl.conf`  
+ net.ipv4.ip_forward = 1   # 开启路由转发  
+`[root@xy ~]# sysctl -p`  # 刷新内核参数  
+`[root@xy ~]# vim /etc/dhcp/dhcpd.conf`  
+    
+    shared-network public {
+    subnet 192.168.88.0 netmask 255.255.255.0｛
+         option routers 192.168.88.10；
+         range 192.168.88.100 192.168.88.100；
+        }
+    subnet 192.168.99.0 netmask 255.255.255.0｛
+         option routers 192.168.99.10；
+         range 192.168.99.100 192.168.99.110；
+        }
+    }
+`[root@xy ~]# service dhcpd restart`  
+`[root@xy ~]# ifdown eth0; ifup eth0`  
+#### 9.6 DHCP 中继 
+> DHCP Relay（DHCPR）DHCP中继是一个小程序，可以实现在**不同子网和物理网段**之间处理和转发dhcp信息的功能。
+##### 9.6.1 配置DHCP服务器 192.168.10.10
+`[root@xy ~]# vim /etc/sysctl.conf`  
+
+    subnet 192.168.10.0 netmask 255.255.255.0 { #实验中并未用到该地址池分配IP
+        range 192.168.10.100 192.168.10.110；
+        option routers 192.168.10.20；
+    }
+    subnet 100.100.100.0 netmask 255.255.255.0 {
+        range 100.100.100.100 100.100.100.110；
+        option routers 100.100.100.20；
+    }
+`[root@xy ~]# service dhcpd start`  
+`[root@xy ~]# 指定网关：只能为中继器内网IP`  
+##### 9.6.2 配置DHCP中继器服务器  192.168.10.20     100.100.100.20
+`[root@xy ~]# vim /etc/sysconfig/dhcrelay`  
+INTERFACES="eth0 eth1"  
+DHCPSERVERS="192.168.10.10"  
+`[root@xy ~]# vim /etc/sysctl.conf`  
+netipv4.ip_forwrad = 1  
+`[root@xy ~]# sysctl -p`  
+`[root@xy ~]# service dhcrelay start`  
 
 ### 10. 使用Postfix 与 Dovecot部署邮件系统  <div id="Email"></div>
 + 电子邮件协议:
@@ -908,6 +961,8 @@ ln -s '/usr/lib/systemd/system/dovecot.service' '/etc/systemd/system/multi-user.
     上传：
         rsync -avz /本地目录/* 服务器IP:/服务器目录/
         rsync -avz /filedst/* root@192.168.37.10:/filesrc/
+    ssh-keygen -t rsa -b 2048
+    ssh-copy-id root@192.168.37.20
 #### 11.2rsync + inotifywait 实现单向实时同步：
 `[root@xy ~]# yum -y install gcc*`  
 `[root@xy ~]# tar -xvf inotify-tools-3.14.tar.gz`  
@@ -926,5 +981,19 @@ ln -s '/usr/lib/systemd/system/dovecot.service' '/etc/systemd/system/multi-user.
     do
 	$Rsync
     done  
-    
+### 12. ELK日志分析：<div id="ELK"></div>      
+> **ELK**是三个开源软件的缩写，分别表示：**Elasticsearch、Logstash、Kibana**它们都是开源软件。新增了**FileBeat** ，轻量级的日志收集处理工具；
+
++ **ElastiSearch**：开源分布式搜索引擎，提供搜集、分析、存储数据三大功能
++ **Logstash**：负责日志的收集、分析、功率，支持大量数据获取方式，C/S架构，client 端安装在需要收集日志的主机上，server端负责将收集到的节点日志进行过滤发至Elastiserach上  
++ **Kibana**：为 Logstash 和 Elasticserach 提供Web 界面
++ **Filebeat**：属于Beats
+    - **Packetbeat**：搜集网络流量数据
+    - **Topbeat**：搜集系统、进程和文件系统级别的CPU和内存使用情况  
+    - **Filebeat**：搜集文件数据
+    - **Winlogbeat**：搜集Windows事件日志数据  
+
+![ELK](../img/ELK.jpg)
+![ELK-Filebeat](../img/ELK-Filebeat.jpg)
+
 [返回目录](#back)
