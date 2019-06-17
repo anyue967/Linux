@@ -1106,13 +1106,13 @@ iptables: Saving firewall rules to /etc/sysconfig/iptables:[  OK  ]
 ####  禁止源自192.168.10.0/24 网段的流量访问本机sshd服务：
 `[root@xy ~]# iptables -I INPUT -s 192.168.10.0/24 -p tcp --dport 22 -j REJECT`  
 `[root@xt ~]# service iptables save`
-####  SNAT 转换规则：
-`[root@xy ~]# iptables -t nat -A  POSTROUTING -s 10.10.10.0/24 -o eth1 -j SNAT --to-source 192.168.239.129`  
+####  SNAT 转换规则：内网访问外网(路由后交给SNAT)
+`[root@xy ~]# iptables -t nat -A  POSTROUTING -s 10.10.10.0/24 -o eth1 -j SNAT --to-source 192.168.239.129`   
 `[root@xy ~]# iptables -t nat -A  POSTROUTING -s 10.10.10.0/24 -o eth1 -j MASQUERADE`  
 `[root@xt ~]# service iptables save`
 `[root@xt ~]# vim /etc/sysconfig/iptables`  
 DNS1=114.144.114.114 8.8.8.8  
-####  DNAT 转换规则：
+####  DNAT 转换规则：外网访问内网(路由前交给DNAT)
 `[root@xy ~]# iptables -t nat -A  PREROUTING -i eth0 -d 218.29.30.31 -p tcp --dport 80 -j DNAT --to-destination 192.168.1.6`    
 `[root@xt ~]# service iptables save`
 
@@ -1502,13 +1502,13 @@ Adding password for user xy
 `[root@xy ~]# mkdir -p /home/wwwroot/www`
   
     <VirtualHost 192.168.37.10>  
-	DocumentRoot "/home/wwwroot/www"  
-	ServerName tech.xy.com  
-	<Directory "/home/wwwroot/www">  
-	AllowOverride None  
-	Require all granted  
-	</Directory>  
-	</VirtualHost>  
+    DocumentRoot "/home/wwwroot/www"  
+	  ServerName tech.xy.com  
+	  <Directory "/home/wwwroot/www">  
+	  AllowOverride None  
+	  Require all granted  
+    </Directory>  
+	  </VirtualHost>  
 
 `[root@xy ~]# systemctl restart httpd`  
 `[root@xy ~]# semanage fcontext -a -t httpd_sys_content_t /home/wwwroot/`  
@@ -1521,7 +1521,7 @@ Adding password for user xy
 `[root@xy ~]# echo "port:6111" > /home/wwwroot/6111/index.html`
 `[root@xy ~]# vim /etc/httpd/conf/httpd.conf` 
 
-	 Listen 6222  
+	 Listen 6111  
     	<VirtualHost 192.168.37.10:6111>  
     	DocumentRoot "/home/wwwroot/6111"  
     	ServerName www.xy.com  
