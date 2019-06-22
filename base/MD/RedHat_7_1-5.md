@@ -142,8 +142,11 @@ Fri Jul  6 10:49:07 EDT 2018
 #### 7.4 wget  
     -b 后台下载         -P 下载至指定目录
     -t 最大尝试次数      -c 断点续传
-    -p 下载页面搜有资源   -r 递归下载        
-`[root@xy ~]# wget -r -p htpp://www.linuxprobe.com`
+    -p 下载页面搜有资源   -r 递归下载    
+    -np 不追溯至父级    
+    -k  make links in downloaded HTML point to local files
+`[root@xy ~]# wget -r -p http://www.linuxprobe.com`  
+`[root@xy ~]# wget -r -p -np -k http://www.linuxprobe.com`  
 
 #### 7.5 ps  
     -a 显示搜有进程　　-u 用户以及其他详细信息　　-x 显示没有控制终端进程  
@@ -1220,7 +1223,7 @@ drwxr-xr-t. 2 root root 6 Feb 11 19:34 linux/
 `[root@xy test]# rm linuxprobe`   
 rm: remove regular file ‘linuxprobe’? y  
 rm: cannot remove ‘linuxprobe’: Operation not permitted  
-44. lsattr  
+1.  lsattr  
 `[root@xy test]# chattr -a linuxprobe`   
 `[root@xy test]# rm linuxprobe`   
 rm: remove regular file ‘linuxprobe’? y  

@@ -15,16 +15,17 @@
 ![Cacti](../img/Cacti.png)
 #### 2.1 Cacti 原理
 > **SNMP(收集数据)** -->**RRD Tool(绘图)** -->**Apache(平台展示)**
-#### 2.2 Cacti 监控构建
+#### 2.2 Cacti 监控构建 服务器端  10.10.10.11
 `[root@xy ~]# yum -y install httpd mysql mysql-server mysql-devel libxml2-devel mysql-connector-odbc perl-DBD-MySQL unixODBC php php-mysql php-pdo`  
+`[root@xy ~]# mysqladmin -uroot password anyu`  
 
-`[root@xy ~]# yum -y install net-snmp net-snmp-utils net-snmp-libs lm_sensors`  服务器端  10.10.10.11  安装 snmp
+`[root@xy ~]# yum -y install net-snmp net-snmp-utils net-snmp-libs lm_sensors`    安装 snmp
 
 `[root@xy ~]# mount -o loop cacti.iso /mnt/iso`  
 `[root@xy ~]# cp -a /mnt/iso/* .`    
 `[root@xy ~]# tar -xzvf rrdtool-1.4.5.tar.gz`  安装 rrdtool  
-`[root@xy ~]# ./configure --prefix=/usr/local`  
-`[root@xy ~]# make && make install`  
+`[root@xy rrdtool-1.4.5]# ./configure --prefix=/usr/local`  
+`[root@xy rrdtool-1.4.5]# make && make install`  
     
     报错解决方法：
         tar -xzvf cgilib-0.5.tar.gz
@@ -34,53 +35,64 @@
         cp cgi.h /usr/local/include
 `[root@xy ~]# yum -y install libart_lgpl-devel pango-devel* cairo-devel*`  
 
-`[root@xy ~]# tar -xzvf cacti-0.8.7g.tar.gz`  
-`[root@xy ~]# mv cacti-0.8.7g/ /var/www/html/`  
-`[root@xy ~]# patch -p1 -N < ~/cacti/data_source_deactivate.patch`  打补丁  
-`[root@xy ~]# useradd runct`  
-`[root@xy cacti]# chown -R root:root ./`  
-`[root@xy cacti]# chown -R runct:runct rra/ log/`    
-`[root@xy cacti]# mysql -uroot -p`  授权数据库用户，导入初始化数据  
+`[root@xy cacti]# tar -xzvf cacti-0.8.7g.tar.gz`  
+`[root@xy cacti]# mv cacti-0.8.7g/ /var/www/html/`  
+`[root@xy www html]# ln -s cacti-0.8.7g/ cacti`    
+`[root@xy www cacti]# patch -p1 -N < /root/cacti/data_source_deactivate.patch`  打补丁  
+`[root@xy www cacti]# useradd runct`  
+`[root@xy www cacti]# chown -R root:root ./`  
+`[root@xy www cacti]# chown -R runct:runct rra/ log/`    
+`[root@xy www cacti]# mysql -uroot -p`  授权数据库用户，导入初始化数据  
 
     mysql> create database cactidb default character set utf-8;
     mysql> grant all privileges on cactidb.* to cactiuser@localhost identified by 'pwd@123';
-    mysql> quit
-`[root@xy cacti]# mysql -uroot -p cactidb < cacti.sql`  
-`[root@xy cacti]# vim /include/config.php`  设置数据连接参数   
-/* make sure these values refect your actual database/host/user/password */
-`[root@xy cacti]# vim /etc/httpd/conf/httpd.conf`   
+    mysql> exit
+`[root@xy www cacti]# mysql -uroot -p cactidb < cacti.sql`  
+`[root@xy www cacti]# vim /include/config.php`  设置数据连接参数   
+/* make sure these values refect your actual database/host/user/password */  
+`[root@xy www cacti]# vim /etc/httpd/conf/httpd.conf`   
+```
 DocumentRoot "/var/www/html/cacti"  
 <Directory "/var/www/html/cacti">  
 DirectoryIndex index.php index.html index.htm.var  
-#### 2.3 Cacti 插件添加 
-`[root@xy ~]# yum -y install net-snmp net-snmp-utils net-snmp-libs lm_sensors`  10.10.10.12  客户端  
-`[root@xy ~]# service snmpd start`  
-`[root@xy ~]# snmpwalk -v 2c -c public 10.10.10.11 tcp`  -c 共同体名称(组号)  
+```
+> 10.10.10.11 进行安装  
 
-    V1 版 简单，高效，不支持加密及身份认证  
-    V2 版 身份认证  
-    V3 版 加密  
+#### 2.3 Cacti 插件添加 10.10.10.12  客户端
+`[root@xy ~]# yum -y install net-snmp net-snmp-utils net-snmp-libs lm_sensors`    
 `[root@xy ~]# vim /etc/snmpd.conf`  
-
-    view all include .1  
-    #       group   context sec.model   sec.level   prefix  read        write   notif   
-    access  notConfigGroup  ""  any noauth          exact   all  none    none  
-`[root@xy ~]# su -runct`  
-`[runct@xy ~]# php /var/www/html/cacti/poller.php`  
+```
+com2sec notConfigUser   default public123
+view all include .1  
+#       group   context sec.model   sec.level   prefix  read        write   notif   
+access  notConfigGroup  ""  any noauth          exact   all  none    none  
+```
+`[root@xy ~]# service snmpd start`  
+`[root@xy ~]# snmpwalk -v 2c -c public123 10.10.10.12 tcp`  -c 共同体名称(组号)
+```
+V1 版 简单，高效，不支持加密及身份认证  
+V2 版 身份认证  
+V3 版 加密
+``` 
+`[runct@www html]# php /var/www/html/cacti/poller.php` 
+`[root@www html]# su -runct` 
 `[runct@xy ~]# crontab -e`  
-`*/5   *   *   *   *   /usr/bin/php    /var/www/html/cacti/poller.php &>/dev/null`   min hour day month week  
+`*/5   *   *   *   *   /usr/bin/php    /var/www/html/cacti/poller.php &>/dev/null`   // min hour day month week  
+`[runct@xy ~]# service crond restart`   
 
-`[root@xy cacti-plugin]#  tar -xzvf cacti-plugin-0.8.7-PA-v2.8.tar.gz`  
+`[root@xy cacti-plugin]# tar -xzvf cacti-plugin-0.8.7-PA-v2.8.tar.gz`  
 `[root@xy cacti-plugin-arch]# mysql -uroot -p cactidb < pa.aql`  
+
 ### 2. Nagios 监控平台  
 #### 2.1 Nagios 原理
 ![Nagios原理](../img/Nagios.png)
 #### 2.2 Nagios 构建
-`[root@xy ~]# yum -y install httpd gcc glibc glibc-commom php php-mysql`  在光盘里找 *gd* 安装  
-`[root@xy ~]# groupadd nagcmd`  
-`[root@xy ~]# useradd -m nagios`  
+`[root@xy ~]# yum -y install httpd gcc glibc glibc-commom php php-mysql`  
+`[root@xy mnt cdrom]# yum -y insatall *gd*`   // 在光盘Package里找 *gd* 安装    
+`[root@xy ~]# groupadd nagcmd`  // 必须  
+`[root@xy ~]# useradd -m nagios`  // 必须  
 `[root@xy ~]# usermod -a -G nagcmd nagios`  
-`[root@xy ~]# usermod -a -G nagcmd apache`  
+`[root@xy ~]# usermod -a -G nagcmd apache`  // 把Apache添加到 nagcmd 组  
 `[root@xy ~]# mount -o loop nagios.iso /mnt/iso`  
 `[root@xy ~]# cp -a /mnt/iso/* .`  
 `[root@xy ~]# tar -xzvf nagios-3.1.2.tar.gz`  
@@ -91,10 +103,13 @@ DirectoryIndex index.php index.html index.htm.var
 `[root@xy nagios-3.1.2]# make install-config`  
 `[root@xy nagios-3.1.2]# make install-commandmode`  
 `[root@xy nagios-3.1.2]# vim /usr/local/nagios/etc/objects/contacts.cfg`  
-email   nagios@localhost  
+```
+email   nagios@localhost
+```  
 `[root@xy nagios-3.1.2]# make install-webconf`  
 `[root@xy nagios-3.1.2]# vim /etc/httpd/conf.d/nagios.conf`  
- `[root@xy nagios-3.1.2]# htpasswd -c /usr/local/nagios/etc/htpasswd.users nagiosadmin`  
+`[root@xy nagios-3.1.2]# htpasswd -c /usr/local/nagios/etc/htpasswd.users nagiosadmin`  
+
 `[root@xy ~]# tar -xzvf nagios-plugins-1.4.15.tar.gz`  
 `[root@xy nagios-plugins-1.4.15]# ./configure --with-nagios-user=nagios --with-nagios-group=nagios --with-mysql --enable-perl-modules`  
 `[root@xy nagios-plugins-1.4.15]# make &&  make install`  
@@ -103,6 +118,7 @@ email   nagios@localhost
 `[root@xy nagios-plugins-1.4.15]# /usr/local/nagios -v /usr/local/nagios/etc/nagios.cfg`  
 `[root@xy nagios-plugins-1.4.15]# service nagios start`  
 #### 2.3 Nagios 添加监控主机
+
 ### 3. Zabbix 监控平台  
 #### 3.1 Zabbix 组件说明
 ![Zabbix](../img/Zabbix.png)
@@ -117,11 +133,15 @@ email   nagios@localhost
     - `zabbix_server`：**Zabbix 服务端守护进程**，所有数据都是被提交 或者 主动提交 给 Zabbix_server 端 ✔
     - `zabbix_java_gateway`：类似于agentd，但只用于Java方面，只能主动获取数据，不能被动获取，最终提交给 serve / proxy
 #### 3.2 Zabbix 监控构建
+##### 3.2.1 初始化系统
 `[root@xy ~]# systemctl stop firewalld`  
 `[root@xy ~]# systemctl disable firewalld`  
 `[root@xy ~]# setenforce 0`  
 `[root@xy ~]# sed -i "s/SELINUX=enforcing/SELINUX=disabled/g" /etc/selinux/config`  
-
+##### 3.2.2 构建 LAMP 环境
+`[root@xy ~]# wget http://mirros.163.com/.help/CentOS7-Base-163.repo`  
+`[root@xy ~]# yum clean all`  
+`[root@xy ~]# makecache`  
 `[root@xy ~]# yum -y install mariadb mariadb-server httpd php php-mysql`  
 `[root@xy ~]# systemctl enable httpd`  
 `[root@xy ~]# systemctl restart httpd`  
@@ -131,49 +151,59 @@ email   nagios@localhost
 
 `[root@xy ~]# rpm -ivh https://repo.zabbix.com/zabbix/3.0/rhel/7/x86_64/zabbix-release-3.2.1.el7.noarch.rpm`  
 `[root@xy ~]# rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-ZABBIX`  
-`[root@xy ~]# yum -y install zabbix-server-mysql zabbix-web-mysql zabbix-agent`  
-`[root@xy ~]# mysql -uroot -p`  
-`MariaDB [(none)]> create database zabbix default character set utf8 collate utf8_bin;`  
-`MariaDB [(none)]> grant all privileges on zabbix.* to zabbix@localhost identified by 'zabbix';`  
+`[root@xy ~]# yum -y install zabbix-server-mysql zabbix-web-mysql zabbix-agent`  // 连接数据库方案 Web可视化方案  
+`[root@xy ~]# mysql -uroot -p`  // 还原官方数据库  
+```
+MariaDB [(none)]> create database zabbix default character set utf8 collate utf8_bin;  
+MariaDB [(none)]> grant all privileges on zabbix.* to zabbix@localhost identified by 'zabbix';
+```  
 `[root@xy ~]# cd /usr/share/doc/zabbix-server-mysql-3.2.11/`  
-`[root@xy zabbix-server-mysql-3.2.11]# zcat create.sql.gz | mysql -uroot -p zabbix`  
+`[root@xy zabbix-server-mysql-3.2.11]# zcat create.sql.gz | mysql -uroot -p zabbix`  // zcat 解压并查看  
 `[root@xy zabbix-server-mysql-3.2.11]# vim /etc/zabbix/zabbix_server.conf`  ✔
+```
 DBHost=localhost  
 DBName=zabbix  
 DBUser=zabbix  
 DBPassword=zabbix  
+```
 `[root@xy zabbix-server-mysql-3.2.11]# systemctl start zabbix-server`  
 `[root@xy zabbix-server-mysql-3.2.11]# systemctl enable zabbix-server`  
-`[root@xy zabbix-server-mysql-3.2.11]# vim /etc/httpd/conf.d/zabbix.conf`  
+`[root@xy zabbix-server-mysql-3.2.11]# vim /etc/httpd/conf.d/zabbix.conf` 
+``` 
 php_value date.timezone Asia/Shanghai  
+```
 `[root@xy ~]# systemctl restart httpd`  
 `[root@xy ~]# yum -y install ntpdate`  
 `[root@xy ~]# /usr/share/zabbix`  
-`[root@xy ~]# vim /etc/zabbix/zabbix_agentd.conf`  ✔
+`[root@xy ~]# vim /etc/zabbix/zabbix_agentd.conf`  ✔  
 `[root@xy ~]# systemctl start zabbix-agent`    
 `[root@xy ~]# systemctl enable zabbix-agent`  
 `[root@xy ~]# netstat -anpt | grep :10050`  
 `[root@xy ~]# mv simsun.ttc /usr/share/zabbix/fonts`  
 `[root@xy fonts]# chomod a+x song.ttf`  
- `[root@xy fonts]# vim /usr/share/zabbix/include/defines.inc.php`  :font  ✔  
+`[root@xy fonts]# vim /usr/share/zabbix/include/defines.inc.php`  // :font  ✔  
 #### 3.3 Zabbix 手动添加监控主机 / 自动发现  10.10.10.12
 `[root@xy ~]# yum -y install zabbix-agent-3.2.1-1.el6.x86_64.rpm`  
 `[root@xy ~]# service httpd start`  
 `[root@xy ~]# echo "Hello,HTML~" >> /var/www/html/index.html`  
 `[root@xy ~]# curl localhost`  
-`[root@xy ~]# vim /etc/zabbix/zabbix_agentd.conf`   
+`[root@xy ~]# vim /etc/zabbix/zabbix_agentd.conf`  
+``` 
 Server=10.10.10.11  
 ServerActive=10.10.10.11  
 Hostname=10.10.10.12  
+```
 `[root@xy ~]# service zabbix-agent start`  
 `[root@xy ~]# chkconfig zabbix-agent on`   
 `[root@xy ~]# netstat -anpt | grep :10050`   
 
 `[root@xy ~]# yum -y install zabbix-agent-3.2.1-1.el6.x86_64.rpm`  10.10.10.13  
 `[root@xy ~]# vim /etc/zabbix/zabbix_agentd.conf`   
+```
 Server=10.10.10.11  
 ServerActive=10.10.10.11  
 Hostname=10.10.10.13  
+```
 #### 3.4 Zabbix Nginx 并发监控  10.10.10.12
 `[root@xy nginx-1.2.6]# yum -y install pcre pcre-devel zlib zlib-devel`  
 `[root@xy nginx-1.2.6]# ./configure --help | grep status`  
@@ -231,8 +261,10 @@ Hostname=10.10.10.13
     %s/ngx_status/nginx_status/g
 `[root@xy nginx-1.2.6]# chmod a+x nginx-status.sh`  
 `[root@xy ~]# vim /etc/zabbix/zabbix_agentd.conf`  ✔
+```
 UnsafeUserParameter=1  
 UserParameter=nginx.status[*],/etc/zabbix/zabbix_agentd.d/nginx-status.sh $1  
+```
 `[root@xy ~]# yum -y install zabbix-get`   10.10.10.11 
 `[root@xy ~]# zabbix_get -s 10.10.10.12 -k 'nginx.status[requests]'`   
 #### 3.5 Zabbix Web场景、组合图

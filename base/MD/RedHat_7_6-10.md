@@ -1318,7 +1318,7 @@ ger/ActiveConnection/2)
 
 **安全密钥验证**  
 *客户端主机生成“密钥对”*  
-`[root@xy ~]# ssh-keygen -t rsa -b 2048`  
+`[root@xy ~]# ssh-keygen -t rsa -b 2048`  // 用此命令的 留下 私钥
 Generating public/private rsa key pair. 
 Enter file in which to save the key (/root/.ssh/id_rsa):　**回车或设置密钥存储路径**  
 Enter passphrase (empty for no passphrase): 　**直接按回车或设置密钥密码**  
@@ -1340,8 +1340,8 @@ The key's randomart image is:
 |                 |  
 +-----------------+  
 
-* 客户端主机生成的密钥对传送至远程主机上  
-`[root@xy ~]# ssh-copy-id 192.168.37.10`  
+* 客户端主机生成的公钥传送至远程主机上  
+`[root@xy ~]# ssh-copy-id 192.168.37.10`  // ssh-copy-ip 只能拷贝公钥
 Number of key(s) added: 1  
 Now try logging into the machine, with:   "ssh '192.168.37.10'"  
 and check to make sure that only the key(s) you wanted were added.  

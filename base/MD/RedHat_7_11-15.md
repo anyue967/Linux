@@ -993,7 +993,86 @@ ln -s '/usr/lib/systemd/system/dovecot.service' '/etc/systemd/system/multi-user.
     - **Filebeat**：搜集文件数据
     - **Winlogbeat**：搜集Windows事件日志数据  
 
-![ELK](../img/ELK.jpg)
-![ELK-Filebeat](../img/ELK-Filebeat.jpg)
+![ELK](../img/ELK.jpg)  
+![ELK-Filebeat](../img/ELK-Filebeat.jpg)  
 
+#### 12.1 ELK 服务端部署(192.168.37.10)
+#### 配置 elasticserch
+`[root@xy ~]# mkdir /elk;cd /elk`  
+`[root@xy elk]# wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.2.3.tar.gz`  
+`[root@xy elk]# wget https://artifacts.elastic.co/downloads/logstash/logstash-6.2.3.tar.gz` 
+`[root@xy elk]# wget https://artifacts.elastic.co/downloads/kibana/kibana-6.2.3-linux-x86_64.tar.gz` 
+`[root@xy elk]# tar -xzvf elasticsearch-6.2.3.tar.gz`  
+`[root@xy elk]# tar -xzvf logstash-6.2.3.tar.gz`  
+`[root@xy elk]# tar -xf kibana-6.2.3-linux-x86_64.tar.gz`    
+`[root@xy elk]# chown -Rf root:root kibana-6.2.3-linux-x86_64` 
+`[root@xy elk]# cp -a elasticsearch-6.2.3/ logstash-6.2.3/ kibana-6.2.3-linux-x86_64/ /usr/local`  
+`[root@xy elk]# yum install -y java-1.8*`  
+`[root@xy elk]# useradd elasticsearch`   
+`[root@xy elk]# chown elasticsearch:elasticsearch /usr/local/elasticsearch-6.2.3/`  
+`[root@xy elk]# su elasticsearch`  
+`[elasticsearch@xy elasticsearch-6.2.3]$ ./bin/elasticsearch -d`  
+`[elasticsearch@xy elasticsearch-6.2.3]$ netstat -antp`  // 9200端口  
+`[elasticsearch@xy elasticsearch-6.2.3]$ cat /usr/local/elasticserch-6.2.3/logs/elasticsearch.log`  
+`[elasticsearch@xy elasticsearch-6.2.3]$ curl localhost:9200`  
+#### 配置 logstash  
+`[root@xy logstash-6.2.3]# vim /vendor/bundle/jruby/2.3.0/gems/logstash-patterns-core-4.1.2/patterns/grok-patterns`  
+```
+# Nginx log
+WZ ([^ ]*)
+NGINXACCESS %{IP:remote_ip} \- \- \[%{HTTPDATE:timestamp}\] "%{WORD:method} %{WZ:request} HTTP/%{NUMBER:httpversion}" %{NUMBER:status} %{NUMBER:bytes} %{QS:referer} %{QS:agent} %{QS:xforward}
+```
+`[root@xy logstash-6.2.3]# vim /usr/local/logstash-6.2.3/default.conf`  
+```
+input {
+    beats{
+        port => "5044"
+    }
+}
+# 数据过滤
+filter {
+    grok {
+        match => { "message" => "%{NGINXACCESS}" }
+    }
+    geoip {
+        # nginx 客户端 ip
+        source => "192.168.37.20"
+    }
+}
+# 输出配置为本机的 9200 端口,这是elasticsearch 服务的监听端口
+output {
+    elasticsearch {
+        hosts => ["127.0.0.1:9200"]
+    }
+}
+```
+`[root@xy logstash-6.2.3]# nohup bin/logstash -f default.conf &`  
+`[root@xy logstash-6.2.3]# tail -f nohup.out`  
+`[root@xy logstash-6.2.3]# netstat -antp | grep 5044`    
+
+#### 配置 Kibana
+`[root@xy kibana-6.2.3-linux-x86_64]# vim /usr/local/kibana-6.2.3-linux-x86_64/config/kibana.yml`  
+```
+serverhost:"192.168.37.10"
+```
+`[root@xy kibana-6.2.3-linux-x86_64]# nohup bin/kibana &`  
+`[root@xy kibana-6.2.3-linux-x86_64]# tail -f nohup.out`  
+`[root@xy kibana-6.2.3-linux-x86_64]# netstat -antp | grep 5601`  
+测试：192.168.37.10:5601  
+
+#### 12.1 Nginx部署(192.168.37.20)
+`[root@xy ~]# yum install -y nginx`  
+`[root@xy ~]# wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-6.2.3-linux-x86_64.tar.gz`  
+`[root@xy ~]# tar -xf ./filebeat-6.2.3-linux-x86_64.tar.gz -C /usr/local/`  
+`[root@xy filebeat-6.2.3-linux-x86_64]# vim filebeat.yml`  
+```
+enable：false     #修改为true
+paths：/var/log/*.log   #修改为/var/log/nginx/*.log
+#output.elasticsearch:   #将此行注释掉
+#hosts: ["localhost:9200"]  #将此行注释掉
+output.logstash:    #取消此行注释
+hosts: ["192.168.37.10:5044"] #取消此行注释并修改IP 地址为ELK 服务器地址
+```
+`[root@xy filebeat-6.2.3-linux-x86_64]# nohup ./filebeat -e -c filebeat.yml &`  
+`[root@xy filebeat-6.2.3-linux-x86_64]# tailf nohup.out`  
 [返回目录](#back)
