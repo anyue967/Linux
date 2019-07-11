@@ -52,7 +52,7 @@
 `[root@xy ~]# vim /etc/sysconfig/network-scripts/`  
 `[root@xy ~]# vim ifcfg-eth0:0`  拷贝eth0 网卡子接口充当集群入口接口  
 DEVICE=eth0:0  
-IPADDR=10.10.10.100 #虚拟IP  
+IPADDR=10.10.10.100 #虚拟(集群IP)    
 NETMASK=255.255.255.0  
 `[root@xy ~]# ifup eth0:0`  
 `[root@xy ~]# vim /etc/sysctl.conf`  关闭网卡重定向  
@@ -69,7 +69,7 @@ net.ipv4.conf.eth0.send_redirects = 0
 `[root@xy ~]# ipvsadm -Ln`  
 `[root@xy ~]# service ipvsadm save`  
 `[root@xy ~]# chkconfig ipvsadm on`  
-+ 真实服务器  10.10.10.12
++ 真实服务器  10.10.10.12 10.10.10.13  
 `[root@xy ~]# service NetworkManager stop`  
 `[root@xy ~]# cd /etc/sysconfig/network-scripts/`  
 `[root@xy ~]# cp ifcfg-lo ifcfg-lo:0`  
@@ -92,7 +92,7 @@ net.ipv4.conf.lo.arp_announce = 2
 ![LVS-DR](../img/LVS-DR.png)  
 
 #### 2.3.2 NAT 模式构建：  
-+ 负载调度器配置  
++ 负载调度器配置: eth0 20.20.20.11 eth1 10.10.10.11  
 `[root@xy ~]# vim /etc/sysctl.conf`  开启负载调度器路由转发功能  
 net.ipv4.ip_forward=1  
 `[root@xy ~]# sysctl -p`  刷新内核参数  
@@ -109,7 +109,7 @@ net.ipv4.ip_forward=1
 
 `[root@xy ~]# ipvsadm -Ln --status` 查看集群状态  
 `[root@xy ~]# ipvsadm -D -t 外网卡地址:80`  删除集群  
-+ 真实服务器配置  
++ 真实服务器配置: 10.10.10.12 10.10.10.13   
 `[root@xy ~]# route add default gw IP`  指定真实服务器网关至负载调度器  
 `[root@xy ~]# route -n`  
 `[root@xy ~]# service httpd start`  

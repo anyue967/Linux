@@ -1106,14 +1106,26 @@ iptables: Saving firewall rules to /etc/sysconfig/iptables:[  OK  ]
 ####  禁止源自192.168.10.0/24 网段的流量访问本机sshd服务：
 `[root@xy ~]# iptables -I INPUT -s 192.168.10.0/24 -p tcp --dport 22 -j REJECT`  
 `[root@xt ~]# service iptables save`
+####  SNAT && DNAT 
+`[root@xy ~]# modprobe ip_tables`  
+`[root@xy ~]# modprobe`  
+`[root@xy ~]# vim /etc/sysctl.conf`  
+`[root@xy ~]# net.ipv4.ip_forward  = 1`  
+`[root@xy ~]# sysctl -p /etc/sysctl.conf`  
+`[root@xy ~]# iptables -F`  
+```
+网关服务器: eth0(192.168.1.1) eth1(218.29.30.31) 
+局域网客户机(服务器): 192.168.1.6
+公网服务器(客户机): 58.63.236.45
+```
 ####  SNAT 转换规则：内网访问外网(路由后交给SNAT)
-`[root@xy ~]# iptables -t nat -A  POSTROUTING -s 10.10.10.0/24 -o eth1 -j SNAT --to-source 192.168.239.129`   
-`[root@xy ~]# iptables -t nat -A  POSTROUTING -s 10.10.10.0/24 -o eth1 -j MASQUERADE`  
+`[root@xy ~]# iptables -t nat -A  POSTROUTING -s 192.168.1.0/24 -o eth1 -j SNAT --to-source 218.29.30.31`     
+`[root@xy ~]# iptables -t nat -A  POSTROUTING -s 192.168.1.0/24 -o eth1 -j MASQUERADE`  
 `[root@xt ~]# service iptables save`
 `[root@xt ~]# vim /etc/sysconfig/iptables`  
 DNS1=114.144.114.114 8.8.8.8  
 ####  DNAT 转换规则：外网访问内网(路由前交给DNAT)
-`[root@xy ~]# iptables -t nat -A  PREROUTING -i eth0 -d 218.29.30.31 -p tcp --dport 80 -j DNAT --to-destination 192.168.1.6`    
+`[root@xy ~]# iptables -t nat -A  PREROUTING -i eth0 -d 218.29.30.31 -p tcp --dport 8080 -j DNAT --to-destination 192.168.1.6:80`      
 `[root@xt ~]# service iptables save`
 
 `[root@xy ~]# iptables-save > 1.iptables`  

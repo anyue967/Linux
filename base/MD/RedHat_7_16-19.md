@@ -681,6 +681,36 @@ MariaDB [(none)]> `delete from user where password='';`
 MariaDB [(none)]> `create database xy default character set latin1;`  
 `[root@xingyue masR5]# mysql -u root -p 123456 xy < masR5.sql --default-character-set=lantin1`  
 
+### MySQL主从备份:
+`[root@xy ~]# vim /etc/my.cnf`  
+```
+主: 192.168.10.10
+[mysqld]				
+log-bin=mysql.bin  		
+server-id=10  
+
+mysql> grant replication slave on *.* to 'slave@192.168.10.20' identified by '123456';
++------------------+----------+--------------+-------------------+
+| Fiel             | Position | Binlog_Do_DB | Binglog_Ignore_DB |
++------------------+----------+--------------+-------------------+
+| mysql-bin.000003 |      257 |              |                   |
++------------------+----------+--------------+-------------------+
+
+备: 192.168.10.20
+[mysqld]				
+log-bin=mysql.bin  		
+server-id=20  	
+
+mysql> change master to
+	-> master_user='slave',
+	-> master_password='123456',
+	-> master_host='192.168.10.10',
+	-> master_log_file='mysql-bin.000003',
+	-> master_log_pos=257;
+mysql> start slave;
+mysql> show slave status;
+```  
+
 ### 4.1 使用PXE+Kickstat无人值守安装服务  <div id="无人值守安装"></div>
 + **PXE(Preboot eXecute Environment)**---预启动执行环境,可以让计算机通过网络来启动操作系统,主要用于在无人值守安装系统中引导客户端安装Linux操作系统  
 + **Kickstat无人值守安装方式**,预先把手工填写参数保存为**ks.cfg**文件,安装过程自动匹配Kickstat生成的文件  

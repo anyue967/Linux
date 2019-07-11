@@ -110,8 +110,9 @@
 `awk 'BEGIN{print 1/2} {print "ok"} END{print "--------"}' /etc/hosts`
 `awk 'BEGIN{FS=":";OFS="---"} {print $1,$2}' passwd    ==>root---x`
 + 记录与字段相关的内部变量:
-  - $0: awk变量$0保存当前记录的内容
-    * `awk -F ":" '{print $0}' /etc/passwd`
+  - $0: awk变量$0保存当前记录的整行内容
+    * `awk -F ":" '{print $0}' /etc/passwd`  
+    * $n 目前读入行的第n个字段  
   - NR: total number of input record
     * `awk -F ":" '{print NR,$0}' /etc/passwd /etc/hosts`
   - FNR: current input record
@@ -124,7 +125,7 @@
     * `awk -F 'BEGIN{FS=":"} /^root/{print $1,$2,$3,$4}' passwd`
   - RS: input record spearator
     * `awk -F ":" 'BEGIN{RS=" "} {print $0}' a.txt`
-  - ORS: output
+  - ORS: output record spearator  
     * `awk -F ":" 'BEGIN{ORS=" "} {print $0}' passwd`
 > 字段分隔符: FS OFS 默认空格/制表符
 > 记录字段分隔符: RS ORS 默认换行符
@@ -182,7 +183,13 @@
 + 10.统计2017年9月5日各种状态码数量  
 `awk '/05\/09\/2017/ {code[$9]++;total++} END{for(i in code){printf i"\t"; printf code[i]"\t"; printf "%.2f",code[i]/total*100; print "%"}}' sz.mobiletrain.org.log`  
 
-
+```
+continue: 在循环中不执行continue下面的代码，转而进入下一轮循环
+break: 结束并退出整个循环
+exit: 退出脚本，常带一个整数给系统，如 exit 0
+return: 在函数中将数据返回或返回一个结果给调用函数的脚本
+break: 是立马跳出循环, continue: 是跳出当前条件循环, 继续下一轮条件循环, exit: 是直接退出整个脚本
+```
 
 
 

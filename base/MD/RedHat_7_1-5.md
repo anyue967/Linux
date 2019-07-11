@@ -1296,7 +1296,7 @@ ps: /usr/bin/ps /usr/share/man/man1/ps.1.gz /usr/share/man/man1p/ps.1p.gz
     -   `df -h | awk '{print "$1 \t $3"}'`
     -   `df -h | awk '/sda[0-9]/ {print $1 "\t" $5 "\n"}'`
 +   **sed** 基本使用(修改文本数据)：
-    -   `sed [选型] '[动作]' 文件名`  
+    -   `sed [选项] '[动作]' 文件名`  
     -   `sed -n '2p' example02.sh`  
 +   **nslookup**：域名解析测试命令  
     -   `/etc/sysconfig/network-scripts/ifcfg-eth0`   局部配置文件 DNS=ip
