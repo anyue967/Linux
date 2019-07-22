@@ -1,9 +1,14 @@
+
 # Shell
 ## 流编辑器sed
+> sed命令将当前处理的行读入模式空间进行处理, 处理完把结果输出, 并清空模式空间. 然后再将下一行读入模式空间进行处理输出, 以此类推, 直到最后一行. 还有一个空间叫保持空间, 又称暂存空间，可以暂时存放一些处理的数据, 但不能直接输出, 只能放到模式空间输出.  这两个空间其实就是在内存中初始化的一个内存区域, 存放正在处理的数据和临时存放的数据.  
+
+> sed [选项] '地址 命令' file
+
 + 地址(定址)  
   ```
   sed -r 'd' /etc/passwd  // 删除第n行
-  sed -r '3d' /etc/passwd
+  sed -r '3d' /etc/passwd	// --regexp-extended
   sed -r '1,3d' /etc/passwd
   sed -r '/root/d' /etc/passwd
   sed -r '/root/,5d' /etc/passwd
@@ -24,17 +29,6 @@
   sed -r 's/^west/north/g' datafile
   sed -r 's/[0-9][0-9]$/&.5/' datafile    // & 在查找串中匹配到的内容  
   :3,5s/\(.*)\#\1/
-  ```
-  - 读文件命令: `r` 
-  ``` 
-  sed -r '/Suan/r /etc/newfile' datafile
-  sed -r '/2/r /etc/host' a.txt
-  sed -r '2r /etc/host' a.txt
-  ```
-  - 写文件命令: `w`
-  ```
-  sed -r '/north/w newfile' datafile
-  sed -r '3,$w /new1.txt' datafile 
   ```
   - 追加命令: `a`
   ```
@@ -101,6 +95,8 @@
   sed -r '1,5s/^[ \t]*#*/#/' a.txt
  
 ## 行文本处理awk
+
+![awk原理](./img/awk.jpg)
 > awk [option] 'commands' filenames  
 > awk [option] -f awk-script-file filenames
 
@@ -112,21 +108,26 @@
 + 记录与字段相关的内部变量:
   - $0: awk变量$0保存当前记录的整行内容
     * `awk -F ":" '{print $0}' /etc/passwd`  
-    * $n 目前读入行的第n个字段  
-  - NR: total number of input record
-    * `awk -F ":" '{print NR,$0}' /etc/passwd /etc/hosts`
-  - FNR: current input record
-    * `awk -F ":" '{print FNR,$0}' /etc/passwd /etc/hosts`
-  - NF: 保存记录的字段数($NF: 最后一列): $1, $2, ..., $100
-    * `awk -F ":" '{print $0,NF}' /etc/passwd`
+    * $n 目前读入行的第n个字段 
+	
   - FS: 输入字段分隔符, 默认空格
     * `awk -F 'BEGIN{FS=":"} {print $1,$3}' /etc/passwd`
   - OFS: 输出字段分隔符:
     * `awk -F 'BEGIN{FS=":"} /^root/{print $1,$2,$3,$4}' passwd`
+	
+  - NR: total number of input record(输入记录总数)
+    * `awk -F ":" '{print NR,$0}' /etc/passwd /etc/hosts`
+  - FNR: current input record
+    * `awk -F ":" '{print FNR,$0}' /etc/passwd /etc/hosts`
+	
+  - NF: 保存记录的字段数($NF: 最后一列): $1, $2, ..., $100
+    * `awk -F ":" '{print $0,NF}' /etc/passwd`
+	
   - RS: input record spearator
     * `awk -F ":" 'BEGIN{RS=" "} {print $0}' a.txt`
   - ORS: output record spearator  
     * `awk -F ":" 'BEGIN{ORS=" "} {print $0}' passwd`
+	
 > 字段分隔符: FS OFS 默认空格/制表符
 > 记录字段分隔符: RS ORS 默认换行符
 
@@ -190,6 +191,22 @@ exit: 退出脚本，常带一个整数给系统，如 exit 0
 return: 在函数中将数据返回或返回一个结果给调用函数的脚本
 break: 是立马跳出循环, continue: 是跳出当前条件循环, 继续下一轮条件循环, exit: 是直接退出整个脚本
 ```
+
+## 琐碎知识点:  
+| 项目 |                     说明                      |
+| ---- | --------------------------------------------: |
+| $0   |                                  脚本自身名字 |
+| $?   | 返回上条命令是否执行成功, 0执行成功, 非零失败 |
+| S#   |                                      参数总数 |
+| $*   |                        参数都被看作一个字符串 |
+| $@   |                      每个参数被看作独立字符串 |
+| $$   |                                   当前进程PID |
+| $!   |                         上一条运行后台进程PID |
+
+
+
+
+
 
 
 
