@@ -1,0 +1,9 @@
+This is a Certificate Request file:
+It should be mailed to zawu@seu.edu.cn
+============================================================
+Certificate Subject:
+    /O=Grid/OU=GlobusTest/OU=simpleCA-seugrid1.seu.edu.cn/OU=seu.edu.cn/CN=globus
+The above string is known as your user certificate subject, and it uniquely identifies
+this user. $88
+To install this user certificate, please save this e-mail message into the following file.
+/home/globus/.globus/usercert.pem
