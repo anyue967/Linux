@@ -1,6 +1,0 @@
-CODE SETTINGS SYNC UPLOAD SUMMARY
-Version: 3.4.1
---------------------
-GitHub Token: 28e5773b82032b9f41b86ca336aa00885b9fa43a
-GitHub Gist: fe9927481dba43bd945b4f14b9c4efeb
-GitHub Gist Type: Secret
